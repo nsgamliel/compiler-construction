@@ -1,0 +1,1 @@
+ERROR: instruction 2 attempted to use position 4 in the dimension 2 of a tensor that only has 1 position in that dimension
