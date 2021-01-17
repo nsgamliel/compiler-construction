@@ -5,7 +5,7 @@
 
 namespace L1 {
 
-  enum Register {rdi, rax};
+  enum Register {rdi, rax, rbx, rcx, rdx, rbp, rsi, r8, r9, r10, r11, r12, r13, r14, r15};
 
   struct Item {
     std::string labelName;
