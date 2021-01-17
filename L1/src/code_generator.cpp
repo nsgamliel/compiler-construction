@@ -23,6 +23,15 @@ namespace L1{
     outputFile << "popq %r15\npopq %r14\npopq %r13\npopq %r12\npopq %rbp\npopq %rbx\nretq\n";
 
 
+    for (auto f : p.functions) {
+      outputFile << conv_string(f.name) << "\n";
+      for (auto i : f.instructions) {
+        outputFile << ";; instr placeholder\n";
+      }
+      outputFile << "retq\n";
+    }
+
+
     /* 
      * Close the output file.
      */ 

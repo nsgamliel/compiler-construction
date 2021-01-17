@@ -310,16 +310,6 @@ namespace L1 {
     }
   };
 
-  template<> struct action < str_return > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "return instruction" << std::endl;
-      auto currentF = p.functions.back();
-      auto i = new Instruction_ret();
-      currentF->instructions.push_back(i);
-    }
-  };
-
   template<> struct action < Label_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
@@ -493,6 +483,16 @@ namespace L1 {
       i.isARegister = true;
       i.r = r15;
       parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < str_return > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "return instruction" << std::endl;
+      auto currentF = p.functions.back();
+      auto i = new Instruction_ret();
+      currentF->instructions.push_back(i);
     }
   };
 
