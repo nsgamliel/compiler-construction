@@ -69,19 +69,19 @@ namespace L1 {
   //struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_rdi : TAOCPP_PEGTL_STRING( "rdi" ) {};
   struct str_rax : TAOCPP_PEGTL_STRING( "rax" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "rbx" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "rcx" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "rdx" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "rbp" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "rsi" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r8" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r9" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r10" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r11" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r12" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r13" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r14" ) {};
-  struct str_rax : TAOCPP_PEGTL_STRING( "r15" ) {};
+  struct str_rbx : TAOCPP_PEGTL_STRING( "rbx" ) {};
+  struct str_rcx : TAOCPP_PEGTL_STRING( "rcx" ) {};
+  struct str_rdx : TAOCPP_PEGTL_STRING( "rdx" ) {};
+  struct str_rbp : TAOCPP_PEGTL_STRING( "rbp" ) {};
+  struct str_rsi : TAOCPP_PEGTL_STRING( "rsi" ) {};
+  struct str_r8  : TAOCPP_PEGTL_STRING( "r8" ) {};
+  struct str_r9  : TAOCPP_PEGTL_STRING( "r9" ) {};
+  struct str_r10 : TAOCPP_PEGTL_STRING( "r10" ) {};
+  struct str_r11 : TAOCPP_PEGTL_STRING( "r11" ) {};
+  struct str_r12 : TAOCPP_PEGTL_STRING( "r12" ) {};
+  struct str_r13 : TAOCPP_PEGTL_STRING( "r13" ) {};
+  struct str_r14 : TAOCPP_PEGTL_STRING( "r14" ) {};
+  struct str_r15 : TAOCPP_PEGTL_STRING( "r15" ) {};
 
   struct label:
     pegtl::seq<
