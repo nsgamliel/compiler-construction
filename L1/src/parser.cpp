@@ -68,7 +68,7 @@ namespace L1 {
    * Keywords.
    */
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
-  struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
+  //struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_rdi : TAOCPP_PEGTL_STRING( "rdi" ) {};
   struct str_rax : TAOCPP_PEGTL_STRING( "rax" ) {};
   struct str_rbx : TAOCPP_PEGTL_STRING( "rbx" ) {};
@@ -273,7 +273,7 @@ namespace L1 {
   template<> struct action < label > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "entry point label" << std::cout;
+    if (printActions) std::cout << "entry point label" << std::endl;
       if (p.entryPointLabel.empty()){
         p.entryPointLabel = in.string();
       } else {
@@ -285,7 +285,7 @@ namespace L1 {
   template<> struct action < function_name > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function name" << std::cout;
+    if (printActions) std::cout << "function name" << std::endl;
       auto newF = new Function();
       newF->name = in.string();
       p.functions.push_back(newF);
@@ -295,7 +295,7 @@ namespace L1 {
   template<> struct action < argument_number > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function arguments number" << std::cout;
+    if (printActions) std::cout << "function arguments number" << std::endl;
       auto currentF = p.functions.back();
       currentF->arguments = std::stoll(in.string());
     }
@@ -304,7 +304,7 @@ namespace L1 {
   template<> struct action < local_number > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function locals number" << std::cout;
+    if (printActions) std::cout << "function locals number" << std::endl;
       auto currentF = p.functions.back();
       currentF->locals = std::stoll(in.string());
     }
@@ -313,7 +313,7 @@ namespace L1 {
   template<> struct action < str_return > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "return instruction" << std::cout;
+    if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
       auto i = new Instruction_ret();
       currentF->instructions.push_back(i);
@@ -323,7 +323,7 @@ namespace L1 {
   template<> struct action < Label_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "adding item to parsed_items" << std::cout;
+    if (printActions) std::cout << "adding item to parsed_items" << std::endl;
       Item i;
       i.isARegister = false;
       i.labelName = in.string();
@@ -334,7 +334,7 @@ namespace L1 {
   template<> struct action < register_rdi_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rdi" << std::cout;
+      if (printActions) std::cout << "register rdi" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rdi;
@@ -345,7 +345,7 @@ namespace L1 {
   template<> struct action < register_rax_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rax" << std::cout;
+      if (printActions) std::cout << "register rax" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rax;
@@ -356,7 +356,7 @@ namespace L1 {
   template<> struct action < register_rbx_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rbx" << std::cout;
+      if (printActions) std::cout << "register rbx" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rbx;
@@ -367,7 +367,7 @@ namespace L1 {
   template<> struct action < register_rcx_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rcx" << std::cout;
+      if (printActions) std::cout << "register rcx" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rcx;
@@ -378,7 +378,7 @@ namespace L1 {
   template<> struct action < register_rdx_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rdx" << std::cout;
+      if (printActions) std::cout << "register rdx" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rdx;
@@ -389,7 +389,7 @@ namespace L1 {
   template<> struct action < register_rbp_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rbp" << std::cout;
+      if (printActions) std::cout << "register rbp" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rbp;
@@ -400,7 +400,7 @@ namespace L1 {
   template<> struct action < register_rsi_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rsi" << std::cout;
+      if (printActions) std::cout << "register rsi" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = rsi;
@@ -411,7 +411,7 @@ namespace L1 {
   template<> struct action < register_r8_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r8" << std::cout;
+      if (printActions) std::cout << "register r8" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r8;
@@ -422,7 +422,7 @@ namespace L1 {
   template<> struct action < register_r9_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r9" << std::cout;
+      if (printActions) std::cout << "register r9" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r9;
@@ -433,7 +433,7 @@ namespace L1 {
   template<> struct action < register_r10_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r10" << std::cout;
+      if (printActions) std::cout << "register r10" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r10;
@@ -444,7 +444,7 @@ namespace L1 {
   template<> struct action < register_r11_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r11" << std::cout;
+      if (printActions) std::cout << "register r11" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r11;
@@ -455,7 +455,7 @@ namespace L1 {
   template<> struct action < register_r12_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r12" << std::cout;
+      if (printActions) std::cout << "register r12" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r12;
@@ -466,7 +466,7 @@ namespace L1 {
   template<> struct action < register_r13_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r13" << std::cout;
+      if (printActions) std::cout << "register r13" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r13;
@@ -477,7 +477,7 @@ namespace L1 {
   template<> struct action < register_r14_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r14" << std::cout;
+      if (printActions) std::cout << "register r14" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r14;
@@ -488,7 +488,7 @@ namespace L1 {
   template<> struct action < register_r15_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register r15" << std::cout;
+      if (printActions) std::cout << "register r15" << std::endl;
       Item i;
       i.isARegister = true;
       i.r = r15;
@@ -499,6 +499,7 @@ namespace L1 {
   template<> struct action < Instruction_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "assignment instruction" << std::endl
 
       // Fetch the current function. 
       auto currentF = p.functions.back();
