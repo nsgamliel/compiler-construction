@@ -69,6 +69,19 @@ namespace L1 {
   //struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_rdi : TAOCPP_PEGTL_STRING( "rdi" ) {};
   struct str_rax : TAOCPP_PEGTL_STRING( "rax" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "rbx" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "rcx" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "rdx" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "rbp" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "rsi" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r8" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r9" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r10" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r11" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r12" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r13" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r14" ) {};
+  struct str_rax : TAOCPP_PEGTL_STRING( "r15" ) {};
 
   struct label:
     pegtl::seq<
@@ -81,11 +94,63 @@ namespace L1 {
 
   struct register_rax_rule:
       str_rax {};
+
+  struct register_rbx_rule:
+      str_rax {};
+
+  struct register_rcx_rule:
+      str_rax {};
+
+  struct register_rdx_rule:
+      str_rax {};
+
+  struct register_rbp_rule:
+      str_rax {};
+
+  struct register_rsi_rule:
+      str_rax {};
+
+  struct register_r8_rule:
+      str_rax {};
+
+  struct register_r9_rule:
+      str_rax {};
+
+  struct register_r10_rule:
+      str_rax {};
+
+  struct register_r11_rule:
+      str_rax {};
+
+  struct register_r12_rule:
+      str_rax {};
+
+  struct register_r13_rule:
+      str_rax {};
+
+  struct register_r14_rule:
+      str_rax {};
+
+  struct register_r15_rule:
+      str_rax {};
    
   struct register_rule:
     pegtl::sor<
       register_rdi_rule,
-      register_rax_rule
+      register_rax_rule,
+      register_rbx_rule,
+      register_rcx_rule,
+      register_rdx_rule,
+      register_rbp_rule,
+      register_rsi_rule,
+      register_r8_rule,
+      register_r9_rule,
+      register_r10_rule,
+      register_r11_rule,
+      register_r12_rule,
+      register_r13_rule,
+      register_r14_rule,
+      register_r15_rule
     > {};
 
   struct number:
@@ -282,23 +347,17 @@ namespace L1 {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
 
-      /* 
-       * Fetch the current function.
-       */ 
+      // Fetch the current function. 
       auto currentF = p.functions.back();
 
-      /* 
-       * Create the instruction.
-       */ 
+      // Create the instruction. 
       auto i = new Instruction_assignment();
       i->src = parsed_items.back();
       parsed_items.pop_back();
       i->dst = parsed_items.back();
       parsed_items.pop_back();
 
-      /* 
-       * Add the just-created instruction to the current function.
-       */ 
+      // Add the just-created instruction to the current function.
       currentF->instructions.push_back(i);
     }
   };
