@@ -68,7 +68,7 @@ namespace L1 {
    * Keywords.
    */
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
-  //struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
+  struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_rdi : TAOCPP_PEGTL_STRING( "rdi" ) {};
   struct str_rax : TAOCPP_PEGTL_STRING( "rax" ) {};
   struct str_rbx : TAOCPP_PEGTL_STRING( "rbx" ) {};
@@ -499,7 +499,7 @@ namespace L1 {
   template<> struct action < Instruction_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "assignment instruction" << std::endl
+    if (printActions) std::cout << "assignment instruction" << std::endl;
 
       // Fetch the current function. 
       auto currentF = p.functions.back();
