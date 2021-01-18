@@ -5,7 +5,7 @@
     // This is my comment
     :test_lbl
     rax <- rdi
-    rbx <- :test_lbl
+    rdi <- :test_lbl
 
     return 
   )

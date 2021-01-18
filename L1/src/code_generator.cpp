@@ -19,11 +19,14 @@ namespace L1{
     /* 
      * Generate target code
      */ 
+    std::cout << "starting prog.S setup" << std::endl;
     outputFile << "    .text\n    .globl go\ngo:\n    pushq %rbx\n    pushq %rbp\n    pushq %r12\n    pushq %r13\n    pushq %r14\n    pushq %r15\n";
     outputFile << "\n    call " << conv_label(p.entryPointLabel) << "\n\n";
     outputFile << "    popq %r15\n    popq %r14\n    popq %r13\n    popq %r12\n    popq %rbp\n    popq %rbx\n    retq\n\n";
+    std::cout << "finished prog.S setup" << std::endl;
 
 
+    std::cout << "starting function iterations" << std::endl;
     for (auto f : p.functions) {
       outputFile << conv_label(f->name) << ":\n";
       for (auto i : f->instructions) {
