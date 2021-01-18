@@ -492,7 +492,7 @@ namespace L1 {
     if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
       auto i = new Instruction();
-      i->type = 0;
+      i->op = ret;
       currentF->instructions.push_back(i);
     }
   };
@@ -507,7 +507,7 @@ namespace L1 {
 
       // Create the instruction. 
       auto i = new Instruction();
-      i->type = 1;
+      i->op = mov;
       Item* new_item = &parsed_items.back();
       i->items.push_back(new_item);
       parsed_items.pop_back();

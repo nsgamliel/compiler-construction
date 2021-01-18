@@ -16,8 +16,10 @@ namespace L1 {
   /*
    * Instructions.
    */
+  enum Opcode {ret, mov};
+
   struct Instruction{
-    int type; // consider making this std::string opcode;
+    Opcode op;
     std::vector<Item *> items;
   };
 

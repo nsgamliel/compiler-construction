@@ -28,14 +28,11 @@ namespace L1{
       for (auto i : f->instructions) {
         switch (i->type) {
           case 0:
-            outputFile << "retq\n";
-            break;
+            outputFile << "retq\n"; break;
           case 1:
-            outputFile << "movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
-            break;
+            outputFile << "movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
           default:
-            outputFile << "# instr placeholder\n";
-            break;
+            outputFile << "# instr placeholder\n"; break;
         }
       }
     }
