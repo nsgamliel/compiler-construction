@@ -491,7 +491,7 @@ namespace L1 {
   static void apply( const Input & in, Program & p){
     if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
-      auto i = new Instruction_no_var();
+      auto i = new Instruction();
       i->type = 0;
       currentF->instructions.push_back(i);
     }
@@ -506,11 +506,13 @@ namespace L1 {
       auto currentF = p.functions.back();
 
       // Create the instruction. 
-      auto i = new Instruction_two_var();
+      auto i = new Instruction();
       i->type = 1;
-      i->src = parsed_items.back();
+      Item* new_item = &parsed_items.back();
+      i->items.push_back(new_item);
       parsed_items.pop_back();
-      i->dst = parsed_items.back();
+      new_item = &parsed_items.back();
+      i->items.push_back(new_item);
       parsed_items.pop_back();
 
       // Add the just-created instruction to the current function.

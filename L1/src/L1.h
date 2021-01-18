@@ -14,20 +14,11 @@ namespace L1 {
   };
 
   /*
-   * Instruction interface.
+   * Instructions.
    */
   struct Instruction{
     int type;
-  };
-
-  /*
-   * Instructions.
-   */
-  struct Instruction_no_var : Instruction{
-  };
-
-  struct Instruction_two_var : Instruction{
-    Item src,dst;
+    std::vector<Item *> items;
   };
 
   /*
