@@ -69,6 +69,8 @@ namespace L1{
     std::cout << "converting operand" << std::endl;
     std::string s;
     switch (item->type) {
+      case -1:
+        s = conv_label(item->value) + ":"; break;
       case 0:
         s = "%" + item->register_name; break;
       case 3:
