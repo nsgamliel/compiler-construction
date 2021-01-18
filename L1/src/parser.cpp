@@ -224,28 +224,28 @@ namespace L1 {
     > { };
 
   struct Instr_assignment_rule:
-    pegtl::seq<
+    pegtl::seq< // use at formatting
       seps,
       pegtl::sor<
-        register_rule,
-        mem_access_operand_rule
+        pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >
       >,
       seps,
       str_arrow,
       seps,
       pegtl::sor<
-        register_rule,
-        label_operand_rule,
-        number_operand_rule,
-        mem_access_operand_rule
+        pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
+        pegtl::seq< pegtl::at<label_operand_rule>     , label_operand_rule      >,
+        pegtl::seq< pegtl::at<number_operand_rule>    , number_operand_rule     >,
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >
       >
     > {};
 
   struct Instruction_rule:
     pegtl::sor<
-      pegtl::seq< pegtl::at<Instr_return_rule>            , Instr_return_rule             >,
-      pegtl::seq< pegtl::at<Instr_assignment_rule>        , Instr_assignment_rule         >,
-      pegtl::seq< pegtl::at<Instr_label_defn_rule>        , Instr_label_defn_rule         >
+      pegtl::seq< pegtl::at<Instr_return_rule>    , Instr_return_rule     >,
+      pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
+      pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >
     > { };
 
   struct Instructions_rule:

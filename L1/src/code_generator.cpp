@@ -84,7 +84,7 @@ namespace L1{
         s = "$" + conv_label(item->value); break;
       case 4:
         if (printGActions) std::cout << "label definition " << item->value << std::endl;
-        s = conv_label(item->value) + ":"; break;
+        s = "    " + conv_label(item->value) + ":"; break;
     }
     if (printGActions) std::cout << "done converting operand" << std::endl;
     return s;
