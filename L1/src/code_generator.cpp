@@ -48,9 +48,10 @@ namespace L1{
     return;
   }
 
-  std::string conv_operand(const Item& item) {
+  std::string conv_operand(const Item* item) {
     //if (item)
-    return;
+    std::string s;
+    return s;
   }
 
   std::string conv_label(const std::string& str) {
