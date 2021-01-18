@@ -74,15 +74,16 @@ namespace L1 {
   struct str_rdx : TAOCPP_PEGTL_STRING( "rdx" ) {};
   struct str_rbp : TAOCPP_PEGTL_STRING( "rbp" ) {};
   struct str_rsi : TAOCPP_PEGTL_STRING( "rsi" ) {};
-  struct str_r8  : TAOCPP_PEGTL_STRING( "r8" ) {};
-  struct str_r9  : TAOCPP_PEGTL_STRING( "r9" ) {};
+  struct str_r8  : TAOCPP_PEGTL_STRING( "r8"  ) {};
+  struct str_r9  : TAOCPP_PEGTL_STRING( "r9"  ) {};
   struct str_r10 : TAOCPP_PEGTL_STRING( "r10" ) {};
   struct str_r11 : TAOCPP_PEGTL_STRING( "r11" ) {};
   struct str_r12 : TAOCPP_PEGTL_STRING( "r12" ) {};
   struct str_r13 : TAOCPP_PEGTL_STRING( "r13" ) {};
   struct str_r14 : TAOCPP_PEGTL_STRING( "r14" ) {};
   struct str_r15 : TAOCPP_PEGTL_STRING( "r15" ) {};
-  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
+  struct str_mem : TAOCPP_PEGTL_STRING( "mem" ) {};
+  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {}; 
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
   struct comment: 
@@ -200,6 +201,16 @@ namespace L1 {
   struct number_operand_rule:
     number {};
 
+  struct mem_access_operand_rule:
+    pegtl::seq<
+      seps,
+      str_mem,
+      seps,
+      register_rule,
+      seps,
+      number_operand_rule
+    > {};
+
   struct Instr_label_defn_rule:
     pegtl::seq<
       seps,
@@ -221,7 +232,8 @@ namespace L1 {
       pegtl::sor<
         register_rule,
         label_operand_rule,
-        number
+        number_operand_rule,
+        mem_access_operand_rule
       >
     > {};
 
@@ -361,14 +373,17 @@ namespace L1 {
     }
   };
 
-  template<> struct action < str_return > {
+  template<> struct action < mem_access_operand_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "return instruction" << std::endl;
-      auto currentF = p.functions.back();
-      auto i = new Instruction();
-      i->op = ret;
-      currentF->instructions.push_back(i);
+    if (printActions) std::cout << "memory access operand (pop x2, push): " << in.string() << std::endl;
+      Item i;
+      i.type = 1;
+      i.value = parsed_items.back().value;
+      parsed_items.pop_back();
+      i.register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+      parsed_items.push_back(i);
     }
   };
 
@@ -423,6 +438,17 @@ namespace L1 {
       instr->items.push_back(dst);
       // add the just-created instruction to the current function
       currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < str_return > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "return instruction" << std::endl;
+      auto currentF = p.functions.back();
+      auto i = new Instruction();
+      i->op = ret;
+      currentF->instructions.push_back(i);
     }
   };
 

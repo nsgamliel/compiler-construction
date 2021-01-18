@@ -73,6 +73,9 @@ namespace L1{
       case 0:
         if (printGActions) std::cout << "register " << item->register_name << std::endl;
         s = "%" + item->register_name; break;
+      case 1:
+        if (printGActions) std::cout << "mem access " << item->register_name << " " << item->value << std::endl;
+        s = item->value + "(%" + item->register_name + ")"; break;
       case 2:
         if (printGActions) std::cout << "constant " << item->value << std::endl;
         s = "$" + item->value; break;
