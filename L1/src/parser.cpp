@@ -338,7 +338,7 @@ namespace L1 {
   template<> struct action < label_operand_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label used as operand (push):  " << in.string() << std::endl;
+    if (printActions) std::cout << "label used as operand (push): " << in.string() << std::endl;
       Item i;
       i.type = 3;
       i.value = in.string();
@@ -394,13 +394,13 @@ namespace L1 {
       auto dst = new Item();
 
       src->type = parsed_items.back().type;
-      src->register_name = parsed_items.back().register_name;
       src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
       dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
       dst->register_name = parsed_items.back().register_name;
-      src->value = parsed_items.back().value;
       parsed_items.pop_back();
 
       // add items to instr
