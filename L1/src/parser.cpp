@@ -364,14 +364,16 @@ namespace L1 {
 
       // fetch current function
       auto currentF = p.functions.back();
-
       // create new instruction
       auto i = new Instruction();
       i->op = label_def;
-      Item label = parsed_items.back();
-      label.type = 4;
-      i->items.push_back(&label);
+      //create and populate new item
+      auto label = new Item();
+      label->type = 4;
+      label->value = parsed_items.back().value;
       parsed_items.pop_back();
+      // item -> instruction -> function
+      i->items.push_back(label);
       currentF->instructions.push_back(i);
       std::cout << "label defn added: " << currentF->instructions.back()->items[0]->value << std::endl;
     }
@@ -380,23 +382,29 @@ namespace L1 {
   template<> struct action < Instr_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "assignment instruction (pop x2)" << std::endl;
+    if (printActions) std::cout << "generating assignment rule (pop x2)" << std::endl;
 
-      // Fetch the current function. 
+      // fetch the current function
       auto currentF = p.functions.back();
-
-      // Create the instruction. 
-      auto i = new Instruction();
-      i->op = mov;
-      Item* new_item = &parsed_items.back();
-      i->items.push_back(new_item);
+      // create the instruction 
+      auto instr = new Instruction();
+      instr->op = mov;
+      // create and populate new items
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->register_name = parsed_items.back().register_name;
+      // value will go here too once you decide to implement it
       parsed_items.pop_back();
-      new_item = &parsed_items.back();
-      i->items.push_back(new_item);
+      dst->type = parsed_items.back().type;
+      dst->register_name = parsed_items.back().register_name;
+      // here too
       parsed_items.pop_back();
-
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
       // Add the just-created instruction to the current function.
-      currentF->instructions.push_back(i);
+      currentF->instructions.push_back(instr);
     }
   };
 
