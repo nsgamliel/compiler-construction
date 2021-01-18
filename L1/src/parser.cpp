@@ -199,15 +199,9 @@ namespace L1 {
 
   struct Instr_label_defn_rule:
     pegtl::seq<
-      pegtl::plus<
-        pegtl::one<'\n'>
-      >,
       seps,
       Label_rule,
       seps,
-      pegtl::plus<
-        pegtl::one<'\n'>
-      >
     > {};
 
   struct Instr_return_rule:
