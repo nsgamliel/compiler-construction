@@ -34,13 +34,17 @@ namespace L1{
         std::cout << "found instruction: ";
         switch (i->op) {
           case ret:
+            std::cout << "return call" << std::endl;
             outputFile << "    retq\n"; break;
           case mov:
             outputFile << "    movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
           case label_def:
             std::cout << "label definition" << std::endl;
-            outputFile << "_" << i->items[0]->value.substr(1) << ":\n"; break;
+            outputFile << conv_operand(i->items[0]) << "\n";
+            std::cout << conv_operand(i->items[0]) << std::endl;
             std::cout << "done label definition" << std::endl;
+            break;
+
           default:
             outputFile << "    # instr placeholder\n"; break;
         }

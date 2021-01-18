@@ -346,21 +346,6 @@ namespace L1 {
     }
   };
 
-  template<> struct action < Instr_label_defn_rule > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label defined: " << parsed_items.back().value << std::endl;
-      Item* label = &parsed_items.back();
-      auto currentF = p.functions.back();
-      auto i = new Instruction();
-      i->op = label_def;
-      i->items.push_back(label);
-      std::cout << ":: " << i->items.back()->value << std::endl;
-      parsed_items.pop_back();
-      currentF->instructions.push_back(i);
-    }
-  };
-
   template<> struct action < str_return > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
@@ -368,6 +353,24 @@ namespace L1 {
       auto currentF = p.functions.back();
       auto i = new Instruction();
       i->op = ret;
+      currentF->instructions.push_back(i);
+    }
+  };
+
+  template<> struct action < Instr_label_defn_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "label defined: " << parsed_items.back().value << std::endl;
+
+      // fetch current function
+      auto currentF = p.functions.back();
+
+      // create new instruction
+      auto i = new Instruction();
+      i->op = label_def;
+      Item* label = &parsed_items.back();
+      i->items.push_back(label);
+      parsed_items.pop_back();
       currentF->instructions.push_back(i);
     }
   };
