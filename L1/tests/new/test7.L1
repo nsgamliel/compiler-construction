@@ -3,8 +3,9 @@
     0 0
 
     // This is my comment
-
+    :test_lbl
     rax <- rdi
+    rbx <- :test_lbl
 
     return 
   )

@@ -194,6 +194,22 @@ namespace L1 {
   struct Label_rule:
     label {};
 
+  struct label_operand_rule:
+    label {};
+
+  struct label_definition_rule:
+    pegtl::seq<
+      pegtl::plus<
+        pegtl::one<'\n'>
+      >,
+      seps,
+      Label_rule,
+      seps,
+      pegtl::plus<
+        pegtl::one<'\n'>
+      >
+    > {};
+
   struct Instruction_return_rule:
     pegtl::seq<
       str_return
@@ -205,7 +221,10 @@ namespace L1 {
       seps,
       str_arrow,
       seps,
-      register_rule
+      pegtl::sor<
+        register_rule,
+        label_operand_rule
+      >
     > {};
 
   struct Instruction_rule:
@@ -269,6 +288,116 @@ namespace L1 {
    */
   template< typename Rule >
   struct action : pegtl::nothing< Rule > {};
+
+  template<> struct action < label > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "entry point label" << std::endl;
+      if (p.entryPointLabel.empty()){
+        p.entryPointLabel = in.string();
+      } else {
+        abort();
+      }
+    }
+  };
+
+  template<> struct action < function_name > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function name" << std::endl;
+      auto newF = new Function();
+      newF->name = in.string();
+      p.functions.push_back(newF);
+    }
+  };
+
+  template<> struct action < argument_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function arguments number" << std::endl;
+      auto currentF = p.functions.back();
+      currentF->arguments = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < local_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function locals number" << std::endl;
+      auto currentF = p.functions.back();
+      currentF->locals = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < Label_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "adding label to parsed_items" << std::endl;
+      Item i;
+      i.type = -1;
+      i.value = in.string();
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < label_operand_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "label used as operand" << std::endl;
+      Item i;
+      i.type = 3;
+      i.value = in.string();
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < label_definition_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "label defined" << std::endl;
+      Item* label = &parsed_items.back();
+      auto currentF = p.functions.back();
+      auto i = new Instruction();
+      i->op = label_def;
+      i->items.push_back(label);
+      parsed_items.pop_back();
+      currentF->instructions.push_back(i);
+    }
+  };
+
+  template<> struct action < str_return > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "return instruction" << std::endl;
+      auto currentF = p.functions.back();
+      auto i = new Instruction();
+      i->op = ret;
+      currentF->instructions.push_back(i);
+    }
+  };
+
+  template<> struct action < Instruction_assignment_rule > {
+    template< typename Input >
+	static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "assignment instruction" << std::endl;
+
+      // Fetch the current function. 
+      auto currentF = p.functions.back();
+
+      // Create the instruction. 
+      auto i = new Instruction();
+      i->op = mov;
+      Item* new_item = &parsed_items.back();
+      i->items.push_back(new_item);
+      parsed_items.pop_back();
+      new_item = &parsed_items.back();
+      i->items.push_back(new_item);
+      parsed_items.pop_back();
+
+      // Add the just-created instruction to the current function.
+      currentF->instructions.push_back(i);
+    }
+  };
 
   template<> struct action < register_rdi_rule > {
     template< typename Input >
@@ -432,91 +561,6 @@ namespace L1 {
       i.type = 0;
       i.register_name = "r15";
       parsed_items.push_back(i);
-    }
-  };
-
-  template<> struct action < label > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "entry point label" << std::endl;
-      if (p.entryPointLabel.empty()){
-        p.entryPointLabel = in.string();
-      } else {
-        abort();
-      }
-    }
-  };
-
-  template<> struct action < function_name > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function name" << std::endl;
-      auto newF = new Function();
-      newF->name = in.string();
-      p.functions.push_back(newF);
-    }
-  };
-
-  template<> struct action < argument_number > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function arguments number" << std::endl;
-      auto currentF = p.functions.back();
-      currentF->arguments = std::stoll(in.string());
-    }
-  };
-
-  template<> struct action < local_number > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function locals number" << std::endl;
-      auto currentF = p.functions.back();
-      currentF->locals = std::stoll(in.string());
-    }
-  };
-
-  template<> struct action < Label_rule > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "adding item to parsed_items" << std::endl;
-      Item i;
-      i.type = -1;
-      i.value = in.string();
-      parsed_items.push_back(i);
-    }
-  };
-
-  template<> struct action < str_return > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "return instruction" << std::endl;
-      auto currentF = p.functions.back();
-      auto i = new Instruction();
-      i->op = ret;
-      currentF->instructions.push_back(i);
-    }
-  };
-
-  template<> struct action < Instruction_assignment_rule > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "assignment instruction" << std::endl;
-
-      // Fetch the current function. 
-      auto currentF = p.functions.back();
-
-      // Create the instruction. 
-      auto i = new Instruction();
-      i->op = mov;
-      Item* new_item = &parsed_items.back();
-      i->items.push_back(new_item);
-      parsed_items.pop_back();
-      new_item = &parsed_items.back();
-      i->items.push_back(new_item);
-      parsed_items.pop_back();
-
-      // Add the just-created instruction to the current function.
-      currentF->instructions.push_back(i);
     }
   };
 

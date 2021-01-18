@@ -18,21 +18,23 @@ namespace L1{
     /* 
      * Generate target code
      */ 
-    outputFile << ".text\n.globl go\ngo:\npushq %rbx\npushq %rbp\npushq %r12\npushq %r13\npushq %r14\npushq %r15\n";
-    outputFile << "call " << conv_label(p.entryPointLabel) << "\n";
-    outputFile << "popq %r15\npopq %r14\npopq %r13\npopq %r12\npopq %rbp\npopq %rbx\nretq\n";
+    outputFile << "    .text\n    .globl go\ngo:\n    pushq %rbx\n    pushq %rbp\n    pushq %r12\n    pushq %r13\n    pushq %r14\n    pushq %r15\n";
+    outputFile << "\n    call " << conv_label(p.entryPointLabel) << "\n\n";
+    outputFile << "    popq %r15\n    popq %r14\n    popq %r13\n    popq %r12\n    popq %rbp\n    popq %rbx\n    retq\n\n";
 
 
     for (auto f : p.functions) {
       outputFile << conv_label(f->name) << ":\n";
       for (auto i : f->instructions) {
-        switch (i->type) {
-          case 0:
-            outputFile << "retq\n"; break;
-          case 1:
-            outputFile << "movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
+        switch (i->op) {
+          case ret:
+            outputFile << "    retq\n"; break;
+          case mov:
+            outputFile << "    movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
+          case label_def:
+            outputFile << conv_label(i->items[0]) << ":\n"; break;
           default:
-            outputFile << "# instr placeholder\n"; break;
+            outputFile << "    # instr placeholder\n"; break;
         }
       }
     }
@@ -50,8 +52,9 @@ namespace L1{
     std::string s;
     switch (item->type) {
       case 0:
-        s = "%" + item->register_name;
-        break;
+        s = "%" + item->register_name; break;
+      case 3:
+        s = "$" + conv_label(item->value); break;
     }
     return s;
   }
