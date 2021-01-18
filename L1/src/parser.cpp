@@ -67,8 +67,6 @@ namespace L1 {
   /* 
    * Keywords.
    */
-  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
-  struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_rdi : TAOCPP_PEGTL_STRING( "rdi" ) {};
   struct str_rax : TAOCPP_PEGTL_STRING( "rax" ) {};
   struct str_rbx : TAOCPP_PEGTL_STRING( "rbx" ) {};
@@ -84,6 +82,14 @@ namespace L1 {
   struct str_r13 : TAOCPP_PEGTL_STRING( "r13" ) {};
   struct str_r14 : TAOCPP_PEGTL_STRING( "r14" ) {};
   struct str_r15 : TAOCPP_PEGTL_STRING( "r15" ) {};
+  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
+  struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
+
+  struct comment: 
+    pegtl::disable< 
+      TAOCPP_PEGTL_STRING( "//" ), 
+      pegtl::until< pegtl::eolf > 
+    > {};
 
   struct label:
     pegtl::seq<
@@ -176,12 +182,6 @@ namespace L1 {
 
   struct local_number:
     number {} ;
-
-  struct comment: 
-    pegtl::disable< 
-      TAOCPP_PEGTL_STRING( "//" ), 
-      pegtl::until< pegtl::eolf > 
-    > {};
 
   struct seps: 
     pegtl::star< 
@@ -507,6 +507,7 @@ namespace L1 {
 
       // Create the instruction. 
       auto i = new Instruction_assignment();
+      i->type = 1;
       i->src = parsed_items.back();
       parsed_items.pop_back();
       i->dst = parsed_items.back();
