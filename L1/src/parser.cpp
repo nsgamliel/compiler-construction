@@ -276,7 +276,7 @@ namespace L1 {
       if (printActions) std::cout << "register rdi" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rdi";
+      i.register_name = "rdi";
       parsed_items.push_back(i);
     }
   };
@@ -287,7 +287,7 @@ namespace L1 {
       if (printActions) std::cout << "register rax" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rax";
+      i.register_name = "rax";
       parsed_items.push_back(i);
     }
   };
@@ -298,7 +298,7 @@ namespace L1 {
       if (printActions) std::cout << "register rbx" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rbx";
+      i.register_name = "rbx";
       parsed_items.push_back(i);
     }
   };
@@ -309,7 +309,7 @@ namespace L1 {
       if (printActions) std::cout << "register rcx" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rcx";
+      i.register_name = "rcx";
       parsed_items.push_back(i);
     }
   };
@@ -320,7 +320,7 @@ namespace L1 {
       if (printActions) std::cout << "register rdx" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rdx";
+      i.register_name = "rdx";
       parsed_items.push_back(i);
     }
   };
@@ -331,7 +331,7 @@ namespace L1 {
       if (printActions) std::cout << "register rbp" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rbp";
+      i.register_name = "rbp";
       parsed_items.push_back(i);
     }
   };
@@ -342,7 +342,7 @@ namespace L1 {
       if (printActions) std::cout << "register rsi" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "rsi";
+      i.register_name = "rsi";
       parsed_items.push_back(i);
     }
   };
@@ -353,7 +353,7 @@ namespace L1 {
       if (printActions) std::cout << "register r8" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r8";
+      i.register_name = "r8";
       parsed_items.push_back(i);
     }
   };
@@ -364,7 +364,7 @@ namespace L1 {
       if (printActions) std::cout << "register r9" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r9";
+      i.register_name = "r9";
       parsed_items.push_back(i);
     }
   };
@@ -375,7 +375,7 @@ namespace L1 {
       if (printActions) std::cout << "register r10" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r10";
+      i.register_name = "r10";
       parsed_items.push_back(i);
     }
   };
@@ -386,7 +386,7 @@ namespace L1 {
       if (printActions) std::cout << "register r11" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r11";
+      i.register_name = "r11";
       parsed_items.push_back(i);
     }
   };
@@ -397,7 +397,7 @@ namespace L1 {
       if (printActions) std::cout << "register r12" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r12";
+      i.register_name = "r12";
       parsed_items.push_back(i);
     }
   };
@@ -408,7 +408,7 @@ namespace L1 {
       if (printActions) std::cout << "register r13" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r13";
+      i.register_name = "r13";
       parsed_items.push_back(i);
     }
   };
@@ -419,7 +419,7 @@ namespace L1 {
       if (printActions) std::cout << "register r14" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r14";
+      i.register_name = "r14";
       parsed_items.push_back(i);
     }
   };
@@ -430,7 +430,7 @@ namespace L1 {
       if (printActions) std::cout << "register r15" << std::endl;
       Item i;
       i.type = 0;
-      i.register = "r15";
+      i.register_name = "r15";
       parsed_items.push_back(i);
     }
   };
