@@ -19,12 +19,12 @@ namespace L1{
      * Generate target code
      */ 
     outputFile << ".text\n.globl go\ngo:\npushq %rbx\npushq %rbp\npushq %r12\npushq %r13\npushq %r14\npushq %r15\n";
-    outputFile << "call " << conv_string(p.entryPointLabel) << "\n";
+    outputFile << "call " << conv_label(p.entryPointLabel) << "\n";
     outputFile << "popq %r15\npopq %r14\npopq %r13\npopq %r12\npopq %rbp\npopq %rbx\nretq\n";
 
 
     for (auto f : p.functions) {
-      outputFile << conv_string(f->name) << ":\n";
+      outputFile << conv_label(f->name) << ":\n";
       for (auto i : f->instructions) {
         switch (i->type) {
           case 0:
@@ -32,6 +32,7 @@ namespace L1{
             break;
           case 1:
             outputFile << "movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+            break;
           default:
             outputFile << "# instr placeholder\n";
             break;
@@ -49,8 +50,10 @@ namespace L1{
   }
 
   std::string conv_operand(const Item* item) {
-    //if (item)
     std::string s;
+    if (type == 0) {
+      s = "%" + item->register;
+    }
     return s;
   }
 
