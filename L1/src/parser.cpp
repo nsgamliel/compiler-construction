@@ -275,7 +275,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rdi" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rdi;
       parsed_items.push_back(i);
     }
@@ -286,7 +286,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rax" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rax;
       parsed_items.push_back(i);
     }
@@ -297,7 +297,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rbx" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rbx;
       parsed_items.push_back(i);
     }
@@ -308,7 +308,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rcx" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rcx;
       parsed_items.push_back(i);
     }
@@ -319,7 +319,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rdx" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rdx;
       parsed_items.push_back(i);
     }
@@ -330,7 +330,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rbp" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rbp;
       parsed_items.push_back(i);
     }
@@ -341,7 +341,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register rsi" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = rsi;
       parsed_items.push_back(i);
     }
@@ -352,7 +352,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r8" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r8;
       parsed_items.push_back(i);
     }
@@ -363,7 +363,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r9" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r9;
       parsed_items.push_back(i);
     }
@@ -374,7 +374,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r10" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r10;
       parsed_items.push_back(i);
     }
@@ -385,7 +385,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r11" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r11;
       parsed_items.push_back(i);
     }
@@ -396,7 +396,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r12" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r12;
       parsed_items.push_back(i);
     }
@@ -407,7 +407,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r13" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r13;
       parsed_items.push_back(i);
     }
@@ -418,7 +418,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r14" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r14;
       parsed_items.push_back(i);
     }
@@ -429,7 +429,7 @@ namespace L1 {
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "register r15" << std::endl;
       Item i;
-      i.isARegister = true;
+      i.type = 0;
       i.r = r15;
       parsed_items.push_back(i);
     }
@@ -480,8 +480,8 @@ namespace L1 {
   static void apply( const Input & in, Program & p){
     if (printActions) std::cout << "adding item to parsed_items" << std::endl;
       Item i;
-      i.isARegister = false;
-      i.labelName = in.string();
+      i.type = -1;
+      i.value = in.string();
       parsed_items.push_back(i);
     }
   };
@@ -491,7 +491,7 @@ namespace L1 {
   static void apply( const Input & in, Program & p){
     if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
-      auto i = new Instruction_ret();
+      auto i = new Instruction_no_var();
       i->type = 0;
       currentF->instructions.push_back(i);
     }
@@ -506,7 +506,7 @@ namespace L1 {
       auto currentF = p.functions.back();
 
       // Create the instruction. 
-      auto i = new Instruction_assignment();
+      auto i = new Instruction_two_var();
       i->type = 1;
       i->src = parsed_items.back();
       parsed_items.pop_back();

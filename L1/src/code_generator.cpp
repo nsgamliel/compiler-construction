@@ -26,10 +26,12 @@ namespace L1{
     for (auto f : p.functions) {
       outputFile << conv_string(f->name) << ":\n";
       for (auto i : f->instructions) {
-        switch (i) {
+        switch (i->type) {
           case 0:
             outputFile << "retq\n";
             break;
+          case 1:
+            outputFile << "movq " << conv_operand(i->src) << ", " << conv_operand(i->dst) << "\n";
           default:
             outputFile << "# instr placeholder\n";
             break;
@@ -46,7 +48,11 @@ namespace L1{
     return;
   }
 
-  std::string conv_string(std::string str) {
+  std::string conv_operand(const auto& item) {
+    if (item)
+  }
+
+  std::string conv_label(const std::string& str) {
     std::string new_str = "_" + str.substr(1);
     return new_str;
   }
