@@ -197,6 +197,9 @@ namespace L1 {
   struct label_operand_rule:
     label {};
 
+  struct number_operand_rule:
+    number {};
+
   struct Instr_label_defn_rule:
     pegtl::seq<
       seps,
@@ -217,7 +220,8 @@ namespace L1 {
       seps,
       pegtl::sor<
         register_rule,
-        label_operand_rule
+        label_operand_rule,
+        number
       >
     > {};
 
@@ -341,6 +345,17 @@ namespace L1 {
     if (printActions) std::cout << "label used as operand (push): " << in.string() << std::endl;
       Item i;
       i.type = 3;
+      i.value = in.string();
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < number_operand_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "number used as operand (push): " << in.string() << std::endl;
+      Item i;
+      i.type = 2;
       i.value = in.string();
       parsed_items.push_back(i);
     }

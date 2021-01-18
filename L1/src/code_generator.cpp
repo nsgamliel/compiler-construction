@@ -73,6 +73,9 @@ namespace L1{
       case 0:
         if (printGActions) std::cout << "register " << item->register_name << std::endl;
         s = "%" + item->register_name; break;
+      case 2:
+        if (printGActions) std::cout << "constant " << item->value << std::endl;
+        s = "$" + item->value; break;
       case 3:
         if (printGActions) std::cout << "label " << item->value << std::endl;
         s = "$" + conv_label(item->value); break;
