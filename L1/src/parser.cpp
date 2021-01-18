@@ -201,7 +201,7 @@ namespace L1 {
     pegtl::seq<
       seps,
       Label_rule,
-      seps,
+      seps
     > {};
 
   struct Instr_return_rule:
@@ -287,7 +287,7 @@ namespace L1 {
   template<> struct action < label > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "entry point label" << std::endl;
+    if (printActions) std::cout << "entry point label: " << in.string() << std::endl;
       if (p.entryPointLabel.empty()){
         p.entryPointLabel = in.string();
       } else {
@@ -299,7 +299,7 @@ namespace L1 {
   template<> struct action < function_name > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function name" << std::endl;
+    if (printActions) std::cout << "function name: " << in.string() << std::endl;
       auto newF = new Function();
       newF->name = in.string();
       p.functions.push_back(newF);
@@ -309,7 +309,7 @@ namespace L1 {
   template<> struct action < argument_number > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function arguments number" << std::endl;
+    if (printActions) std::cout << "function arguments number: " << in.string() << std::endl;
       auto currentF = p.functions.back();
       currentF->arguments = std::stoll(in.string());
     }
@@ -318,7 +318,7 @@ namespace L1 {
   template<> struct action < local_number > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function locals number" << std::endl;
+    if (printActions) std::cout << "function locals number: " << in.string() << std::endl;
       auto currentF = p.functions.back();
       currentF->locals = std::stoll(in.string());
     }
@@ -327,7 +327,7 @@ namespace L1 {
   template<> struct action < Label_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "adding label to parsed_items" << std::endl;
+    if (printActions) std::cout << "adding label to parsed_items: " << in.string() << std::endl;
       Item i;
       i.type = -1;
       i.value = in.string();
@@ -338,7 +338,7 @@ namespace L1 {
   template<> struct action < label_operand_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label used as operand" << std::endl;
+    if (printActions) std::cout << "label used as operand: " << in.string() << std::endl;
       Item i;
       i.type = 3;
       i.value = in.string();
@@ -349,7 +349,7 @@ namespace L1 {
   template<> struct action < Instr_label_defn_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label defined" << std::endl;
+    if (printActions) std::cout << "label defined: " << parsed_items.back().value << std::endl;
       Item* label = &parsed_items.back();
       auto currentF = p.functions.back();
       auto i = new Instruction();
