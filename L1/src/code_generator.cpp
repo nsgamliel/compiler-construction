@@ -39,7 +39,7 @@ namespace L1{
             outputFile << "    movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
           case label_def:
             std::cout << "label definition" << std::endl;
-            outputFile << "" << conv_label(i->items[0]->value) << ":\n"; break;
+            outputFile << "_" << i->items[0]->value.substr(1) << ":\n"; break;
             std::cout << "done label definition" << std::endl;
           default:
             outputFile << "    # instr placeholder\n"; break;
