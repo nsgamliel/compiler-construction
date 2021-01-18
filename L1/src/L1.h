@@ -17,6 +17,7 @@ namespace L1 {
    * Instruction interface.
    */
   struct Instruction{
+    int type;
   };
 
   /*

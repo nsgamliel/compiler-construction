@@ -492,6 +492,7 @@ namespace L1 {
     if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
       auto i = new Instruction_ret();
+      i->type = 0;
       currentF->instructions.push_back(i);
     }
   };
