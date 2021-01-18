@@ -104,43 +104,43 @@ namespace L1 {
       str_rax {};
 
   struct register_rbx_rule:
-      str_rax {};
+      str_rbx {};
 
   struct register_rcx_rule:
-      str_rax {};
+      str_rcx {};
 
   struct register_rdx_rule:
-      str_rax {};
+      str_rdx {};
 
   struct register_rbp_rule:
-      str_rax {};
+      str_rbp {};
 
   struct register_rsi_rule:
-      str_rax {};
+      str_rsi {};
 
   struct register_r8_rule:
-      str_rax {};
+      str_r8 {};
 
   struct register_r9_rule:
-      str_rax {};
+      str_r9 {};
 
   struct register_r10_rule:
-      str_rax {};
+      str_r10 {};
 
   struct register_r11_rule:
-      str_rax {};
+      str_r11 {};
 
   struct register_r12_rule:
-      str_rax {};
+      str_r12 {};
 
   struct register_r13_rule:
-      str_rax {};
+      str_r13 {};
 
   struct register_r14_rule:
-      str_rax {};
+      str_r14 {};
 
   struct register_r15_rule:
-      str_rax {};
+      str_r15 {};
    
   struct register_rule:
     pegtl::sor<
