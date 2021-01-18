@@ -392,18 +392,21 @@ namespace L1 {
       // create and populate new items
       auto src = new Item();
       auto dst = new Item();
+
       src->type = parsed_items.back().type;
       src->register_name = parsed_items.back().register_name;
-      // value will go here too once you decide to implement it
+      src->value = parsed_items.back().value;
       parsed_items.pop_back();
+
       dst->type = parsed_items.back().type;
       dst->register_name = parsed_items.back().register_name;
-      // here too
+      src->value = parsed_items.back().value;
       parsed_items.pop_back();
+
       // add items to instr
       instr->items.push_back(src);
       instr->items.push_back(dst);
-      // Add the just-created instruction to the current function.
+      // add the just-created instruction to the current function
       currentF->instructions.push_back(instr);
     }
   };
