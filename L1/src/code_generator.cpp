@@ -28,8 +28,10 @@ namespace L1{
 
     std::cout << "starting function iterations" << std::endl;
     for (auto f : p.functions) {
+      std::cout << "in function: " << f->name << std::endl;
       outputFile << conv_label(f->name) << ":\n";
       for (auto i : f->instructions) {
+        std::cout << "found instruction" << std::endl;
         switch (i->op) {
           case ret:
             outputFile << "    retq\n"; break;
@@ -40,19 +42,25 @@ namespace L1{
           default:
             outputFile << "    # instr placeholder\n"; break;
         }
+        std::cout << "instruction handled" << std::endl;
       }
+      std::cout << "leaving function: " << f->name << std::endl;
     }
+    std::cout << "finished function iterations" << std::endl;
 
 
     /* 
      * Close the output file.
      */ 
+    std::cout << "closing prog.S" << std::endl;
     outputFile.close();
+    std::cout << "prog.S closed" << std::endl;
    
     return;
   }
 
   std::string conv_operand(const Item* item) {
+    std::cout << "converting operand" << std::endl;
     std::string s;
     switch (item->type) {
       case 0:
@@ -61,10 +69,13 @@ namespace L1{
         s = "$" + conv_label(item->value); break;
     }
     return s;
+    std::cout << "finished converting operand" << std::endl;
   }
 
   std::string conv_label(const std::string& str) {
+    std::cout << "converting label" << std::endl;
     std::string new_str = "_" + str.substr(1);
     return new_str;
+    std::cout << "finished converting label" << std::endl;
   }
 }
