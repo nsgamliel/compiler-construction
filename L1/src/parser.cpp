@@ -197,7 +197,7 @@ namespace L1 {
   struct label_operand_rule:
     label {};
 
-  struct label_definition_rule:
+  struct Instr_label_defn_rule:
     pegtl::seq<
       pegtl::plus<
         pegtl::one<'\n'>
@@ -210,12 +210,12 @@ namespace L1 {
       >
     > {};
 
-  struct Instruction_return_rule:
+  struct Instr_return_rule:
     pegtl::seq<
       str_return
     > { };
 
-  struct Instruction_assignment_rule:
+  struct Instr_assignment_rule:
     pegtl::seq<
       register_rule,
       seps,
@@ -229,8 +229,9 @@ namespace L1 {
 
   struct Instruction_rule:
     pegtl::sor<
-      pegtl::seq< pegtl::at<Instruction_return_rule>            , Instruction_return_rule             >,
-      pegtl::seq< pegtl::at<Instruction_assignment_rule>        , Instruction_assignment_rule         >
+      pegtl::seq< pegtl::at<Instr_return_rule>            , Instr_return_rule             >,
+      pegtl::seq< pegtl::at<Instr_assignment_rule>        , Instr_assignment_rule         >,
+      pegtl::seq< pegtl::at<Instr_label_defn_rule>        , Instr_label_defn_rule         >
     > { };
 
   struct Instructions_rule:
@@ -351,7 +352,7 @@ namespace L1 {
     }
   };
 
-  template<> struct action < label_definition_rule > {
+  template<> struct action < Instr_label_defn_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
     if (printActions) std::cout << "label defined" << std::endl;
@@ -376,7 +377,7 @@ namespace L1 {
     }
   };
 
-  template<> struct action < Instruction_assignment_rule > {
+  template<> struct action < Instr_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
     if (printActions) std::cout << "assignment instruction" << std::endl;
