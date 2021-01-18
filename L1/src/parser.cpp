@@ -368,10 +368,12 @@ namespace L1 {
       // create new instruction
       auto i = new Instruction();
       i->op = label_def;
-      Item* label = &parsed_items.back();
-      i->items.push_back(label);
+      Item label = parsed_items.back();
+      label.type = 4;
+      i->items.push_back(&label);
       parsed_items.pop_back();
       currentF->instructions.push_back(i);
+      std::cout << "label defn added: " << currentF->instructions.back()->items[0]->value << std::endl;
     }
   };
 
