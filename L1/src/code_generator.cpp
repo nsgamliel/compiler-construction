@@ -31,14 +31,16 @@ namespace L1{
       std::cout << "in function: " << f->name << std::endl;
       outputFile << conv_label(f->name) << ":\n";
       for (auto i : f->instructions) {
-        std::cout << "found instruction" << std::endl;
+        std::cout << "found instruction: ";
         switch (i->op) {
           case ret:
             outputFile << "    retq\n"; break;
           case mov:
             outputFile << "    movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
           case label_def:
-            outputFile << conv_label(i->items[0]->value) << ":\n"; break;
+            std::cout << "label definition" << std::endl;
+            outputFile << "" << conv_label(i->items[0]->value) << ":\n"; break;
+            std::cout << "done label definition" << std::endl;
           default:
             outputFile << "    # instr placeholder\n"; break;
         }
@@ -73,10 +75,10 @@ namespace L1{
   }
 
   std::string conv_label(const std::string& str) {
-    std::cout << "converting label" << std::endl;
+    std::cout << "converting label: " << ("_" + str.substr(1)) << std::endl;
     //std::string new_str = "_" + str.substr(1);
     //return new_str;
-    std::cout << "finished converting label" << std::endl;
+    //std::cout << "finished converting label" << std::endl;
     return "_" + str.substr(1);
   }
 }

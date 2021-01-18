@@ -355,7 +355,7 @@ namespace L1 {
       auto i = new Instruction();
       i->op = label_def;
       i->items.push_back(label);
-      std::cout << ":: " << i->items.back()->value;
+      std::cout << ":: " << i->items.back()->value << std::endl;
       parsed_items.pop_back();
       currentF->instructions.push_back(i);
     }
