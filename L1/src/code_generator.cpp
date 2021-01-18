@@ -51,8 +51,10 @@ namespace L1{
 
   std::string conv_operand(const Item* item) {
     std::string s;
-    if (type == 0) {
-      s = "%" + item->register;
+    switch (item->type) {
+      case 0:
+        s = "%" + item->register_name;
+        break;
     }
     return s;
   }

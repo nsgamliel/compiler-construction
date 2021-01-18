@@ -10,7 +10,7 @@ namespace L1 {
   struct Item {
     int type; // 0: register, 1: memory access, 2: const value, else -1
     std::string value; // receives byte offset if memory access or int value if const
-    std::string register;
+    std::string register_name;
   };
 
   /*
