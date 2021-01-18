@@ -17,7 +17,7 @@ namespace L1 {
    * Instructions.
    */
   struct Instruction{
-    int type;
+    int type; // consider making this std::string opcode;
     std::vector<Item *> items;
   };
 
