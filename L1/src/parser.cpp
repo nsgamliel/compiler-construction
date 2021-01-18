@@ -270,57 +270,6 @@ namespace L1 {
   template< typename Rule >
   struct action : pegtl::nothing< Rule > {};
 
-  template<> struct action < label > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "entry point label" << std::endl;
-      if (p.entryPointLabel.empty()){
-        p.entryPointLabel = in.string();
-      } else {
-        abort();
-      }
-    }
-  };
-
-  template<> struct action < function_name > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function name" << std::endl;
-      auto newF = new Function();
-      newF->name = in.string();
-      p.functions.push_back(newF);
-    }
-  };
-
-  template<> struct action < argument_number > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function arguments number" << std::endl;
-      auto currentF = p.functions.back();
-      currentF->arguments = std::stoll(in.string());
-    }
-  };
-
-  template<> struct action < local_number > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "function locals number" << std::endl;
-      auto currentF = p.functions.back();
-      currentF->locals = std::stoll(in.string());
-    }
-  };
-
-  template<> struct action < Label_rule > {
-    template< typename Input >
-	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "adding item to parsed_items" << std::endl;
-      Item i;
-      i.isARegister = false;
-      i.labelName = in.string();
-      parsed_items.push_back(i);
-    }
-  };
-
   template<> struct action < register_rdi_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
@@ -482,6 +431,57 @@ namespace L1 {
       Item i;
       i.isARegister = true;
       i.r = r15;
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < label > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "entry point label" << std::endl;
+      if (p.entryPointLabel.empty()){
+        p.entryPointLabel = in.string();
+      } else {
+        abort();
+      }
+    }
+  };
+
+  template<> struct action < function_name > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function name" << std::endl;
+      auto newF = new Function();
+      newF->name = in.string();
+      p.functions.push_back(newF);
+    }
+  };
+
+  template<> struct action < argument_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function arguments number" << std::endl;
+      auto currentF = p.functions.back();
+      currentF->arguments = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < local_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function locals number" << std::endl;
+      auto currentF = p.functions.back();
+      currentF->locals = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < Label_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "adding item to parsed_items" << std::endl;
+      Item i;
+      i.isARegister = false;
+      i.labelName = in.string();
       parsed_items.push_back(i);
     }
   };

@@ -24,6 +24,7 @@ namespace L1{
 
 
     for (auto f : p.functions) {
+      std::cout << "generating code for function" << std::endl;
       outputFile << conv_string(f.name) << "\n";
       for (auto i : f.instructions) {
         outputFile << ";; instr placeholder\n";
