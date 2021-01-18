@@ -227,17 +227,17 @@ namespace L1 {
     pegtl::seq< // use at formatting
       seps,
       pegtl::sor<
-        pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
-        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
+        pegtl::seq< pegtl::at<register_rule>          , register_rule           >
       >,
       seps,
       str_arrow,
       seps,
       pegtl::sor<
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
         pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
         pegtl::seq< pegtl::at<label_operand_rule>     , label_operand_rule      >,
-        pegtl::seq< pegtl::at<number_operand_rule>    , number_operand_rule     >,
-        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >
+        pegtl::seq< pegtl::at<number_operand_rule>    , number_operand_rule     >
       >
     > {};
 
