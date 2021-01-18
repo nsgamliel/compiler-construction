@@ -327,7 +327,7 @@ namespace L1 {
   template<> struct action < Label_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "adding label to parsed_items: " << in.string() << std::endl;
+    if (printActions) std::cout << "adding label to parsed_items (push): " << in.string() << std::endl;
       Item i;
       i.type = -1;
       i.value = in.string();
@@ -338,7 +338,7 @@ namespace L1 {
   template<> struct action < label_operand_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label used as operand: " << in.string() << std::endl;
+    if (printActions) std::cout << "label used as operand (push):  " << in.string() << std::endl;
       Item i;
       i.type = 3;
       i.value = in.string();
@@ -360,7 +360,7 @@ namespace L1 {
   template<> struct action < Instr_label_defn_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "label defined: " << parsed_items.back().value << std::endl;
+    if (printActions) std::cout << "label defined (pop): " << parsed_items.back().value << std::endl;
 
       // fetch current function
       auto currentF = p.functions.back();
@@ -380,7 +380,7 @@ namespace L1 {
   template<> struct action < Instr_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "assignment instruction" << std::endl;
+    if (printActions) std::cout << "assignment instruction (pop x2)" << std::endl;
 
       // Fetch the current function. 
       auto currentF = p.functions.back();
@@ -403,7 +403,7 @@ namespace L1 {
   template<> struct action < register_rdi_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rdi" << std::endl;
+      if (printActions) std::cout << "register rdi (push)" << std::endl;
       Item i;
       i.type = 0;
       i.register_name = "rdi";
@@ -414,7 +414,7 @@ namespace L1 {
   template<> struct action < register_rax_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "register rax" << std::endl;
+      if (printActions) std::cout << "register rax (push)" << std::endl;
       Item i;
       i.type = 0;
       i.register_name = "rax";
