@@ -67,15 +67,16 @@ namespace L1{
         s = "%" + item->register_name; break;
       case 3:
         s = "$" + conv_label(item->value); break;
-    }
-    return s;
+    }    
     std::cout << "finished converting operand" << std::endl;
+    return s;
   }
 
   std::string conv_label(const std::string& str) {
     std::cout << "converting label" << std::endl;
-    std::string new_str = "_" + str.substr(1);
-    return new_str;
+    //std::string new_str = "_" + str.substr(1);
+    //return new_str;
     std::cout << "finished converting label" << std::endl;
+    return "_" + str.substr(1);
   }
 }
