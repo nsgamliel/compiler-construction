@@ -225,6 +225,7 @@ namespace L1 {
 
   struct Instr_assignment_rule:
     pegtl::seq<
+      seps,
       pegtl::sor<
         register_rule,
         mem_access_operand_rule
