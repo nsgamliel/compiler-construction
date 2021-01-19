@@ -73,7 +73,7 @@ namespace L1{
             outputFile << "    sarq " << conv_operand(to_8_bit(i->items[0])) << ", " << conv_operand(i->items[1]) << "\n"; break;
           case dir_jmp:
             if (printGActions) std::cout << "dir_jmp instruction" << std::endl;
-            outputFile << "    jmp " << conv_label(i->items[0]) << "\n"; break;
+            outputFile << "    jmp " << conv_label(i->items[0]->value) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
