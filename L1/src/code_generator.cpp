@@ -87,8 +87,8 @@ namespace L1{
                 outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
                 outputFile << "    setl " << conv_operand(to_8_bit(i->items[2])) << "\n";
               }
-            }
-            outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
+              outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n";
+            } break;
           case cmp_le:
             if (printGActions) std::cout << "cmp_le instruction" << std::endl;
             if (i->items[0]->type == 2 && i->items[1]->type == 2) {
@@ -102,8 +102,8 @@ namespace L1{
                 outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
                 outputFile << "    setle " << conv_operand(to_8_bit(i->items[2])) << "\n";
               }
-            }
-            outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
+              outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n";
+            } break;
           case cmp_eq:
             if (printGActions) std::cout << "cmp_eq instruction" << std::endl;
             if (i->items[0]->type == 2 && i->items[1]->type == 2) {
@@ -115,9 +115,9 @@ namespace L1{
               } else {
                 outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
               }
-            }
-            outputFile << "    sete " << conv_operand(to_8_bit(i->items[2])) << "\n";
-            outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
+              outputFile << "    sete " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n";
+            } break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
