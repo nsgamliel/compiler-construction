@@ -534,7 +534,8 @@ namespace L1 {
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
       pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
       pegtl::seq< pegtl::at<instr_sop_rule>       , instr_sop_rule        >,
-      pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >
+      pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >,
+      pegtl::seq< pegtl::at<instr_at_rule>        , instr_at_rule         >
     > {};
 
   struct Instructions_rule:
