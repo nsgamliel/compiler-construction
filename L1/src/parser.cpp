@@ -84,6 +84,7 @@ namespace L1 {
   struct str_rsh : TAOCPP_PEGTL_STRING( ">>=" ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
   struct str_goto : TAOCPP_PEGTL_STRING( "goto" ) {};
+  struct str_cjump: TAOCPP_PEGTL_STRING( "cjump" ) {};
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
   struct comment: 
@@ -392,6 +393,51 @@ namespace L1 {
       seps
     > {};
 
+  struct cond_less_jump_rule:
+    pegtl::seq<
+      seps,
+      str_cjump,
+      seps,
+      register_rule,
+      seps,
+      str_less,
+      seps,
+      register_rule,
+      seps,
+      Label_rule,
+      seps
+    > {};
+
+  struct cond_le_jump_rule:
+    pegtl::seq<
+      seps,
+      str_cjump,
+      seps,
+      register_rule,
+      seps,
+      str_le,
+      seps,
+      register_rule,
+      seps,
+      Label_rule,
+      seps
+    > {};
+
+  struct cond_eq_jump_rule:
+    pegtl::seq<
+      seps,
+      str_cjump,
+      seps,
+      register_rule,
+      seps,
+      str_eq,
+      seps,
+      register_rule,
+      seps,
+      Label_rule,
+      seps
+    > {};
+
   struct instr_comp_rule:
     pegtl::sor<
       comp_less_rule,
@@ -406,6 +452,13 @@ namespace L1 {
       seps,
       Label_rule,
       seps
+    > {};
+
+  struct instr_cond_jump_rule:
+    pegtl::sor<
+      cond_less_jump_rule,
+      cond_le_jump_rule,
+      cond_eq_jump_rule
     > {};
 
   struct Instr_label_defn_rule:
@@ -446,7 +499,8 @@ namespace L1 {
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
       pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
       pegtl::seq< pegtl::at<instr_sop_rule>       , instr_sop_rule        >,
-      pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >
+      pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >,
+      pegtl::seq< pegtl::at<instr_cond_jump_rule> , instr_cond_jump_rule  >
     > {};
 
   struct Instructions_rule:
@@ -881,11 +935,13 @@ namespace L1 {
       auto src_lhs = new Item();
       auto dst = new Item();
 
+      // right side of the comparison
       src_rhs->type = parsed_items.back().type;
       src_rhs->value = parsed_items.back().value;
       src_rhs->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
+      // left side of the comparison
       src_lhs->type = parsed_items.back().type;
       src_lhs->value = parsed_items.back().value;
       src_lhs->register_name = parsed_items.back().register_name;
@@ -963,6 +1019,38 @@ namespace L1 {
       dst->value = parsed_items.back().value;
       dst->register_name = parsed_items.back().register_name;
       dst->r = parsed_items.back().r;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
+      instr->items.push_back(dst);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < cond_less_jump_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "cond_less_jump_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cond_less_jmp;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto lbl = new Item();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
       instr->items.push_back(src_rhs);

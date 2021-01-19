@@ -118,6 +118,20 @@ namespace L1{
               outputFile << "    sete " << conv_operand(to_8_bit(i->items[2])) << "\n";
               outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n";
             } break;
+          case cond_less_jmp:
+            if (printGActions) std::cout << "cond_less_jmp instruction" << std::endl;
+            if (i->items[0]->type == 2 && i->items[1]->type == 2 && int(std::stoi(i->items[1]->value) < std::stoi(i->items[0]->value))) {
+              outputFile << "    jmp " << conv_label(i->items[2]->value) << "\n";
+            } else {
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+                outputFile << "    jg " << conv_label(i->items[2]->value) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+                outputFile << "    jl " << conv_label(i->items[2]->value) << "\n";
+              }
+            } break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
