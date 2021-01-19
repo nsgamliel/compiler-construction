@@ -828,6 +828,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rcx";
+      i.r = rcx;
       parsed_items.push_back(i);
     }
   };
