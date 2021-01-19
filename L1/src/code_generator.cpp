@@ -78,13 +78,13 @@ namespace L1{
             if (printGActions) std::cout << "cmp_less instruction" << std::endl;
             outputFile << "    cmpq ";
             if (i->items[1]->type == 2) {
-              outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[2]) << "\n";
-              outputFile << "    setg " << conv_operand(to_8_bit(i->items[0])) << "\n";
+              outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+              outputFile << "    setg " << conv_operand(to_8_bit(i->items[2])) << "\n";
             } else {
-              outputFile << conv_operand(i->items[2]) << ", " << conv_operand(i->items[1]) << "\n";
-              outputFile << "    setl " << conv_operand(to_8_bit(i->items[0])) << "\n";
+              outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+              outputFile << "    setl " << conv_operand(to_8_bit(i->items[2])) << "\n";
             }
-            outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[0])) << ", " << conv_operand(i->items[0]) << "\n"; break;
+            outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
