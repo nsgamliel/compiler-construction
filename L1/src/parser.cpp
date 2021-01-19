@@ -1039,8 +1039,8 @@ namespace L1 {
       auto src_lhs = new Item();
       auto lbl = new Item();
 
-      dst->type = parsed_items.back().type;
-      dst->value = parsed_items.back().value;
+      lbl->type = parsed_items.back().type;
+      lbl->value = parsed_items.back().value;
       parsed_items.pop_back();
 
       src_rhs->type = parsed_items.back().type;
@@ -1055,7 +1055,7 @@ namespace L1 {
 
       instr->items.push_back(src_rhs);
       instr->items.push_back(src_lhs);
-      instr->items.push_back(dst);
+      instr->items.push_back(lbl);
       currentF->instructions.push_back(instr);
     }
   };
