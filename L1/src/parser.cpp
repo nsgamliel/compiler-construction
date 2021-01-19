@@ -91,7 +91,8 @@ namespace L1 {
   struct str_mm  : TAOCPP_PEGTL_STRING( "--"  ) {};
   struct str_lsh : TAOCPP_PEGTL_STRING( "<<=" ) {};
   struct str_rsh : TAOCPP_PEGTL_STRING( ">>=" ) {};
-  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {}; 
+  struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
+  struct str_goto : TAOCPP_PEGTL_STRING( "goto" ) {};
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
   struct comment: 
@@ -335,6 +336,15 @@ namespace L1 {
     pegtl::sor<
       sop_lsh_rule,
       sop_rsh_rule
+    > {};
+
+  struct instr_dir_jump:
+    pegtl::seq<
+      seps,
+      str_goto,
+      seps,
+      Label_rule,
+      seps
     > {};
 
   struct Instr_label_defn_rule:
@@ -777,6 +787,24 @@ namespace L1 {
       instr->items.push_back(src);
       instr->items.push_back(dst);
       // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < instr_dir_jump > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "direct jump" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = dir_jmp;
+      auto dst = new Item();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      instr->items.push_back(dst);
       currentF->instructions.push_back(instr);
     }
   };
