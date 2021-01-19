@@ -89,6 +89,8 @@ namespace L1 {
   struct str_ae  : TAOCPP_PEGTL_STRING( "&="  ) {};
   struct str_pp  : TAOCPP_PEGTL_STRING( "++"  ) {};
   struct str_mm  : TAOCPP_PEGTL_STRING( "--"  ) {};
+  struct str_lsh : TAOCPP_PEGTL_STRING( "<<=" ) {};
+  struct str_rsh : TAOCPP_PEGTL_STRING( ">>=" ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {}; 
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
@@ -291,6 +293,34 @@ namespace L1 {
       seps
     > {};
 
+  struct sop_lsh_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_lsh,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct sop_rsh_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_rsh,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
   struct instr_aop_rule:
     pegtl::sor<
       aop_pe_rule,
@@ -299,6 +329,12 @@ namespace L1 {
       aop_ae_rule,
       aop_pp_rule,
       aop_mm_rule
+    > {};
+
+  struct instr_sop_rule:
+    pegtl::sor<
+      sop_lsh_rule,
+      sop_rsh_rule
     > {};
 
   struct Instr_label_defn_rule:
@@ -336,8 +372,9 @@ namespace L1 {
       pegtl::seq< pegtl::at<Instr_return_rule>    , Instr_return_rule     >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
-      pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >
-    > { };
+      pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
+      pegtl::seq< pegtl::at<instr_sop_rule>       , instr_sop_rule        >
+    > {};
 
   struct Instructions_rule:
     pegtl::plus<
@@ -681,6 +718,60 @@ namespace L1 {
 
       // add items to instr
       instr->items.push_back(src);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < sop_lsh_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "sop_lsh_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = sop_lsh;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < sop_rsh_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "sop_rsh_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = sop_rsh;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
       // add the just-created instruction to the current function
       currentF->instructions.push_back(instr);
     }

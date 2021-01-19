@@ -65,6 +65,12 @@ namespace L1{
           case aop_mm:
             if (printGActions) std::cout << "aop_mm instruction" << std::endl;
             outputFile << "    dec " << conv_operand(i->items[0]) << "\n"; break;
+          case sop_lsh:
+            if (printGActions) std::cout << "sop_lsh instruction" << std::endl;
+            outputFile << "    salq " << conv_operand(to_8_bit(i->items[0])) << ", " << conv_operand(i->items[1]) << "\n"; break;
+          case sop_rsh:
+            if (printGActions) std::cout << "sop_rsh instruction" << std::endl;
+            outputFile << "    sarq " << conv_operand(to_8_bit(i->items[0])) << ", " << conv_operand(i->items[1]) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
@@ -110,5 +116,16 @@ namespace L1{
   std::string conv_label(const std::string& str) {
     if (printGActions) std::cout << "converting label " << str << std::endl;
     return "_" + str.substr(1);
+  }
+
+  Item to_8_bit(const Item* item) {
+    if (item->type) return item; // ie only convert registers (type 0)
+    auto new_i = new Item();
+    new_i->type = 0;
+    switch (item->register_name) {
+      case "rcx":
+        new_i->register_name = "cl"; break;
+    }
+    return new_i;
   }
 }

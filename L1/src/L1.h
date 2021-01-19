@@ -5,6 +5,7 @@
 
 namespace L1 {
 
+  // consider reimplementing this to make conversion faster
   //enum Register {rdi, rax, rbx, rcx, rdx, rbp, rsi, r8, r9, r10, r11, r12, r13, r14, r15};
 
   struct Item {
@@ -16,7 +17,7 @@ namespace L1 {
   /*
    * Instructions.
    */
-  enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae, aop_pp, aop_mm};
+  enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae, aop_pp, aop_mm, sop_lsh, sop_rsh};
 
   struct Instruction{
     Opcode op; // figured i'd use this instead of ints since there will be quite a few
