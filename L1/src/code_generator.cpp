@@ -124,8 +124,10 @@ namespace L1{
     new_i->type = 0;
     switch (item->r) {
       case rcx:
+        if (printGActions) std::cout << "8-bit rcx" << std::endl;
         new_i->register_name = "cl"; break;
     }
+    std::cout << "new register name " << new_i->register_name << std::endl;
     return new_i;
   }
 }
