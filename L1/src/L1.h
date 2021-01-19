@@ -16,7 +16,7 @@ namespace L1 {
   /*
    * Instructions.
    */
-  enum Opcode {ret, mov, label_def, aop_pe};
+  enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae};
 
   struct Instruction{
     Opcode op; // figured i'd use this instead of ints since there will be quite a few

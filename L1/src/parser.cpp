@@ -482,6 +482,8 @@ namespace L1 {
     }
   };
 
+// NOTE: this is highly repetitive, replace if you have time
+
   template<> struct action < Instr_assignment_rule > {
     template< typename Input >
 	static void apply( const Input & in, Program & p){
@@ -518,10 +520,90 @@ namespace L1 {
     template< typename Input >
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "aop_pe_rule" << std::endl;
-      // new instr, opcode aop_pe, two new items (src,dst), the usual
       auto currentF = p.functions.back();
       auto instr = new Instruction();
       instr->op = aop_pe;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_me_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_me_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_me;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_te_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_te_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_te;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_ae_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_ae_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_ae;
       auto src = new Item();
       auto dst = new Item();
       src->type = parsed_items.back().type;
