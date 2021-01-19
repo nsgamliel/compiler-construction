@@ -82,6 +82,7 @@ namespace L1 {
   struct str_less: TAOCPP_PEGTL_STRING( "<"   ) {};
   struct str_lsh : TAOCPP_PEGTL_STRING( "<<=" ) {};
   struct str_rsh : TAOCPP_PEGTL_STRING( ">>=" ) {};
+  struct str_at  : TAOCPP_PEGTL_STRING( "@"   ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
   struct str_goto : TAOCPP_PEGTL_STRING( "goto" ) {};
   struct str_cjump: TAOCPP_PEGTL_STRING( "cjump" ) {};
@@ -477,6 +478,21 @@ namespace L1 {
       cond_less_jump_rule,
       cond_le_jump_rule,
       cond_eq_jump_rule
+    > {};
+
+  struct instr_at_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_at,
+      seps,
+      register_rule,
+      seps,
+      register_rule,
+      seps,
+      number_operand_rule,
+      seps
     > {};
 
   struct Instr_label_defn_rule:
@@ -1142,10 +1158,48 @@ namespace L1 {
     }
   };
 
+  template<> struct action < instr_at_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p) {
+      if (printActions) std::cout << "at rule (lea)" << std::endl;
+      auto currentF = p.functions.back();
+      auto i = new Instruction();
+      auto scale = new Item();
+      auto offset_register = new Item();
+      auto base_register = new Item();
+      auto dest_register = new Item();
+
+      i->op = at;
+
+      scale->type = parsed_items.back().type;
+      scale->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      offset_register->type = parsed_items.back().type;
+      offset_register->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      base_register->type = parsed_items.back().type;
+      base_register->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dest_register->type = parsed_items.back().type;
+      dest_register->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      i->items.push_back(scale);
+      i->items.push_back(offset_register);
+      i->items.push_back(base_register);
+      i->items.push_back(dest_register);
+
+      currentF->instructions.push_back(i);
+    }
+  };
+
   template<> struct action < str_return > {
     template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "return instruction" << std::endl;
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "return instruction" << std::endl;
       auto currentF = p.functions.back();
       auto i = new Instruction();
       i->op = ret;

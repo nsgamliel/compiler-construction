@@ -162,6 +162,9 @@ namespace L1{
               }
               outputFile << "    je " << conv_label(i->items[2]->value) << "\n";
             } break;
+          case at:
+            if (printGActions) std::cout << "at instruction" << std::endl;
+            outputFile << "    lea (" << conv_operand(i->items[2]) << ", " << conv_operand(i->items[1]) << ", " << i->items[0]->value << "), " << conv_operand(i->items[3]) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
