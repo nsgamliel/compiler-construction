@@ -1,15 +1,3 @@
-/*
- * SUGGESTION FROM THE CC TEAM:
- * double check the order of actions that are fired.
- * You can do this in (at least) two ways:
- * 1) by using gdb adding breakpoints to actions
- * 2) by adding printing statements in each action
- *
- * For 2), we suggest writing the code to make it straightforward to enable/disable all of them 
- * (e.g., assuming shouldIPrint is a global variable
- *    if (shouldIPrint) std::cerr << "MY OUTPUT" << std::endl;
- * )
- */
 #include <sched.h>
 #include <string>
 #include <vector>
@@ -885,10 +873,78 @@ namespace L1 {
   template<> struct action < comp_less_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
-      if (printActions) std::cout << "sop_rsh_rule" << std::endl;
+      if (printActions) std::cout << "comp_less_rule" << std::endl;
       auto currentF = p.functions.back();
       auto instr = new Instruction();
       instr->op = cmp_less;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto dst = new Item();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      dst->r = parsed_items.back().r;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
+      instr->items.push_back(dst);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < comp_le_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "comp_le_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cmp_le;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto dst = new Item();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      dst->r = parsed_items.back().r;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
+      instr->items.push_back(dst);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < comp_eq_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "comp_eq_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cmp_eq;
       auto src_rhs = new Item();
       auto src_lhs = new Item();
       auto dst = new Item();
