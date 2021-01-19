@@ -89,6 +89,9 @@ namespace L1 {
   struct str_ae  : TAOCPP_PEGTL_STRING( "&="  ) {};
   struct str_pp  : TAOCPP_PEGTL_STRING( "++"  ) {};
   struct str_mm  : TAOCPP_PEGTL_STRING( "--"  ) {};
+  struct str_eq  : TAOCPP_PEGTL_STRING( "="   ) {};
+  struct str_le  : TAOCPP_PEGTL_STRING( "<="  ) {};
+  struct str_less: TAOCPP_PEGTL_STRING( "<"   ) {};
   struct str_lsh : TAOCPP_PEGTL_STRING( "<<=" ) {};
   struct str_rsh : TAOCPP_PEGTL_STRING( ">>=" ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
@@ -338,7 +341,77 @@ namespace L1 {
       sop_rsh_rule
     > {};
 
-  struct instr_dir_jump:
+  struct comp_less_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_arrow,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps,
+      str_less,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct comp_le_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_arrow,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps,
+      str_le,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct comp_eq_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_arrow,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps,
+      str_eq,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct instr_comp_rule:
+    pegtl::sor<
+      comp_less_rule,
+      comp_le_rule,
+      comp_eq_rule
+    > {};
+
+  struct instr_dir_jump_rule:
     pegtl::seq<
       seps,
       str_goto,
@@ -384,7 +457,8 @@ namespace L1 {
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
       pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
       pegtl::seq< pegtl::at<instr_sop_rule>       , instr_sop_rule        >,
-      pegtl::seq< pegtl::at<instr_dir_jump>       , instr_dir_jump        >
+      pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >,
+      pegtl::seq< pegtl::at<instr_comp_rule>      , instr_comp_rule       >
     > {};
 
   struct Instructions_rule:
@@ -752,7 +826,6 @@ namespace L1 {
       dst->type = parsed_items.back().type;
       dst->value = parsed_items.back().value;
       dst->register_name = parsed_items.back().register_name;
-      dst->r = parsed_items.back().r;
       parsed_items.pop_back();
 
       // add items to instr
@@ -781,7 +854,6 @@ namespace L1 {
       dst->type = parsed_items.back().type;
       dst->value = parsed_items.back().value;
       dst->register_name = parsed_items.back().register_name;
-      dst->r = parsed_items.back().r;
       parsed_items.pop_back();
 
       // add items to instr
@@ -792,7 +864,7 @@ namespace L1 {
     }
   };
 
-  template<> struct action < instr_dir_jump > {
+  template<> struct action < instr_dir_jump_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "direct jump" << std::endl;
@@ -805,6 +877,40 @@ namespace L1 {
       dst->value = parsed_items.back().value;
       parsed_items.pop_back();
 
+      instr->items.push_back(dst);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < comp_less_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "sop_rsh_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cmp_less;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto dst = new Item();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      dst->r = parsed_items.back().r;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
       instr->items.push_back(dst);
       currentF->instructions.push_back(instr);
     }
