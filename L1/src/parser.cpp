@@ -226,51 +226,24 @@ namespace L1 {
   struct Instr_assignment_rule:
     pegtl::seq<
       seps,
-      register_rule,
+      pegtl::sor<
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
+        pegtl::seq< pegtl::at<register_rule>          , register_rule           >
+      >,
       seps,
       str_arrow,
       seps,
       pegtl::sor<
+        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
         pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
         pegtl::seq< pegtl::at<label_operand_rule>     , label_operand_rule      >,
         pegtl::seq< pegtl::at<number_operand_rule>    , number_operand_rule     >
       >
     > {};
 
-  struct instr_assign_from_mem:
-    pegtl::seq<
-      seps,
-      register_rule,
-      seps,
-      str_arrow,
-      seps,
-      str_mem,
-      seps,
-      register_rule,
-      seps,
-      number,
-      seps
-    > {};
-
-  struct instr_assign_to_mem:
-    pegtl::seq<
-      seps,
-      str_mem,
-      seps,
-      register_rule,
-      seps,
-      number,
-      seps,
-      str_arrow,
-      seps,
-      register_rule
-    > {};
-
   struct Instruction_rule:
     pegtl::sor<
       pegtl::seq< pegtl::at<Instr_return_rule>    , Instr_return_rule     >,
-      pegtl::seq< pegtl::at<instr_assign_from_mem>, instr_assign_from_mem >,
-      pegtl::seq< pegtl::at<instr_assign_to_mem>  , instr_assign_to_mem   >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >
     > { };
@@ -417,28 +390,6 @@ namespace L1 {
       parsed_items.push_back(i);
     }
   };
-
-
-
-
-
-  template<> struct action < instr_assign_to_mem > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "to mem" << std::endl;
-    }
-  };
-
-  template<> struct action < instr_assign_from_mem > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "from mem" << std::endl;
-    }
-  };
-
-
-
-
 
   template<> struct action < Instr_label_defn_rule > {
     template< typename Input >
