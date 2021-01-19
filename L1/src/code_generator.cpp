@@ -76,33 +76,45 @@ namespace L1{
             outputFile << "    jmp " << conv_label(i->items[0]->value) << "\n"; break;
           case cmp_less:
             if (printGActions) std::cout << "cmp_less instruction" << std::endl;
-            outputFile << "    cmpq ";
-            if (i->items[1]->type == 2) {
-              outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
-              outputFile << "    setg " << conv_operand(to_8_bit(i->items[2])) << "\n";
+            if (i->items[0]->type == 2 && i->items[1]->type == 2) {
+              outputFile << "    movq $" << int(std::stoi(i->items[1]->value) < std::stoi(i->items[0]->value)) << ", " << conv_operand(i->items[2]) << "\n";
             } else {
-              outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
-              outputFile << "    setl " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+                outputFile << "    setg " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+                outputFile << "    setl " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              }
             }
             outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
           case cmp_le:
             if (printGActions) std::cout << "cmp_le instruction" << std::endl;
-            outputFile << "    cmpq ";
-            if (i->items[1]->type == 2) {
-              outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
-              outputFile << "    setge " << conv_operand(to_8_bit(i->items[2])) << "\n";
+            if (i->items[0]->type == 2 && i->items[1]->type == 2) {
+              outputFile << "    movq $" << int(std::stoi(i->items[1]->value) <= std::stoi(i->items[0]->value)) << ", " << conv_operand(i->items[2]) << "\n";
             } else {
-              outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
-              outputFile << "    setle " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+                outputFile << "    setge " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+                outputFile << "    setle " << conv_operand(to_8_bit(i->items[2])) << "\n";
+              }
             }
             outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
           case cmp_eq:
             if (printGActions) std::cout << "cmp_eq instruction" << std::endl;
-            outputFile << "    cmpq ";
-            if (i->items[1]->type == 2) {
-              outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+            if (i->items[0]->type == 2 && i->items[1]->type == 2) {
+              outputFile << "    movq $" << int(std::stoi(i->items[1]->value) = std::stoi(i->items[0]->value)) << ", " << conv_operand(i->items[2]) << "\n";
             } else {
-              outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+              }
             }
             outputFile << "    sete " << conv_operand(to_8_bit(i->items[2])) << "\n";
             outputFile << "    movzbq " << conv_operand(to_8_bit(i->items[2])) << ", " << conv_operand(i->items[2]) << "\n"; break;
