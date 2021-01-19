@@ -83,6 +83,10 @@ namespace L1 {
   struct str_r14 : TAOCPP_PEGTL_STRING( "r14" ) {};
   struct str_r15 : TAOCPP_PEGTL_STRING( "r15" ) {};
   struct str_mem : TAOCPP_PEGTL_STRING( "mem" ) {};
+  struct str_pe  : TAOCPP_PEGTL_STRING( "+="  ) {};
+  struct str_me  : TAOCPP_PEGTL_STRING( "-="  ) {};
+  struct str_te  : TAOCPP_PEGTL_STRING( "*="  ) {};
+  struct str_ae  : TAOCPP_PEGTL_STRING( "&="  ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {}; 
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
@@ -210,6 +214,70 @@ namespace L1 {
       seps,
       number_operand_rule
     > {};
+
+  struct aop_pe_rule:
+    pegtl::seg<
+      seps,
+      register_rule,
+      seps,
+      str_pe,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct aop_me_rule:
+    pegtl::seg<
+      seps,
+      register_rule,
+      seps,
+      str_me,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct aop_te_rule:
+    pegtl::seg<
+      seps,
+      register_rule,
+      seps,
+      str_te,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct aop_ae_rule:
+    pegtl::seg<
+      seps,
+      register_rule,
+      seps,
+      str_ae,
+      seps,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
+      seps
+    > {};
+
+  struct instr_aop_rule: // is this necessary?
+    pegtl::sor<
+      aop_pe_rule,
+      aop_me_rule,
+      aop_te_rule,         ======================================================================================
+      aop_ae_rule          TODO: IMPLEMENT RULES AS THEIR OWN SEQUENCES THEN COMBINE WITH THE PEGTL::AT STRUCTURE
+    > {};                  ======================================================================================
 
   struct Instr_label_defn_rule:
     pegtl::seq<
@@ -427,6 +495,34 @@ namespace L1 {
       auto src = new Item();
       auto dst = new Item();
 
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_pe_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_pe_rule" << std::endl;
+      // new instr, opcode aop_pe, two new items (src,dst), the usual
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_pe;
+      auto src = new Item();
+      auto dst = new Item();
       src->type = parsed_items.back().type;
       src->value = parsed_items.back().value;
       src->register_name = parsed_items.back().register_name;

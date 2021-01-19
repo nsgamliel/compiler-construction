@@ -47,7 +47,9 @@ namespace L1{
           case label_def:
             if (printGActions) std::cout << "label def instruction" << std::endl;
             outputFile << conv_operand(i->items[0]) << "\n"; break;
-
+          case aop_pe:
+            if (printGActions) std::cout << "aop_pe instruction" << std::endl;
+            outputFile << "    addq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
