@@ -764,11 +764,13 @@ namespace L1 {
       src->type = parsed_items.back().type;
       src->value = parsed_items.back().value;
       src->register_name = parsed_items.back().register_name;
+      src->r = parsed_items.back().r;
       parsed_items.pop_back();
 
       dst->type = parsed_items.back().type;
       dst->value = parsed_items.back().value;
       dst->register_name = parsed_items.back().register_name;
+      dst->r = parsed_items.back().r;
       parsed_items.pop_back();
 
       // add items to instr
