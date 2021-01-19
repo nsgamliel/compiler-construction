@@ -8,6 +8,6 @@ namespace L1{
 
   std::string conv_label(const std::string& str);
   std::string conv_operand(const Item* item);
-  Item* to_8_bit(const Item* item);
+  Item* to_8_bit(Item* item);
 
 }

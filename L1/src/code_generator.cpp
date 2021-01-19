@@ -118,7 +118,7 @@ namespace L1{
     return "_" + str.substr(1);
   }
 
-  Item* to_8_bit(const Item* item) {
+  Item* to_8_bit(Item* item) {
     if (item->type) return item; // ie only convert registers (type 0)
     auto new_i = new Item();
     new_i->type = 0;
