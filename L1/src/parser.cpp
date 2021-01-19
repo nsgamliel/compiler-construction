@@ -313,7 +313,8 @@ namespace L1 {
     pegtl::sor<
       pegtl::seq< pegtl::at<Instr_return_rule>    , Instr_return_rule     >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
-      pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >
+      pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
+      pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >
     > { };
 
   struct Instructions_rule:
