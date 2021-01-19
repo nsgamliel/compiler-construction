@@ -119,7 +119,9 @@ namespace L1{
   }
 
   Item* to_8_bit(Item* item) {
+    std::cout << "in to_8_bit" << std::endl;
     if (item->type) return item; // ie only convert registers (type 0)
+    std::cout << "need to convert" << std::endl;
     auto new_i = new Item();
     new_i->type = 0;
     switch (item->r) {
