@@ -107,7 +107,7 @@ namespace L1{
           case cmp_eq:
             if (printGActions) std::cout << "cmp_eq instruction" << std::endl;
             if (i->items[0]->type == 2 && i->items[1]->type == 2) {
-              outputFile << "    movq $" << int(std::stoi(i->items[1]->value) = std::stoi(i->items[0]->value)) << ", " << conv_operand(i->items[2]) << "\n";
+              outputFile << "    movq $" << int(std::stoi(i->items[1]->value) == std::stoi(i->items[0]->value)) << ", " << conv_operand(i->items[2]) << "\n";
             } else {
               outputFile << "    cmpq ";
               if (i->items[1]->type == 2) {
