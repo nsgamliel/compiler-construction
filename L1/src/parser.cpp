@@ -87,6 +87,8 @@ namespace L1 {
   struct str_me  : TAOCPP_PEGTL_STRING( "-="  ) {};
   struct str_te  : TAOCPP_PEGTL_STRING( "*="  ) {};
   struct str_ae  : TAOCPP_PEGTL_STRING( "&="  ) {};
+  struct str_pp  : TAOCPP_PEGTL_STRING( "++"  ) {};
+  struct str_mm  : TAOCPP_PEGTL_STRING( "--"  ) {};
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {}; 
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
@@ -271,12 +273,32 @@ namespace L1 {
       seps
     > {};
 
+  struct aop_pp_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_pp,
+      seps
+    > {};
+
+  struct aop_mm_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_mm,
+      seps
+    > {};
+
   struct instr_aop_rule:
     pegtl::sor<
       aop_pe_rule,
       aop_me_rule,
       aop_te_rule,
-      aop_ae_rule
+      aop_ae_rule,
+      aop_pp_rule,
+      aop_mm_rule
     > {};
 
   struct Instr_label_defn_rule:
@@ -619,6 +641,46 @@ namespace L1 {
       // add items to instr
       instr->items.push_back(src);
       instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_pp_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_pp_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_pp;
+      auto src = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < aop_mm_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "aop_mm_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = aop_mm;
+      auto src = new Item();
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
       // add the just-created instruction to the current function
       currentF->instructions.push_back(instr);
     }

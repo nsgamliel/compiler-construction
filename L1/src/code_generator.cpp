@@ -59,6 +59,12 @@ namespace L1{
           case aop_ae:
             if (printGActions) std::cout << "aop_ae instruction" << std::endl;
             outputFile << "    andq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;
+          case aop_pp:
+            if (printGActions) std::cout << "aop_pp instruction" << std::endl;
+            outputFile << "    inc " << conv_operand(i->items[0]) << "\n"; break;
+          case aop_mm:
+            if (printGActions) std::cout << "aop_mm instruction" << std::endl;
+            outputFile << "    dec " << conv_operand(i->items[0]) << "\n"; break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
