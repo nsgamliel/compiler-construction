@@ -119,17 +119,59 @@ namespace L1{
   }
 
   Item* to_8_bit(Item* item) {
-    std::cout << "in to_8_bit" << std::endl;
+    if (printGActions) std::cout << "in to_8_bit" << std::endl;
     if (item->type) return item; // ie only convert registers (type 0)
-    std::cout << "need to convert" << std::endl;
+    if (printGActions) std::cout << "need to convert" << std::endl;
     auto new_i = new Item();
     new_i->type = 0;
     switch (item->r) {
+      case rax:
+        if (printGActions) std::cout << "8-bit rax" << std::endl;
+        new_i->register_name = "al"; break;
+      case rbx:
+        if (printGActions) std::cout << "8-bit rbx" << std::endl;
+        new_i->register_name = "bl"; break;
       case rcx:
         if (printGActions) std::cout << "8-bit rcx" << std::endl;
         new_i->register_name = "cl"; break;
+      case rdx:
+        if (printGActions) std::cout << "8-bit rdx" << std::endl;
+        new_i->register_name = "dl"; break;
+      case rdi:
+        if (printGActions) std::cout << "8-bit rdi" << std::endl;
+        new_i->register_name = "dil"; break;
+      case rbp:
+        if (printGActions) std::cout << "8-bit rbp" << std::endl;
+        new_i->register_name = "bpl"; break;
+      case rsi:
+        if (printGActions) std::cout << "8-bit rsi" << std::endl;
+        new_i->register_name = "sil"; break;
+      case r8:
+        if (printGActions) std::cout << "8-bit r8" << std::endl;
+        new_i->register_name = "r8b"; break;
+      case r9:
+        if (printGActions) std::cout << "8-bit r9" << std::endl;
+        new_i->register_name = "r9b"; break;
+      case r10:
+        if (printGActions) std::cout << "8-bit r10" << std::endl;
+        new_i->register_name = "r10b"; break;
+      case r11:
+        if (printGActions) std::cout << "8-bit r11" << std::endl;
+        new_i->register_name = "r11b"; break;
+      case r12:
+        if (printGActions) std::cout << "8-bit r12" << std::endl;
+        new_i->register_name = "r12b"; break;
+      case r13:
+        if (printGActions) std::cout << "8-bit r13" << std::endl;
+        new_i->register_name = "r13b"; break;
+      case r14:
+        if (printGActions) std::cout << "8-bit r14" << std::endl;
+        new_i->register_name = "r14b"; break;
+      case r15:
+        if (printGActions) std::cout << "8-bit r15" << std::endl;
+        new_i->register_name = "r15b"; break;
     }
-    std::cout << "new register name " << new_i->register_name << std::endl;
+    if (printGActions) std::cout << "new register name " << new_i->register_name << std::endl;
     return new_i;
   }
 }

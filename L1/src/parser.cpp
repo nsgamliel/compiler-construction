@@ -799,6 +799,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rdi";
+      i.r = rdi;
       parsed_items.push_back(i);
     }
   };
@@ -810,6 +811,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rax";
+      i.r = rax;
       parsed_items.push_back(i);
     }
   };
@@ -821,6 +823,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rbx";
+      i.r = rbx;
       parsed_items.push_back(i);
     }
   };
@@ -844,6 +847,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rdx";
+      i.r = rdx;
       parsed_items.push_back(i);
     }
   };
@@ -855,6 +859,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rbp";
+      i.r = rbp;
       parsed_items.push_back(i);
     }
   };
@@ -866,6 +871,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "rsi";
+      i.r = rsi;
       parsed_items.push_back(i);
     }
   };
@@ -877,6 +883,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r8";
+      i.r = r8;
       parsed_items.push_back(i);
     }
   };
@@ -888,6 +895,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r9";
+      i.r = r9;
       parsed_items.push_back(i);
     }
   };
@@ -899,6 +907,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r10";
+      i.r = r10;
       parsed_items.push_back(i);
     }
   };
@@ -910,6 +919,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r11";
+      i.r = r11;
       parsed_items.push_back(i);
     }
   };
@@ -921,6 +931,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r12";
+      i.r = r12;
       parsed_items.push_back(i);
     }
   };
@@ -932,6 +943,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r13";
+      i.r = r13;
       parsed_items.push_back(i);
     }
   };
@@ -943,6 +955,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r14";
+      i.r = r14;
       parsed_items.push_back(i);
     }
   };
@@ -954,6 +967,7 @@ namespace L1 {
       Item i;
       i.type = 0;
       i.register_name = "r15";
+      i.r = r15;
       parsed_items.push_back(i);
     }
   };
