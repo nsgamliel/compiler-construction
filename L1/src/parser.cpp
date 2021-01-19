@@ -398,11 +398,17 @@ namespace L1 {
       seps,
       str_cjump,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       str_less,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       Label_rule,
       seps
@@ -413,11 +419,17 @@ namespace L1 {
       seps,
       str_cjump,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       str_le,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       Label_rule,
       seps
@@ -428,11 +440,17 @@ namespace L1 {
       seps,
       str_cjump,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       str_eq,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        number_operand_rule
+      >,
       seps,
       Label_rule,
       seps
@@ -1035,6 +1053,70 @@ namespace L1 {
       auto currentF = p.functions.back();
       auto instr = new Instruction();
       instr->op = cond_less_jmp;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto lbl = new Item();
+
+      lbl->type = parsed_items.back().type;
+      lbl->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
+      instr->items.push_back(lbl);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < cond_le_jump_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "cond_le_jump_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cond_le_jmp;
+      auto src_rhs = new Item();
+      auto src_lhs = new Item();
+      auto lbl = new Item();
+
+      lbl->type = parsed_items.back().type;
+      lbl->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      src_rhs->type = parsed_items.back().type;
+      src_rhs->value = parsed_items.back().value;
+      src_rhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      src_lhs->type = parsed_items.back().type;
+      src_lhs->value = parsed_items.back().value;
+      src_lhs->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      instr->items.push_back(src_rhs);
+      instr->items.push_back(src_lhs);
+      instr->items.push_back(lbl);
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < cond_eq_jump_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "cond_eq_jump_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = cond_eq_jmp;
       auto src_rhs = new Item();
       auto src_lhs = new Item();
       auto lbl = new Item();

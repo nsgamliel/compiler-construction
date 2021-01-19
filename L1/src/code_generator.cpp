@@ -132,6 +132,33 @@ namespace L1{
                 outputFile << "    jl " << conv_label(i->items[2]->value) << "\n";
               }
             } break;
+          case cond_le_jmp:
+            if (printGActions) std::cout << "cond_le_jmp instruction" << std::endl;
+            if (i->items[0]->type == 2 && i->items[1]->type == 2 && int(std::stoi(i->items[1]->value) <= std::stoi(i->items[0]->value))) {
+              outputFile << "    jmp " << conv_label(i->items[2]->value) << "\n";
+            } else {
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+                outputFile << "    jge " << conv_label(i->items[2]->value) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+                outputFile << "    jle " << conv_label(i->items[2]->value) << "\n";
+              }
+            } break;
+          case cond_eq_jmp:
+            if (printGActions) std::cout << "cond_eq_jmp instruction" << std::endl;
+            if (i->items[0]->type == 2 && i->items[1]->type == 2 && int(std::stoi(i->items[1]->value) == std::stoi(i->items[0]->value))) {
+              outputFile << "    jmp " << conv_label(i->items[2]->value) << "\n";
+            } else {
+              outputFile << "    cmpq ";
+              if (i->items[1]->type == 2) {
+                outputFile << conv_operand(i->items[1]) << ", " << conv_operand(i->items[0]) << "\n";
+              } else {
+                outputFile << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n";
+              }
+              outputFile << "    je " << conv_label(i->items[2]->value) << "\n";
+            } break;
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
