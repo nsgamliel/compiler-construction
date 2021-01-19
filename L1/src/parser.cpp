@@ -216,7 +216,7 @@ namespace L1 {
     > {};
 
   struct aop_pe_rule:
-    pegtl::seg<
+    pegtl::seq<
       seps,
       register_rule,
       seps,
@@ -230,7 +230,7 @@ namespace L1 {
     > {};
 
   struct aop_me_rule:
-    pegtl::seg<
+    pegtl::seq<
       seps,
       register_rule,
       seps,
@@ -244,7 +244,7 @@ namespace L1 {
     > {};
 
   struct aop_te_rule:
-    pegtl::seg<
+    pegtl::seq<
       seps,
       register_rule,
       seps,
@@ -258,7 +258,7 @@ namespace L1 {
     > {};
 
   struct aop_ae_rule:
-    pegtl::seg<
+    pegtl::seq<
       seps,
       register_rule,
       seps,
@@ -271,13 +271,13 @@ namespace L1 {
       seps
     > {};
 
-  struct instr_aop_rule: // is this necessary?
+  struct instr_aop_rule:
     pegtl::sor<
       aop_pe_rule,
       aop_me_rule,
-      aop_te_rule,         ======================================================================================
-      aop_ae_rule          TODO: IMPLEMENT RULES AS THEIR OWN SEQUENCES THEN COMBINE WITH THE PEGTL::AT STRUCTURE
-    > {};                  ======================================================================================
+      aop_te_rule,
+      aop_ae_rule
+    > {};
 
   struct Instr_label_defn_rule:
     pegtl::seq<
