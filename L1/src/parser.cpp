@@ -62,6 +62,7 @@ namespace L1 {
   struct str_rdx : TAOCPP_PEGTL_STRING( "rdx" ) {};
   struct str_rbp : TAOCPP_PEGTL_STRING( "rbp" ) {};
   struct str_rsi : TAOCPP_PEGTL_STRING( "rsi" ) {};
+  struct str_rsp : TAOCPP_PEGTL_STRING( "rsp" ) {};
   struct str_r8  : TAOCPP_PEGTL_STRING( "r8"  ) {};
   struct str_r9  : TAOCPP_PEGTL_STRING( "r9"  ) {};
   struct str_r10 : TAOCPP_PEGTL_STRING( "r10" ) {};
@@ -121,6 +122,9 @@ namespace L1 {
   struct register_rsi_rule:
       str_rsi {};
 
+  struct register_rsp_rule:
+      str_rsp {};
+
   struct register_r8_rule:
       str_r8 {};
 
@@ -154,6 +158,7 @@ namespace L1 {
       register_rdx_rule,
       register_rbp_rule,
       register_rsi_rule,
+      register_rsp_rule,
       register_r8_rule,
       register_r9_rule,
       register_r10_rule,
@@ -511,11 +516,14 @@ namespace L1 {
       seps,
       str_arrow,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        label_operand_rule
+      >,
       seps
     > {};
 
-  struct instr_save_rule:
+  /*struct instr_save_rule:
     pegtl::seq<
       seps,
       str_mem,
@@ -528,7 +536,7 @@ namespace L1 {
       seps,
       label_operand_rule,
       seps
-    > {};
+    > {};*/
 
   struct Instr_label_defn_rule:
     pegtl::seq<
@@ -563,7 +571,7 @@ namespace L1 {
       pegtl::seq< pegtl::at<instr_comp_rule>      , instr_comp_rule       >,
       pegtl::seq< pegtl::at<instr_cond_jump_rule> , instr_cond_jump_rule  >,
       pegtl::seq< pegtl::at<instr_load_rule>      , instr_load_rule       >,
-      pegtl::seq< pegtl::at<instr_save_rule>      , instr_save_rule       >,
+      //pegtl::seq< pegtl::at<instr_save_rule>      , instr_save_rule       >,
       pegtl::seq< pegtl::at<instr_store_rule>     , instr_store_rule      >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
@@ -782,11 +790,11 @@ namespace L1 {
     }
   };
 
-  template<> struct action < instr_save_rule > {
+  /*template<> struct action < instr_save_rule > {
     template< typename Input >
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "instr_save_rule" << std::endl;
-      /*auto currentF = p.functions.back();
+      auto currentF = p.functions.back();
       auto instr = new Instruction();
       instr->op = store;
       auto src = new Item();
@@ -807,9 +815,9 @@ namespace L1 {
       instr->items.push_back(src);
       instr->items.push_back(dst);
       // add the just-created instruction to the current function
-      currentF->instructions.push_back(instr);*/
+      currentF->instructions.push_back(instr);
     }
-  };
+  };*/
 
   template<> struct action < Instr_assignment_rule > {
     template< typename Input >
@@ -1394,6 +1402,18 @@ namespace L1 {
       i.type = 0;
       i.register_name = "rsi";
       i.r = rsi;
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < register_rsp_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "register rsp" << std::endl;
+      Item i;
+      i.type = 0;
+      i.register_name = "rsp";
+      i.r = rsp;
       parsed_items.push_back(i);
     }
   };
