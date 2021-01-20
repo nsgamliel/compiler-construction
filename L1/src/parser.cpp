@@ -495,9 +495,9 @@ namespace L1 {
       str_mem,
       seps,
       register_rule,
-      seps/*,
+      seps,
       number_operand_rule,
-      seps*/
+      seps
     > {};
 
   struct Instr_label_defn_rule:
