@@ -35,7 +35,7 @@ namespace L1{
       if (printGActions) std::cout << "found function " << f->name << std::endl;
       outputFile << conv_label(f->name) << ":\n";
       if (f->arguments > 6 || f->locals > 0)
-        outputFile << "    subq $" << f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8 << ", %rsp\n";
+        outputFile << "    subq $" << std::to_string(f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8) << ", %rsp\n";
       if (printGActions) std::cout << "entering instructions..." << std::endl;
       for (auto i : f->instructions) {
         if (printGActions) std::cout << "found ";
@@ -43,7 +43,7 @@ namespace L1{
           case ret:
             if (printGActions) std::cout << "return instruction" << std::endl;
             if (f->arguments > 6 || f->locals > 0)
-              outputFile << "    addq $" << f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8 << ", %rsp\n";
+              outputFile << "    addq $" << std::to_string(f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8) << ", %rsp\n";
             outputFile << "    retq\n"; break;
           case mov:
             if (printGActions) std::cout << "move instruction" << std::endl;
