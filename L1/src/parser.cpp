@@ -87,6 +87,7 @@ namespace L1 {
   struct str_return : TAOCPP_PEGTL_STRING( "return" ) {};
   struct str_goto : TAOCPP_PEGTL_STRING( "goto" ) {};
   struct str_cjump: TAOCPP_PEGTL_STRING( "cjump" ) {};
+  struct str_call : TAOCPP_PEGTL_STRING( "call" ) {};
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
   struct comment: 
@@ -542,6 +543,25 @@ namespace L1 {
       seps
     > {};
 
+  struct instr_call_local_rule:
+    pegtl::seq<
+      seps,
+      str_call,
+      seps,
+      pegtl::sor<
+        Label_rule,
+        register_rule
+      >,
+      seps,
+      number_operand_rule,
+      seps
+    > {};
+
+  struct instr_call_rule:
+    pegtl::sor<
+      instr_call_local_rule
+    > {};
+
   struct Instr_label_defn_rule:
     pegtl::seq<
       seps,
@@ -581,7 +601,8 @@ namespace L1 {
       pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
       pegtl::seq< pegtl::at<instr_sop_rule>       , instr_sop_rule        >,
       pegtl::seq< pegtl::at<instr_dir_jump_rule>  , instr_dir_jump_rule   >,
-      pegtl::seq< pegtl::at<instr_at_rule>        , instr_at_rule         >
+      pegtl::seq< pegtl::at<instr_at_rule>        , instr_at_rule         >,
+      pegtl::seq< pegtl::at<instr_call_rule>      , instr_call_rule       >
     > {};
 
   struct Instructions_rule:
@@ -724,6 +745,33 @@ namespace L1 {
       i.register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
       parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < instr_call_local_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "instr_call_local_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = call_local;
+      auto src = new Item();
+      auto num = new Item();
+
+      num->type = parsed_items.back().type;
+      num->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(num);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
     }
   };
 

@@ -173,6 +173,10 @@ namespace L1{
           case at:
             if (printGActions) std::cout << "at instruction" << std::endl;
             outputFile << "    lea (" << conv_operand(i->items[2]) << ", " << conv_operand(i->items[1]) << ", " << i->items[0]->value << "), " << conv_operand(i->items[3]) << "\n"; break;
+          case call_local:
+            if (printGActions) std::cout << "local call" << std::endl;
+            outputFile << "    subq $" << std::to_string((i->items[1]->value > 6) ? (i->items[1]->value-5)*8 : 8) << ", %rsp\n";
+            outputFile << "    jmp " << i->items[0]->type == 0 ? "*" + conv_operand(i->items[0]) : conv_label(i->items[0]->value) << "\n";
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
