@@ -181,7 +181,7 @@ namespace L1{
             if (printGActions) std::cout << "call to runtime" << std::endl;
             outputFile << "    call ";
             if (i->items[0]->value.compare("tensor-error")) {
-              switch (i->items[1]->value) {
+              switch (std::stoi(i->items[1]->value)) {
                 case 1: outputFile << "array_tensor_error_null\n"; break;
                 case 3: outputFile << "array_error\n"; break;
                 case 4: outputFile << "tensor_error\n"; break;
