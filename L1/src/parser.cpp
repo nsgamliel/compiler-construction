@@ -510,19 +510,16 @@ namespace L1 {
   struct Instr_assignment_rule:
     pegtl::seq<
       seps,
-      pegtl::sor<
-        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
-        pegtl::seq< pegtl::at<register_rule>          , register_rule           >
-      >,
+      register_rule,
       seps,
       str_arrow,
       seps,
       pegtl::sor<
-        pegtl::seq< pegtl::at<mem_access_operand_rule>, mem_access_operand_rule >,
-        pegtl::seq< pegtl::at<register_rule>          , register_rule           >,
-        pegtl::seq< pegtl::at<label_operand_rule>     , label_operand_rule      >,
-        pegtl::seq< pegtl::at<number_operand_rule>    , number_operand_rule     >
-      >
+        register_rule,
+        label_operand_rule,
+        number_operand_rule
+      >,
+      seps
     > {};
 
   struct Instruction_rule:
