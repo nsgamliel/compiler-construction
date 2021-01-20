@@ -176,7 +176,7 @@ namespace L1{
           case call_local:
             if (printGActions) std::cout << "local call" << std::endl;
             outputFile << "    subq $" << std::to_string((std::stoi(i->items[1]->value) > 6) ? (std::stoi(i->items[1]->value)-5)*8 : 8) << ", %rsp\n";
-            outputFile << "    jmp " << i->items[0]->type == 0 ? "*" + conv_operand(i->items[0]) : conv_label(i->items[0]->value) << "\n";
+            outputFile << "    jmp " << (int(i->items[0]->type) == 0) ? ("*" + conv_operand(i->items[0])) : conv_label(i->items[0]->value) << "\n";
           default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
