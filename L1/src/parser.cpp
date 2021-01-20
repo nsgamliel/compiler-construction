@@ -752,10 +752,10 @@ namespace L1 {
       src->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
-      src->type = 1;
-      src->value = parsed_items.back().value;
+      dst->type = 1;
+      dst->value = parsed_items.back().value;
       parsed_items.pop_back();
-      src->register_name = parsed_items.back().register_name;
+      dst->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
       // add items to instr
