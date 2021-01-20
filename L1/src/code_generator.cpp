@@ -34,8 +34,8 @@ namespace L1{
     for (auto f : p.functions) {
       if (printGActions) std::cout << "found function " << f->name << std::endl;
       outputFile << conv_label(f->name) << ":\n";
-      if (f->arguments > 6 || f->locals > 0)
-        outputFile << "    subq $" << std::to_string(f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8) << ", %rsp\n";
+      if (f->locals > 0)
+        outputFile << "    subq $" << std::to_string(f->locals*8) << ", %rsp\n";
       if (printGActions) std::cout << "entering instructions..." << std::endl;
       for (auto i : f->instructions) {
         if (printGActions) std::cout << "found ";
