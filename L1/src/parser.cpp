@@ -755,6 +755,8 @@ namespace L1 {
       Item i;
       i.type = 2;
       i.value = in.string();
+      if (i.value.front() == '+')
+          i.value = i.value.substr(1);
       parsed_items.push_back(i);
     }
   };
