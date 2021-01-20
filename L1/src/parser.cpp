@@ -566,7 +566,7 @@ namespace L1 {
       str_print,
       str_alloc,
       str_inp,
-      str_tensor,
+      str_tensor
     > {};
 
   struct instr_call_runtime_rule:
@@ -574,7 +574,7 @@ namespace L1 {
       seps,
       str_call,
       seps,
-      ,
+      runtime_call_rule,
       seps,
       number_operand_rule,
       seps
