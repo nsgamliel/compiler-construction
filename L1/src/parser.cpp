@@ -493,8 +493,8 @@ namespace L1 {
       str_arrow,
       seps,
       str_mem,
-      seps,
-      /*register_rule,
+      seps/*,
+      register_rule,
       seps,
       number_operand_rule,
       seps*/
