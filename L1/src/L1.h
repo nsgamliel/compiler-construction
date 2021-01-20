@@ -17,7 +17,7 @@ namespace L1 {
   /*
    * Instructions.
    */
-  enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae, aop_pp, aop_mm, sop_lsh, sop_rsh, dir_jmp, cmp_less, cmp_le, cmp_eq, cond_less_jmp, cond_le_jmp, cond_eq_jmp, at};
+  enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae, aop_pp, aop_mm, sop_lsh, sop_rsh, dir_jmp, cmp_less, cmp_le, cmp_eq, cond_less_jmp, cond_le_jmp, cond_eq_jmp, at, load};
 
   struct Instruction{
     Opcode op; // figured i'd use this instead of ints since there will be quite a few

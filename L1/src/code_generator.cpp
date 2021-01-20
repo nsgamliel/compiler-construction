@@ -45,6 +45,8 @@ namespace L1{
             if (f->arguments > 6 || f->locals > 0)
               outputFile << "    addq $" << std::to_string(f->arguments > 6 ? ((f->arguments-6)+f->locals)*8 : f->locals*8) << ", %rsp\n";
             outputFile << "    retq\n"; break;
+          case load:
+            if (printGActions) std::cout << "(load) ";
           case mov:
             if (printGActions) std::cout << "move instruction" << std::endl;
             outputFile << "    movq " << conv_operand(i->items[0]) << ", " << conv_operand(i->items[1]) << "\n"; break;

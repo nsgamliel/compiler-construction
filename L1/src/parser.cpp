@@ -203,16 +203,6 @@ namespace L1 {
   struct number_operand_rule:
     number {};
 
-  struct mem_access_operand_rule:
-    pegtl::seq<
-      seps,
-      str_mem,
-      seps,
-      register_rule,
-      seps,
-      number_operand_rule
-    > {};
-
   struct aop_pe_rule:
     pegtl::seq<
       seps,
@@ -495,6 +485,21 @@ namespace L1 {
       seps
     > {};
 
+  struct instr_load_rule:
+    pegtl::seq<
+      seps,
+      register_rule,
+      seps,
+      str_arrow,
+      seps,
+      str_mem,
+      seps,
+      register_rule,
+      seps,
+      number_operand_rule,
+      seps
+    > {};
+
   struct Instr_label_defn_rule:
     pegtl::seq<
       seps,
@@ -527,6 +532,7 @@ namespace L1 {
       pegtl::seq< pegtl::at<Instr_return_rule>    , Instr_return_rule     >,
       pegtl::seq< pegtl::at<instr_comp_rule>      , instr_comp_rule       >,
       pegtl::seq< pegtl::at<instr_cond_jump_rule> , instr_cond_jump_rule  >,
+      pegtl::seq< pegtl::at<instr_load_rule>      , instr_load_rule       >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
       pegtl::seq< pegtl::at<instr_aop_rule>       , instr_aop_rule        >,
@@ -664,20 +670,6 @@ namespace L1 {
     }
   };
 
-  template<> struct action < mem_access_operand_rule > {
-    template< typename Input >
-  static void apply( const Input & in, Program & p){
-    if (printActions) std::cout << "memory access operand (pop x2, push): " << in.string() << std::endl;
-      Item i;
-      i.type = 1;
-      i.value = parsed_items.back().value;
-      parsed_items.pop_back();
-      i.register_name = parsed_items.back().register_name;
-      parsed_items.pop_back();
-      parsed_items.push_back(i);
-    }
-  };
-
   template<> struct action < Instr_label_defn_rule > {
     template< typename Input >
   static void apply( const Input & in, Program & p){
@@ -700,7 +692,34 @@ namespace L1 {
     }
   };
 
-// NOTE: this is highly repetitive, replace if you have time
+  template<> struct action < instr_load_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "instr_load_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = load;
+      auto src = new Item();
+      auto dst = new Item();
+      src->type = 1;
+      // get offset from number at back of vector
+      src->value = parsed_items.back().value;
+      parsed_items.pop_back();
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = parsed_items.back().type;
+      dst->value = parsed_items.back().value;
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
 
   template<> struct action < Instr_assignment_rule > {
     template< typename Input >
