@@ -88,6 +88,10 @@ namespace L1 {
   struct str_goto : TAOCPP_PEGTL_STRING( "goto" ) {};
   struct str_cjump: TAOCPP_PEGTL_STRING( "cjump" ) {};
   struct str_call : TAOCPP_PEGTL_STRING( "call" ) {};
+  struct str_print: TAOCPP_PEGTL_STRING( "print" ) {};
+  struct str_alloc: TAOCPP_PEGTL_STRING( "allocate" ) {};
+  struct str_inp  : TAOCPP_PEGTL_STRING( "input" ) {};
+  struct str_tensor: TAOCPP_PEGTL_STRING( "tensor-error" ) {};
   struct str_arrow : TAOCPP_PEGTL_STRING( "<-" ) {};
 
   struct comment: 
@@ -557,9 +561,29 @@ namespace L1 {
       seps
     > {};
 
+  struct runtime_call_rule:
+    pegtl::sor<
+      str_print,
+      str_alloc,
+      str_inp,
+      str_tensor,
+    > {};
+
+  struct instr_call_runtime_rule:
+    pegtl::seq<
+      seps,
+      str_call,
+      seps,
+      ,
+      seps,
+      number_operand_rule,
+      seps
+    > {};
+
   struct instr_call_rule:
     pegtl::sor<
-      instr_call_local_rule
+      instr_call_local_rule,
+      instr_call_runtime_rule
     > {};
 
   struct Instr_label_defn_rule:
@@ -765,6 +789,43 @@ namespace L1 {
       src->type = parsed_items.back().type;
       src->value = parsed_items.back().value;
       src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(num);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < runtime_call_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "runtime call (push): " << in.string() << std::endl;
+      Item i;
+      i.type = 5;
+      i.value = in.string();
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < instr_call_runtime_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "instr_call_runtime_rule" << std::endl;
+      auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = call_runtime;
+      auto src = new Item();
+      auto num = new Item();
+
+      num->type = parsed_items.back().type;
+      num->value = parsed_items.back().value;
+      parsed_items.pop_back();
+
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
       parsed_items.pop_back();
 
       // add items to instr

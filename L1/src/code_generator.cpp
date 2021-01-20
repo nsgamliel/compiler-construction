@@ -176,7 +176,20 @@ namespace L1{
           case call_local:
             if (printGActions) std::cout << "local call" << std::endl;
             outputFile << "    subq $" << std::to_string((std::stoi(i->items[1]->value) > 6) ? (std::stoi(i->items[1]->value)-5)*8 : 8) << ", %rsp\n";
-            outputFile << "    jmp " << (((i->items[0]->type) == 0) ? ("*" + conv_operand(i->items[0])) : conv_label(i->items[0]->value)) << "\n"; break;          default:
+            outputFile << "    jmp " << (((i->items[0]->type) == 0) ? ("*" + conv_operand(i->items[0])) : conv_label(i->items[0]->value)) << "\n"; break;          
+          case call_runtime:
+            if (printGActions) std::cout << "call to runtime" << std::endl;
+            outputFile << "    call ";
+            if (i->items[0]->value.compare("tensor-error")) {
+              switch (i->items[1]->value) {
+                case 1: outputFile << "array_tensor_error_null\n"; break;
+                case 3: outputFile << "array_error\n"; break;
+                case 4: outputFile << "tensor_error\n"; break;
+              }
+            } else {
+              outputFile << (i->items[0]->value) << "\n";
+            } break;
+          default:
             if (printGActions) std::cout << "unknown instruction" << std::endl;
             outputFile << "    # instr placeholder\n"; break;
         }
