@@ -854,7 +854,6 @@ namespace L1 {
       // item -> instruction -> function
       i->items.push_back(label);
       currentF->instructions.push_back(i);
-      std::cout << "label defn added: " << currentF->instructions.back()->items[0]->value << std::endl;
     }
   };
 
