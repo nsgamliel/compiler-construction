@@ -61,8 +61,9 @@ int main(
   /*
    * Parse the input file.
    */
+  if (verbose) std::cout << "==== parsing ====" << std::endl;
   auto p = L1::parse_file(argv[optind]);
-
+  if (verbose) std::cout << "==== done parsing ====" << std::endl;
   /* 
    * Print the source program.
    */
@@ -75,9 +76,11 @@ int main(
   /*
    * Generate x86_64 assembly.
    */
+  if (verbose) std::cout << "==== generating x86_64 code ====" << std::endl;
   if (enable_code_generator){
     L1::generate_code(p);
   }
+  if (verbose) std::cout << "==== done generating x86_64 code ====" << std::endl;
 
   return 0;
 }
