@@ -542,7 +542,8 @@ namespace L1 {
       seps,
       pegtl::sor<
         register_rule,
-        label_operand_rule
+        label_operand_rule,
+        number_operand_rule
       >,
       seps
     > {};
