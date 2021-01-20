@@ -208,18 +208,23 @@ namespace L1 {
   struct number_operand_rule:
     number {};
 
+  struct mem_operand_rule:
+    pegtl::seq<
+      seps,
+      str_mem,
+      seps,
+      register_rule,
+      seps,
+      number_operand_rule,
+      seps
+    > {};
+
   struct aop_pe_rule:
     pegtl::seq<
       seps,
       pegtl::sor<
         register_rule,
-        pegtl::seq<
-          str_mem,
-          seps,
-          register_rule,
-          seps,
-          number_operand_rule
-        >
+        mem_operand_rule
       >,
       seps,
       str_pe,
@@ -227,13 +232,7 @@ namespace L1 {
       pegtl::sor<
         register_rule,
         number_operand_rule,
-        pegtl::seq<
-          str_mem,
-          seps,
-          register_rule,
-          seps,
-          number_operand_rule
-        >
+        mem_operand_rule
       >,
       seps
     > {};
@@ -243,13 +242,7 @@ namespace L1 {
       seps,
       pegtl::sor<
         register_rule,
-        pegtl::seq<
-          str_mem,
-          seps,
-          register_rule,
-          seps,
-          number_operand_rule
-        >
+        mem_operand_rule
       >,
       seps,
       str_me,
@@ -257,13 +250,7 @@ namespace L1 {
       pegtl::sor<
         register_rule,
         number_operand_rule,
-        pegtl::seq<
-          str_mem,
-          seps,
-          register_rule,
-          seps,
-          number_operand_rule
-        >
+        mem_operand_rule
       >,
       seps
     > {};
@@ -722,6 +709,20 @@ namespace L1 {
       Item i;
       i.type = 2;
       i.value = in.string();
+      parsed_items.push_back(i);
+    }
+  };
+
+  template<> struct action < mem_operand_rule > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "memory access operand (popx2, push): " << in.string() << std::endl;
+      Item i;
+      i.type = 1;
+      i.value = parsed_items.back().value;
+      parsed_items.pop_back();
+      i.register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
       parsed_items.push_back(i);
     }
   };
