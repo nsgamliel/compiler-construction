@@ -519,9 +519,9 @@ namespace L1 {
     pegtl::seq<
       seps,
       str_mem,
-      seps/*,
-      register_rule,
       seps,
+      register_rule,
+      seps/*,
       number_operand_rule,
       seps,
       str_arrow,
