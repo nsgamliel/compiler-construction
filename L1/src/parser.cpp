@@ -519,7 +519,7 @@ namespace L1 {
     pegtl::seq<
       seps,
       str_mem,
-      seps,
+      seps/*,
       register_rule,
       seps,
       number_operand_rule,
@@ -527,7 +527,7 @@ namespace L1 {
       str_arrow,
       seps,
       label_operand_rule,
-      seps
+      seps*/
     > {};
 
   struct Instr_label_defn_rule:
