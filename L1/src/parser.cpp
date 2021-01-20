@@ -511,10 +511,22 @@ namespace L1 {
       seps,
       str_arrow,
       seps,
-      pegtl::sor<
-        register_rule,
-        label_operand_rule
-      >,
+      register_rule,
+      seps
+    > {};
+
+  struct instr_save_rule:
+    pegtl::seq<
+      seps,
+      str_mem,
+      seps,
+      register_rule,
+      seps,
+      number_operand_rule,
+      seps,
+      str_arrow,
+      seps,
+      label_operand_rule,
       seps
     > {};
 
@@ -551,6 +563,7 @@ namespace L1 {
       pegtl::seq< pegtl::at<instr_comp_rule>      , instr_comp_rule       >,
       pegtl::seq< pegtl::at<instr_cond_jump_rule> , instr_cond_jump_rule  >,
       pegtl::seq< pegtl::at<instr_load_rule>      , instr_load_rule       >,
+      pegtl::seq< pegtl::at<instr_save_rule>      , instr_save_rule       >,
       pegtl::seq< pegtl::at<instr_store_rule>     , instr_store_rule      >,
       pegtl::seq< pegtl::at<Instr_assignment_rule>, Instr_assignment_rule >,
       pegtl::seq< pegtl::at<Instr_label_defn_rule>, Instr_label_defn_rule >,
@@ -766,6 +779,35 @@ namespace L1 {
       instr->items.push_back(dst);
       // add the just-created instruction to the current function
       currentF->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < instr_save_rule > {
+    template< typename Input >
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "instr_save_rule" << std::endl;
+      /*auto currentF = p.functions.back();
+      auto instr = new Instruction();
+      instr->op = store;
+      auto src = new Item();
+      auto dst = new Item();
+
+      src->type = parsed_items.back().type;
+      src->value = parsed_items.back().value;
+      src->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      dst->type = 1;
+      dst->value = parsed_items.back().value;
+      parsed_items.pop_back();
+      dst->register_name = parsed_items.back().register_name;
+      parsed_items.pop_back();
+
+      // add items to instr
+      instr->items.push_back(src);
+      instr->items.push_back(dst);
+      // add the just-created instruction to the current function
+      currentF->instructions.push_back(instr);*/
     }
   };
 
