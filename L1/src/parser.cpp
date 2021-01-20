@@ -25,7 +25,7 @@ using namespace std;
 
 namespace L1 {
 
-  bool printActions = true;
+  bool printActions = false;
 
   /* 
    * Data required to parse
