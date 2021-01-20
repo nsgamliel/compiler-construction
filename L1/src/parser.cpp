@@ -504,7 +504,7 @@ namespace L1 {
     pegtl::seq<
       seps,
       str_mem,
-      seps/*,
+      seps,
       register_rule,
       seps,
       number_operand_rule,
@@ -512,7 +512,7 @@ namespace L1 {
       str_arrow,
       seps,
       register_rule,
-      seps*/
+      seps
     > {};
 
   struct Instr_label_defn_rule:
@@ -741,7 +741,7 @@ namespace L1 {
     template< typename Input >
     static void apply( const Input & in, Program & p){
       if (printActions) std::cout << "instr_store_rule" << std::endl;
-      /*auto currentF = p.functions.back();
+      auto currentF = p.functions.back();
       auto instr = new Instruction();
       instr->op = store;
       auto src = new Item();
@@ -762,7 +762,7 @@ namespace L1 {
       instr->items.push_back(src);
       instr->items.push_back(dst);
       // add the just-created instruction to the current function
-      currentF->instructions.push_back(instr);*/
+      currentF->instructions.push_back(instr);
     }
   };
 
