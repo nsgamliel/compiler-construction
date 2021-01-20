@@ -511,7 +511,10 @@ namespace L1 {
       seps,
       str_arrow,
       seps,
-      register_rule,
+      pegtl::sor<
+        register_rule,
+        label_operand_rule
+      >,
       seps
     > {};
 
