@@ -491,10 +491,10 @@ namespace L1 {
       register_rule,
       seps,
       str_arrow,
-      seps/*,
+      seps,
       str_mem,
       seps,
-      register_rule,
+      /*register_rule,
       seps,
       number_operand_rule,
       seps*/
