@@ -51,7 +51,7 @@
     return
   )
   (:intPrint
-    0 0
+    0
     rdi <<= 1
     rdi ++
     call print 1
