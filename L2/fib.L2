@@ -5,7 +5,9 @@
   (:fib
     0
     
-    call input 0
+    //manual value is assigned for demonstration purposes
+    rax <- 111
+    //call input 0
     %userInput <- rax
 
     %signCheck <- %userInput

@@ -8,11 +8,14 @@
     0
 
     // create a zero-filled matrix with the desired dimensions and unique rows
-
-    call input 0
-    %rows <- rax
-    call input 0
-    %cols <- rax
+    
+    // sample values are manually assigned instead of relying on user input
+    %rows <- 9
+    %cols <- 7
+    //call input 0
+    //%rows <- rax
+    //call input 0
+    //%cols <- rax
 
     cjump %rows <= 1 :abort
     cjump %cols <= 1 :abort
