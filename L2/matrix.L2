@@ -18,7 +18,7 @@
     cjump %cols <= 1 :abort
 
     rdi <- %rows
-    rsi <- 0 // placeholder until memory addresses can be generated
+    rsi <- 1 // placeholder until memory addresses can be generated
     call allocate 2
     %matrix_start <- rax
     rax += 8
@@ -46,9 +46,12 @@
     %fill_value <<= 1
     %fill_value ++ // num rows * num cols (value encoded)
 
+    rdi <- %fill_value
+    call print 1
+
     :outer_loop
     cjump %row_ptr <= %matrix_start :end
-    %row_index <- mem %element_ptr 0
+    %row_index <- mem %row_ptr 0
     %row_width <- %cols
     %row_width *= 8
     %row_index += %row_width
