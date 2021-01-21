@@ -45,7 +45,7 @@ for i in `ls -S -r *.${extFile}` ; do
   pushd ./ &> /dev/null ;
   cd "${origDir}" ;
   didSucceed=0 ;
-  ./${compiler} ${testsDir}/${i} ;
+  ./${compiler} ${testsDir}/${i} &> /dev/null;
   if test $? -eq 0 ; then
     if test -f ${testsDir}/${i}.in ; then
       ./a.out < ${testsDir}/${i}.in &> ${testsDir}/${i}.out.tmp;

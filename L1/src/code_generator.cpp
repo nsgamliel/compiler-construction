@@ -9,7 +9,7 @@ using namespace std;
 
 namespace L1{
 
-  bool printGActions = true;
+  bool printGActions = false;
 
   void generate_code(Program p){
     /* 

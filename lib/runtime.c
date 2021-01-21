@@ -531,9 +531,13 @@ int input (void){
       number = realloc(number, numberSize);
     }
     c=getc(stdin);
+
     if ((c != '\n') && c != '\r'){
       number[i] = c;
       i++;
+
+    } else if (c == ' '){
+
     } else {
       number[i] = '\0';
       i++;
