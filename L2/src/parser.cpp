@@ -703,7 +703,7 @@ namespace L2 {
         variable
       >,
       seps,
-      arrow,
+      str_arrow,
       seps,
       str_stack_arg,
       seps,
