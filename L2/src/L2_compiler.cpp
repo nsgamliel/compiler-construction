@@ -41,7 +41,7 @@ int main(
   /* 
    * Check the compiler arguments.
    */
-  Utils::verbose = false;
+  //Utils::verbose = false;
   if( argc < 2 ) {
     print_help(argv[0]);
     return 1;
@@ -71,7 +71,7 @@ int main(
         break ;
 
       case 'v':
-        Utils::verbose = true;
+        //Utils::verbose = true;
         break ;
 
       default:
@@ -89,7 +89,7 @@ int main(
     /* 
      * Parse an L2 function and the spill arguments.
      */
-    p = L2::parse_spill_file(argv[optind]);
+    //p = L2::parse_spill_file(argv[optind]);
  
   } else if (liveness_only){
 
@@ -103,7 +103,7 @@ int main(
     /*
      * Parse an L2 function.
      */
-    p = L2::parse_function_file(argv[optind]);
+    //p = L2::parse_function_file(argv[optind]);
 
   } else {
 
