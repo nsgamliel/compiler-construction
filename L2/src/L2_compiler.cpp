@@ -14,12 +14,12 @@
 
 #include <L2.h>
 #include <parser.h>
-#include <analysis.h>
-#include <transformer.h>
-#include <code_generator.h>
-#include <spiller.h>
-#include <register_allocation.h>
-#include <utils.h>
+//#include <analysis.h>
+//#include <transformer.h>
+//#include <code_generator.h>
+//#include <spiller.h>
+//#include <register_allocation.h>
+//#include <utils.h>
 
 using namespace std;
 
@@ -126,6 +126,9 @@ int main(
    */
   if (liveness_only){
     // TODO
+
+    // send p to some function to generate in/out sets (gen/kill first)
+
     return 0;
   }
 
