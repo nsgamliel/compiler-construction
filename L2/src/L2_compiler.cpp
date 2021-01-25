@@ -96,6 +96,7 @@ int main(
     /*
      * Parse an L2 function.
      */
+    std::cout << "liveness only" <<std::endl;
     p = L2::parse_function_file(argv[optind]);
 
   } else if (interference_only){
