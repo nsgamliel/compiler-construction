@@ -112,10 +112,12 @@ namespace L2 {
 					f_l.
 			}
 		}*/
+		return f_l;
 	}
 
 	Function_l in_out(Function_l f_l) {
 		//TODO
+		return f_l;
 	}
 
 	std::vector<size_t> add_items(Function_l* f_l, const std::vector<std::string>& strs) {

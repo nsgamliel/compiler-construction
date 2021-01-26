@@ -1768,7 +1768,7 @@ namespace L2 {
     Function f;
     parse< function_grammar, action >(fileInput, f);
 
-    return p;
+    return f;
   }
 
 }
