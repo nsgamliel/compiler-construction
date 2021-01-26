@@ -17,13 +17,13 @@ namespace L2 {
 		std::vector<size_t> out;
 		// only used in special case
 		std::vector<int> successors;
-	}
+	};
 
 	struct Function_l {
 		bool isDirty;
 		std::vector<Instruction_l*> instructions;
 		std::map<size_t, std::string> items_l;
-	}
+	};
 
 	Function_l generate_liveness(Function f);
 
