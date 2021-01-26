@@ -10,7 +10,7 @@ namespace L2 {
   struct Item {
     int type; // 0: register, 1: memory access, 2: const value, 3: label operand, 4: label defn, 5: runtime call, 6: variable
     std::string value; // receives byte offset if memory access or int value if const
-    std::string register_name;
+    std::string register_name; // receives variable name if mem access from variable
     Register r;
   };
 
@@ -30,7 +30,6 @@ namespace L2 {
   struct Function{
     std::string name;
     int64_t arguments;
-    int64_t locals;
     std::vector<Instruction *> instructions;
   };
 

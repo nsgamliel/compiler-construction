@@ -97,14 +97,14 @@ int main(
      * Parse an L2 function.
      */
     std::cout << "liveness only" <<std::endl;
-    p = L2::parse_function_file(argv[optind]);
+    L2::Function f;
+    f = L2::parse_function_file(argv[optind]);
 
   } else if (interference_only){
 
     /*
      * Parse an L2 function.
      */
-    //p = L2::parse_function_file(argv[optind]);
 
   } else {
 
@@ -126,9 +126,8 @@ int main(
    * Liveness test.
    */
   if (liveness_only){
-    // TODO
 
-    // send p to some function to generate in/out sets (gen/kill first)
+    L2::generate_liveness(f);
 
     return 0;
   }

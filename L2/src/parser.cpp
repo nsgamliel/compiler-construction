@@ -872,7 +872,10 @@ namespace L2 {
       i.type = 1;
       i.value = parsed_items.back().value;
       parsed_items.pop_back();
-      i.register_name = parsed_items.back().register_name;
+      if (parsed_items.back().type == 0)
+        i.register_name = parsed_items.back().register_name;
+      else if (parsed_items.back().type == 6)
+        i.register_name = parsed_items.back().value;
       parsed_items.pop_back();
       parsed_items.push_back(i);
     }
@@ -1762,8 +1765,8 @@ namespace L2 {
   Program parse_function_file(char* fileName) {
     pegtl::analyze< function_grammar >();
     file_input< > fileInput(fileName);
-    Program p;
-    parse< function_grammar, action >(fileInput, p);
+    Function f;
+    parse< function_grammar, action >(fileInput, f);
 
     return p;
   }
