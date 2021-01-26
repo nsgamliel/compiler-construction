@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 
 #include <liveness.h>
@@ -36,7 +37,7 @@ namespace L2 {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					if (instr->items[1]->register_name.compare("rsp") != 0)
 						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
-					instr_l->kill = new_set;
+					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				case aop_pp: // src is read and written
 				case aop_mm:
@@ -73,7 +74,7 @@ namespace L2 {
 				case call_local: { // special case
 					std::vector<std::string> instr_items;
 					int i;
-					for (i=0; i<std::max(instr->items[1]->value, 6)) {
+					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6)) {
 						instr_items.push_back(L2::caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
