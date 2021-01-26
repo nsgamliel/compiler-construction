@@ -1745,7 +1745,7 @@ namespace L2 {
     }
   };
 
-  Program parse_file (char *fileName){
+  L2::Program parse_file (char *fileName){
 
     /* 
      * Check the grammar for some possible issues.
@@ -1756,7 +1756,7 @@ namespace L2 {
      * Parse.
      */   
     file_input< > fileInput(fileName);
-    Program p;
+    L2::Program p;
     parse< grammar, action >(fileInput, p);
 
     return p;
@@ -1765,7 +1765,7 @@ namespace L2 {
   L2::Function parse_function_file(char* fileName) {
     pegtl::analyze< function_grammar >();
     file_input< > fileInput(fileName);
-    Function f;
+    L2::Function f;
     parse< function_grammar, action >(fileInput, f);
 
     return f;
