@@ -25,13 +25,13 @@ namespace L2 {
 		std::map<size_t, std::string> items_l;
 	};
 
-	Function_l generate_liveness(Function f);
+	Function_l generate_liveness(L2::Function f);
 
 	// TODO: include function here to output a function_l
 
 	// helper functions
-	Function_l gen_kill(Function& f);
-	Function_l find_successors(Function_l f_l, Function& f);
+	Function_l gen_kill(L2::Function& f);
+	Function_l find_successors(Function_l f_l, L2::Function& f);
 	Function_l in_out(Function_l fl);
 
 
@@ -39,7 +39,7 @@ namespace L2 {
 	// also adds the items to the function's items dictionary
 	// prevents rsp from being added anywhere
 	std::vector<size_t> add_items(Function_l* f_l, std::vector<std::string>& strs);
-	std::vector<size_t> add_items(Function_l* f_l, Item* item);
+	std::vector<size_t> add_items(Function_l* f_l, L2::Item* item);
 
 }
 

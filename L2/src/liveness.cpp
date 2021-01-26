@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 
 #include <liveness.h>
@@ -9,7 +7,7 @@ namespace L2 {
 
 	bool verbose = false;
 
-	Function_l generate_liveness(Function f) {
+	Function_l generate_liveness(L2::Function f) {
 		Function_l f_l;
 
 		f_l = gen_kill(f);
@@ -19,7 +17,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	Function_l gen_kill(Function& f) {
+	Function_l gen_kill(L2::Function& f) {
 		Function_l f_l;
 		for (auto instr : f.instructions) {
 			auto instr_l = new Instruction_l();
@@ -132,7 +130,7 @@ namespace L2 {
 		return new_set;
 	}
 
-	std::vector<size_t> add_items(Function_l* f_l, Item* item) {
+	std::vector<size_t> add_items(Function_l* f_l, L2::Item* item) {
 		std::vector<size_t> new_set;
 		std::string str;
 		if (item->type == 0 || item->type == 1)
