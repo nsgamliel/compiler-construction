@@ -34,8 +34,8 @@ namespace L2 {
 				case sop_lsh:
 				case sop_rsh:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
-					instr_l->gen.insert(instr_l->gen.end(), new_set.begin(), new_set.end());
+					if (instr->items[1]->register_name.compare("rsp") != 0)
+						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
 					instr_l->kill = new_set;
 					break;
 				case aop_pp: // src is read and written
@@ -47,8 +47,8 @@ namespace L2 {
 				case cmp_le:
 				case cmp_eq:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
-					instr_l->gen.insert(instr_l->gen.end(), new_set.begin(), new_set.end());
+					if (instr->items[1]->register_name.compare("rsp") != 0)
+						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
 					instr_l->kill = add_items(&f_l, instr->items[2]);
 					break;
 				case cond_less_jmp: // both srcs read, no write
@@ -56,34 +56,32 @@ namespace L2 {
 				case cond_eq_jmp:
 				case store:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
-					instr_l->gen.insert(instr_l->gen.end(), new_set.begin(), new_set.end());
+					if (instr->items[1]->register_name.compare("rsp") != 0)
+						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
 					break;
 				case at: // base and offset read, dst written
 					instr_l->gen = add_items(&f_l, instr->items[1]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[2]); // TODO this can be simplified
-					instr_l->gen.insert(instr_l->gen.end(), new_set.begin(), new_set.end());
+					if (instr->items[2]->register_name.compare("rsp") != 0)
+						instr_l->gen.push_back(add_items(&f_l, instr->items[2])[0]);
 					instr_l->kill = add_items(&f_l, instr->items[3]);
 					break;
 				case ret: // special case
-					std::vector<std::string> instr_items;  // TODO this can be removed, just input callee save directly
-					instr_items.push_back("rax");
-					for (auto str : L2::callee_save) {
-						instr_items.push_back(str);
-					}
-					instr_l->gen = add_items(&f_l, instr_items);
+					L2::callee_save.push_back("rax");
+					instr_l->gen = add_items(&f_l, L2::callee_save);
+					L2::callee_save.pop_back();
 					break;
-				case call_local: // special case
+				case call_local: { // special case
 					std::vector<std::string> instr_items;
 					int i;
 					for (i=0; i<std::max(instr->items[1]->value, 6)) {
 						instr_items.push_back(L2::caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
-					instr_l->gen.push_back(add_items(&f_l, instr->items[0])[0]);
+					if (instr->items[0]->register_name.compare("rsp") != 0)
+						instr_l->gen.push_back(add_items(&f_l, instr->items[0])[0]);
 					instr_l->kill = add_items(&f_l, L2::caller_save);
-					break;
-				case call_runtime: // special case
+					break; }
+				case call_runtime: { // special case
 					std::vector<std::string> instr_items;
 					int i;
 					for (i=0; i<std::max(instr->items[1]->value, 6)) {
@@ -93,7 +91,7 @@ namespace L2 {
 					instr_l->kill = add_items(&f_l, L2::caller_save);
 					// gen gets only the args dictated by N
 					// kill gets all caller save
-					break;
+					break; }
 				case load_stack: // dst gets written ONLY
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
