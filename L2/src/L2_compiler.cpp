@@ -99,6 +99,7 @@ int main(
     std::cout << "liveness only" <<std::endl;
     L2::Function f;
     f = L2::parse_function_file(argv[optind]);
+    L2::generate_liveness(f);
 
   } else if (interference_only){
 
@@ -127,7 +128,6 @@ int main(
    */
   if (liveness_only){
 
-    L2::generate_liveness(f);
 
     return 0;
   }
