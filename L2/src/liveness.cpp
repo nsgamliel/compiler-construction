@@ -74,7 +74,7 @@ namespace L2 {
 				case call_local: { // special case
 					std::vector<std::string> instr_items;
 					int i;
-					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6)) {
+					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(L2::caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
@@ -85,7 +85,7 @@ namespace L2 {
 				case call_runtime: { // special case
 					std::vector<std::string> instr_items;
 					int i;
-					for (i=0; i<std::max(instr->items[1]->value, 6)) {
+					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(L2::caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
