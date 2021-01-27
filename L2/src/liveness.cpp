@@ -8,16 +8,18 @@
 
 namespace L2 {
 
+	bool printV = true;
+
 	Function_l generate_liveness(L2::Program p) {
 		Function_l f_l;
 
-		if (L2::verbose) std::cout << "entering gen_kill" << std::endl;
+		if (printV) std::cout << "entering gen_kill" << std::endl;
 		f_l = gen_kill(*(p.functions[0]));
-		if (L2::verbose) std::cout << "entering find_successors" << std::endl;
+		if (printV) std::cout << "entering find_successors" << std::endl;
 		f_l = find_successors(f_l, *(p.functions[0]));
-		if (L2::verbose) std::cout << "entering in_out" << std::endl;
+		if (printV) std::cout << "entering in_out" << std::endl;
 		f_l = in_out(f_l);
-		if (L2::verbose) std::cout << "leaving generate_liveness" << std::endl;
+		if (printV) std::cout << "leaving generate_liveness" << std::endl;
 
 		return f_l;
 	}
@@ -101,7 +103,7 @@ namespace L2 {
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				default:
-					if (verbose) std::cout << "instruction not found" << std::endl;
+					if (printV) std::cout << "instruction not found" << std::endl;
 					break;
 			} f_l.instructions.push_back(instr_l);
 		} return f_l;
@@ -139,7 +141,7 @@ namespace L2 {
 					} 
 					f_l.instructions[i]->successors.push_back(i+1); break; }
 				default:
-					if (verbose) std::cout << "no special successors" << std::endl;
+					if (printV) std::cout << "no special successors" << std::endl;
 					break;
 			}
 		}
