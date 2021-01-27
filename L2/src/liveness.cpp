@@ -193,7 +193,8 @@ namespace L2 {
 		do {
 			int i;
 			f_l.isDirty = false;
-			for (int i=f_l.instructions.size()-1; i>=0; i--) {
+			for (i=0; i<f_l.instructions.size(); i++) {
+			//for (i=f_l.instructions.size()-1; i>=0; i--) {
 				if (printV) std::cout << i << "starting out set " << i << std::endl;
 				// OUT[i] = U(IN[s]) where s is all successors of i
 				std::vector<size_t> new_set;
