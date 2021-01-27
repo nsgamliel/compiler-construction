@@ -275,7 +275,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	void generate_inout_output(Function_l f_l, char* fileName) {
+	void generate_inout_output(Function_l f_l) {
 		std::cout << "(\n(in\n";
 		int i;
 		for (auto instr : f_l.instructions) {
@@ -297,7 +297,7 @@ namespace L2 {
 			}
 			std::cout << ")\n";
 		}
-		std::cout << ")\n\n)";
+		std::cout << ")\n\n)\n";
 		return;
 	}
 

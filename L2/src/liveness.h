@@ -29,7 +29,7 @@ namespace L2 {
 
 	Function_l generate_liveness(L2::Program p);
 
-	void generate_inout_output(Function_l f_l, char* fileName);
+	void generate_inout_output(Function_l f_l);
 
 	// helper functions
 	Function_l gen_kill(L2::Function& f);
