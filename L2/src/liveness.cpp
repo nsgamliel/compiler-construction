@@ -344,13 +344,13 @@ namespace L2 {
 		for (auto instr : f_l.instructions) {
 			int i;
 			for (i=0; i<instr->gen.size(); i++) {
-				if (instr->gen[i] == f_l->str_hash("") || instr->gen[i] == f_l->str_hash(" ")) {
+				if (instr->gen[i] == f_l.str_hash("") || instr->gen[i] == f_l.str_hash(" ")) {
 					instr->gen.erase(instr->gen.begin()+i);
 					f_l.items_l.erase(instr->gen[i]);
 				}
 			}
 			for (i=0; i<instr->kill.size(); i++) {
-				if (instr->kill[i] == f_l->str_hash("") || instr->kill[i] == f_l->str_hash(" ")) {
+				if (instr->kill[i] == f_l.str_hash("") || instr->kill[i] == f_l.str_hash(" ")) {
 					instr->kill.erase(instr->kill.begin()+i);
 					f_l.items_l.erase(instr->kill[i]);
 				}
