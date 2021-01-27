@@ -133,7 +133,7 @@ int main(
     if (verbose) std::cout << "generating liveness" <<std::endl;
     f_l = L2::generate_liveness(p);
     if (verbose) std::cout << "generating output file for " << argv[optind] <<std::endl;
-    L2::generate_inout_output(f_l, argv[optind]);
+    L2::generate_inout_output(f_l);
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;
