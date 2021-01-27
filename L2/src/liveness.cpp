@@ -158,11 +158,11 @@ namespace L2 {
 				std::cout << "instruction " << x << std::endl;
 				std::cout << "gen set: " << std::endl;
 				for (auto elem : instr->gen) {
-					std::cout << elem << std::endl;
+					std::cout << f_l.items_l[elem] << std::endl;
 				}
 				std::cout << "kill set: " << std::endl;
 				for (auto elem : instr->kill) {
-					std::cout << elem << std::endl;
+					std::cout << f_l.items_l[elem] << std::endl;
 				}
 				x++;
 			}
