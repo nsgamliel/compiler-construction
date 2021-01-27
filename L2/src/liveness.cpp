@@ -67,9 +67,9 @@ namespace L2 {
 					instr_l->kill = add_items(&f_l, instr->items[3]);
 					break;
 				case ret: // special case
-					L2::callee_save.push_back("rax");
+					f_l.callee_save.push_back("rax");
 					instr_l->gen = add_items(&f_l, f_l.callee_save);
-					L2::callee_save.pop_back();
+					f_l.callee_save.pop_back();
 					break;
 				case call_local: { // special case
 					std::vector<std::string> instr_items;
