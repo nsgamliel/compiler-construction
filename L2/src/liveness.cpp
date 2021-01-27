@@ -120,7 +120,7 @@ namespace L2 {
 				case dir_jmp: {
 					int j;
 					for (j=0; j<f.instructions.size(); j++) {
-						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0].compare(f.instructions[i]->items[0]->value) == 0) {
+						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0]->value.compare(f.instructions[i]->items[0]->value) == 0) {
 							f_l.instructions[i]->successors.push_back(j);
 						}
 					} break; }
@@ -129,7 +129,7 @@ namespace L2 {
 				case cond_eq_jmp: {
 					int j;
 					for (j=0; j<f.instructions.size(); j++) {
-						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0].compare(f.instructions[i]->items[2]->value) == 0) {
+						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0]->value.compare(f.instructions[i]->items[2]->value) == 0) {
 							f_l.instructions[i]->successors.push_back(j);
 						}
 					} 
