@@ -88,7 +88,7 @@ namespace L2 {
 					}
 					instr_l->gen = add_from_vec(&f_l, instr_items);
 					if (printV) std::cout << "set gen" << std::endl;
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[0])
+					std::vector<size_t> new_set = add_items(&f_l, instr->items[0]);
 					if (new_set.size() > 0)
 						instr_l->gen.push_back(new_set[0]);
 					instr_l->kill = add_from_vec(&f_l, f_l.caller_save);
