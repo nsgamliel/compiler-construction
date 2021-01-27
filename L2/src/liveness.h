@@ -34,7 +34,6 @@ namespace L2 {
 	// helper functions
 	Function_l gen_kill(L2::Function& f);
 	Function_l find_successors(Function_l f_l, L2::Function& f);
-	Function_l clean_gen_kill(Function_l f_l);
 	Function_l in_out(Function_l fl);
 
 

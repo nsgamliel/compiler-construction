@@ -179,11 +179,11 @@ namespace L2 {
 				std::cout << "instruction " << x << std::endl;
 				std::cout << "gen set: " << std::endl;
 				for (auto elem : instr->gen) {
-					std::cout << f_l.items_l[elem] << " (" << elem << ") ";
+					std::cout << f_l.items_l[elem] << " ";
 				}
 				std::cout << "\nkill set: " << std::endl;
 				for (auto elem : instr->kill) {
-					std::cout << f_l.items_l[elem] << " (" << elem << ") ";
+					std::cout << f_l.items_l[elem] << " ";
 				}
 				std::cout << "\n";
 				x++;
@@ -272,11 +272,11 @@ namespace L2 {
 				std::cout << "instruction " << x << std::endl;
 				std::cout << "in set: " << std::endl;
 				for (auto elem : instr->in) {
-					std::cout << f_l.items_l[elem] << " (" << elem << ") ";
+					std::cout << f_l.items_l[elem] << " ";
 				}
 				std::cout << "\nout set: " << std::endl;
 				for (auto elem : instr->out) {
-					std::cout << f_l.items_l[elem] << " (" << elem << ") ";
+					std::cout << f_l.items_l[elem] << " ";
 				}
 				std::cout << "\n";
 				x++;
@@ -340,25 +340,6 @@ namespace L2 {
 			f_l->items_l[f_l->str_hash(str)] = str;
 		}
 		return new_set;
-	}
-
-	Function_l clean_gen_kill(Function_l f_l) {
-		for (auto instr : f_l.instructions) {
-			int i;
-			for (i=0; i<instr->gen.size(); i++) {
-				if (instr->gen[i] == f_l.str_hash("") || instr->gen[i] == f_l.str_hash(" ")) {
-					instr->gen.erase(instr->gen.begin()+i);
-					f_l.items_l.erase(instr->gen[i]);
-				}
-			}
-			for (i=0; i<instr->kill.size(); i++) {
-				if (instr->kill[i] == f_l.str_hash("") || instr->kill[i] == f_l.str_hash(" ")) {
-					instr->kill.erase(instr->kill.begin()+i);
-					f_l.items_l.erase(instr->kill[i]);
-				}
-			}
-		}
-		return f_l;
 	}
 
 }
