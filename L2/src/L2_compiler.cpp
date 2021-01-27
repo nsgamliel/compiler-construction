@@ -127,7 +127,7 @@ int main(
    */
   if (liveness_only){
 
-    Function_l f_l;
+    L2::Function_l f_l;
     f_l = L2::generate_liveness(p);
 
     return 0;
