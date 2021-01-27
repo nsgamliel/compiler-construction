@@ -224,7 +224,7 @@ namespace L2 {
 						}
 					}	
 				} else {
-					if (printV) std::cout << i << "old and new not the same length" << std::endl;
+					if (printV) std::cout << i << "old (" << f_l.instructions[i]->out.size() << ") and new (" << new_set.size() << ") not the same length" << std::endl;
 					for (size_t elem : new_set)
 						f_l.instructions[i]->out.push_back(elem);
 					f_l.isDirty = true;
@@ -260,7 +260,7 @@ namespace L2 {
 						}
 					}	
 				} else {
-					if (printV) std::cout << i << "old and new not the same length" << std::endl;
+					if (printV) std::cout << i << "old (" << f_l.instructions[i]->in.size() << ") and new (" << new_set.size() << ") not the same length" << std::endl;
 					for (size_t elem : new_set)
 						f_l.instructions[i]->in.push_back(elem);
 					f_l.isDirty = true;
