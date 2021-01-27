@@ -18,6 +18,8 @@ namespace L2 {
 		f_l = gen_kill(*(p.functions[0]));
 		if (printV) std::cout << "entering find_successors" << std::endl;
 		f_l = find_successors(f_l, *(p.functions[0]));
+		if (printV) std::cout << "cleaning gen and kill sets" << std::endl;
+		f_l = clean_gen_kill(f_l);
 		if (printV) std::cout << "entering in_out" << std::endl;
 		f_l = in_out(f_l);
 		if (printV) std::cout << "leaving generate_liveness" << std::endl;
@@ -336,6 +338,25 @@ namespace L2 {
 			f_l->items_l[f_l->str_hash(str)] = str;
 		}
 		return new_set;
+	}
+
+	Function_l clean_gen_kill(Function_l f_l) {
+		for (auto instr : f_l.instructions) {
+			int i;
+			for (i=0; i<instr->gen.size(); i++) {
+				if (instr->gen[i] == f_l->str_hash("") || instr->gen[i] == f_l->str_hash(" ")) {
+					instr->gen.erase(instr->gen.begin()+i);
+					f_l.items_l.erase(instr->gen[i]);
+				}
+			}
+			for (i=0; i<instr->kill.size(); i++) {
+				if (instr->kill[i] == f_l->str_hash("") || instr->kill[i] == f_l->str_hash(" ")) {
+					instr->kill.erase(instr->kill.begin()+i);
+					f_l.items_l.erase(instr->kill[i]);
+				}
+			}
+		}
+		return f_l;
 	}
 
 }
