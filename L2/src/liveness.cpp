@@ -9,7 +9,7 @@ namespace L2 {
 
 	// if (printV) std::cout << "" << std::endl;
 
-	bool printV = false;
+	bool printV = true;
 
 	Function_l generate_liveness(L2::Program p) {
 		Function_l f_l;
@@ -262,7 +262,7 @@ namespace L2 {
 				}
 				std::cout << "\nout set: " << std::endl;
 				for (auto elem : instr->out) {
-					std::cout << f_l.items_l[elem] << std::endl;
+					std::cout << f_l.items_l[elem] << " ";
 				}
 				std::cout << "\n";
 				x++;
