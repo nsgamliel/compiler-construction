@@ -150,6 +150,25 @@ namespace L2 {
 	}
 
 	Function_l in_out(Function_l f_l) {
+
+
+		if (verbose) {
+			int x=0;
+			for (auto instr: f_l.instructions) {
+				std::cout << "instruction " << x << std::endl;
+				std::cout << "gen set: " << std::endl;
+				for (auto elem : instr->gen) {
+					std::cout << elem << std::endl;
+				}
+				std::cout << "kill set: " << std::endl;
+				for (auto elem : instr->kill) {
+					std::cout << elem << std::endl;
+				}
+				x++;
+			}
+		}
+
+
 		do {
 			int i;
 			f_l.isDirty = false;
