@@ -38,7 +38,6 @@ namespace L2 {
 					if (printV) std::cout << "move/load" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					if (instr_l->gen.size() > 0)
-						std::cout << "!! gen set is " << instr_l->gen[0] << std::endl;
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				case aop_pe: // src is read, dst is read and written
