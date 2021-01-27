@@ -153,6 +153,7 @@ namespace L2 {
 			int i;
 			f_l.isDirty = false;
 			for (int i=f_l.instructions.size()-1; i>=0; i--) {
+				if (printV) std::cout << "starting out set " << i << std::endl;
 				// OUT[i] = U(IN[s]) where s is all successors of i
 				std::vector<size_t> new_set;
 				for (int succ : f_l.instructions[i]->successors) {
@@ -172,6 +173,7 @@ namespace L2 {
 					f_l.isDirty = true;
 				}
 				
+				if (printV) std::cout << "starting in set " << i << std::endl;
 				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
 				new_set = {};
 				for (size_t elem : f_l.instructions[i]->gen)
