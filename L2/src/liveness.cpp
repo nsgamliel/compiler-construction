@@ -8,11 +8,11 @@ namespace L2 {
 
 	bool verbose = false;
 
-	Function_l generate_liveness(L2::Function f) {
+	Function_l generate_liveness(L2::Program p) {
 		Function_l f_l;
 
-		f_l = gen_kill(f);
-		f_l = find_successors(f_l, f);
+		f_l = gen_kill(p.functions[0]);
+		f_l = find_successors(f_l, p.functions[0]);
 		f_l = in_out(f_l);
 
 		return f_l;

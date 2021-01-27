@@ -90,7 +90,7 @@ int main(
     /* 
      * Parse an L2 function and the spill arguments.
      */
-    p = L2::parse_spill_file(argv[optind]);
+    //p = L2::parse_spill_file(argv[optind]);
  
   } else if (liveness_only){
 
@@ -127,7 +127,8 @@ int main(
    */
   if (liveness_only){
 
-    L2::generate_liveness(p);
+    Function_l f_l;
+    f_l = L2::generate_liveness(p);
 
     return 0;
   }

@@ -27,7 +27,7 @@ namespace L2 {
 		std::map<size_t, std::string> items_l;
 	};
 
-	Function_l generate_liveness(L2::Function f);
+	Function_l generate_liveness(L2::Program p);
 
 	// TODO: include function here to output a function_l
 
