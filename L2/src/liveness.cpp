@@ -250,12 +250,13 @@ namespace L2 {
 				std::cout << "instruction " << x << std::endl;
 				std::cout << "in set: " << std::endl;
 				for (auto elem : instr->in) {
-					std::cout << f_l.items_l[elem] << std::endl;
+					std::cout << f_l.items_l[elem] << " ";
 				}
-				std::cout << "out set: " << std::endl;
+				std::cout << "\nout set: " << std::endl;
 				for (auto elem : instr->out) {
 					std::cout << f_l.items_l[elem] << std::endl;
 				}
+				std::cout << "\n";
 				x++;
 			}
 		}
