@@ -143,8 +143,11 @@ namespace L2 {
 				case ret:
 					f_l.instructions[i]->successors.push_back(-1); break;
 				case call_runtime:
-					if (f.instructions[i]->items[0]->value.compare("tensor-error") == 0)
+					if (f.instructions[i]->items[0]->value.compare("tensor-error") == 0) {
 						f_l.instructions[i]->successors.push_back(-1); 
+					} else {
+						f_l.instructions[i]->successors.push_back(i+1);
+					}
 					break;
 				case dir_jmp: {
 					int j;
