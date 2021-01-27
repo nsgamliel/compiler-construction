@@ -39,7 +39,7 @@ namespace L2 {
 	// add items to the vector corresponding to the location argument
 	// also adds the items to the function's items dictionary
 	// prevents rsp from being added anywhere
-	std::vector<size_t> add_items(Function_l* f_l, std::vector<std::string>& strs);
+	std::vector<size_t> add_from_vec(Function_l* f_l, std::vector<std::string>& strs);
 	std::vector<size_t> add_items(Function_l* f_l, L2::Item* item);
 
 }

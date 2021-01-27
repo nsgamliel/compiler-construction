@@ -68,7 +68,7 @@ namespace L2 {
 					break;
 				case ret: // special case
 					f_l.callee_save.push_back("rax");
-					instr_l->gen = add_items(&f_l, f_l.callee_save);
+					instr_l->gen = add_from_vec(&f_l, f_l.callee_save);
 					f_l.callee_save.pop_back();
 					break;
 				case call_local: { // special case
@@ -77,10 +77,10 @@ namespace L2 {
 					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(f_l.caller_save[i]);
 					}
-					instr_l->gen = add_items(&f_l, instr_items);
+					instr_l->gen = add_from_vec(&f_l, instr_items);
 					if (instr->items[0]->register_name.compare("rsp") != 0)
 						instr_l->gen.push_back(add_items(&f_l, instr->items[0])[0]);
-					instr_l->kill = add_items(&f_l, f_l.caller_save);
+					instr_l->kill = add_from_vec(&f_l, f_l.caller_save);
 					break; }
 				case call_runtime: { // special case
 					std::vector<std::string> instr_items;
@@ -88,8 +88,8 @@ namespace L2 {
 					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(f_l.caller_save[i]);
 					}
-					instr_l->gen = add_items(&f_l, instr_items);
-					instr_l->kill = add_items(&f_l, f_l.caller_save);
+					instr_l->gen = add_from_vec(&f_l, instr_items);
+					instr_l->kill = add_from_vec(&f_l, f_l.caller_save);
 					// gen gets only the args dictated by N
 					// kill gets all caller save
 					break; }
@@ -120,7 +120,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	std::vector<size_t> add_items(Function_l* f_l, const std::vector<std::string>& strs) {
+	std::vector<size_t> add_from_vec(Function_l* f_l, const std::vector<std::string>& strs) {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
 			if (str.compare("rsp") != 0) {
