@@ -37,7 +37,6 @@ int main(
   auto spill_only = false;
   auto interference_only = false;
   auto liveness_only = false;
-  auto verbose = false;
   int32_t optLevel = 3;
 
   /* 
@@ -73,7 +72,7 @@ int main(
         break ;
 
       case 'v':
-        verbose = true;
+        L2::verbose = true;
         break ;
 
       default:
@@ -98,9 +97,9 @@ int main(
     /*
      * Parse an L2 function.
      */
-    if (verbose) std::cout << "parsing for liveness only" <<std::endl;
+    if (L2::verbose) std::cout << "parsing for liveness only" <<std::endl;
     p = L2::parse_function_file(argv[optind]);
-    if (verbose) std::cout << "done parsing" <<std::endl;
+    if (L2::verbose) std::cout << "done parsing" <<std::endl;
 
   } else if (interference_only){
 
@@ -130,11 +129,11 @@ int main(
   if (liveness_only){
 
     L2::Function_l f_l;
-    if (verbose) std::cout << "generating liveness" <<std::endl;
+    if (L2::verbose) std::cout << "generating liveness" <<std::endl;
     f_l = L2::generate_liveness(p);
-    if (verbose) std::cout << "generating output file" <<std::endl;
+    if (L2::verbose) std::cout << "generating output file" <<std::endl;
     L2::generate_inout_output(f_l, argv[optind]);
-    if (verbose) std::cout << "done" <<std::endl;
+    if (L2::verbose) std::cout << "done" <<std::endl;
 
     return 0;
   }
