@@ -8,6 +8,8 @@
 
 namespace L2 {
 
+	// if (printV) std::cout << "" << std::endl;
+
 	bool printV = true;
 
 	Function_l generate_liveness(L2::Program p) {
@@ -155,11 +157,14 @@ namespace L2 {
 				if (printV) std::cout << "starting out set " << i << std::endl;
 				// OUT[i] = U(IN[s]) where s is all successors of i
 				std::vector<size_t> new_set;
+				if (printV) std::cout << "examining successors" << std::endl;
 				for (int succ : f_l.instructions[i]->successors) {
+					if (printV) std::cout << "successor " << succ << std::endl;
 					for (size_t elem : f_l.instructions[succ]->in)
 						new_set.push_back(elem);
 				}
 
+				if (printV) std::cout << "checking for dirty" << std::endl;
 				if (new_set.size() == f_l.instructions[i]->out.size()) { // make sure the for loop won't miss anything
 					for (size_t elem : f_l.instructions[i]->out) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
