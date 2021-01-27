@@ -194,70 +194,70 @@ namespace L2 {
 			int i;
 			f_l.isDirty = false;
 			for (int i=f_l.instructions.size()-1; i>=0; i--) {
-				if (printV) std::cout << "starting out set " << i << std::endl;
+				if (printV) std::cout << i << "starting out set " << i << std::endl;
 				// OUT[i] = U(IN[s]) where s is all successors of i
 				std::vector<size_t> new_set;
-				if (printV) std::cout << "examining successors" << std::endl;
+				if (printV) std::cout << i << "examining successors" << std::endl;
 				for (int succ : f_l.instructions[i]->successors) {
-					if (printV) std::cout << "successor " << succ << std::endl;
+					if (printV) std::cout << i << "successor " << succ << std::endl;
 					if (succ >= 0) {
-						if (printV) std::cout << "entering successor " << succ << " in (" << f_l.instructions[succ]->in.size() << " elements)" << std::endl;
+						if (printV) std::cout << i << "entering successor " << succ << " in (" << f_l.instructions[succ]->in.size() << " elements)" << std::endl;
 						for (size_t elem : f_l.instructions[succ]->in) {
-							if (printV) std::cout << "adding " << f_l.items_l[elem] << " from successor in" << std::endl;
+							if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from successor in" << std::endl;
 							new_set.push_back(elem);	
 						}
-					} if (printV) std::cout << "finished successor " << succ << std::endl;
+					} if (printV) std::cout << i << "finished successor " << succ << std::endl;
 				}
 
-				if (printV) std::cout << "checking for dirty" << std::endl;
+				if (printV) std::cout << i << "checking for dirty" << std::endl;
 				if (new_set.size() == f_l.instructions[i]->out.size()) { // make sure the for loop won't miss anything
 					for (size_t elem : f_l.instructions[i]->out) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
-							if (printV) std::cout << "found mismatch: " << f_l.items_l[elem] << std::endl;
+							if (printV) std::cout << i << "found mismatch: " << f_l.items_l[elem] << std::endl;
 							for (size_t elem : new_set)
 								f_l.instructions[i]->out.push_back(elem);
 							f_l.isDirty = true;
 						}
 					}	
 				} else {
-					if (printV) std::cout << "old and new not the same length" << std::endl;
+					if (printV) std::cout << i << "old and new not the same length" << std::endl;
 					for (size_t elem : new_set)
 						f_l.instructions[i]->out.push_back(elem);
 					f_l.isDirty = true;
 				}
-				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
+				if (printV) std::cout << i << "dirty is " << f_l.isDirty << std::endl;
 				
-				if (printV) std::cout << "starting in set " << i << std::endl;
+				if (printV) std::cout << i << "starting in set " << i << std::endl;
 				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
 				new_set = {};
 				for (size_t elem : f_l.instructions[i]->gen) {
-					if (printV) std::cout << "adding " << f_l.items_l[elem] << " from gen" << std::endl;
+					if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from gen" << std::endl;
 					new_set.push_back(elem); 
 				}
 				for (size_t elem : f_l.instructions[i]->out) {
 					if (std::find(f_l.instructions[i]->kill.begin(), f_l.instructions[i]->kill.end(), elem) == f_l.instructions[i]->kill.end()) {
-						if (printV) std::cout << "adding " << f_l.items_l[elem] << " from out" << std::endl;
+						if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from out" << std::endl;
 						new_set.push_back(elem);
 					}
 				}
 
-				if (printV) std::cout << "checking for dirty" << std::endl;
+				if (printV) std::cout << i << "checking for dirty" << std::endl;
 				if (new_set.size() == f_l.instructions[i]->in.size()) { // make sure the for loop won't miss anything
 					for (size_t elem : f_l.instructions[i]->in) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
-							if (printV) std::cout << "found mismatch: " << f_l.items_l[elem] << std::endl;
+							if (printV) std::cout << i << "found mismatch: " << f_l.items_l[elem] << std::endl;
 							for (size_t elem : new_set)
 								f_l.instructions[i]->in.push_back(elem);
 							f_l.isDirty = true;
 						}
 					}	
 				} else {
-					if (printV) std::cout << "old and new not the same length" << std::endl;
+					if (printV) std::cout << i << "old and new not the same length" << std::endl;
 					for (size_t elem : new_set)
 						f_l.instructions[i]->in.push_back(elem);
 					f_l.isDirty = true;
 				}
-				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
+				if (printV) std::cout << i << "dirty is " << f_l.isDirty << std::endl;
 			}
 			//std::cin.get();
 		} while (f_l.isDirty);
