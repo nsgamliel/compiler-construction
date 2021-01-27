@@ -195,8 +195,8 @@ namespace L2 {
 
 	void generate_inout_output(Function_l f_l, char* fileName) {
 		std::ofstream outputFile;
-		std::string file(fileName);
-		outputFile.open(file + ".out");
+		//std::string file(fileName);
+		outputFile.open("inout.out");
 		outputFile << "lior is dumb\n" << std::endl;
 		outputFile.close();
 		return;
