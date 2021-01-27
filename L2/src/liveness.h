@@ -8,10 +8,6 @@
 
 namespace L2 {
 
-	std::hash<std::string> str_hash;
-	std::vector<std::string> callee_save = {"r12", "r13", "r14", "r15", "rbp", "rbx"};
-	std::vector<std::string> caller_save = {"rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10", "r11", "rax"};
-
 	struct Instruction_l {
 		std::vector<size_t> gen;
 		std::vector<size_t> kill;
@@ -23,6 +19,9 @@ namespace L2 {
 
 	struct Function_l {
 		bool isDirty;
+		std::hash<std::string> str_hash;
+		std::vector<std::string> callee_save = {"r12", "r13", "r14", "r15", "rbp", "rbx"};
+		std::vector<std::string> caller_save = {"rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10", "r11", "rax"};
 		std::vector<Instruction_l*> instructions;
 		std::map<size_t, std::string> items_l;
 	};

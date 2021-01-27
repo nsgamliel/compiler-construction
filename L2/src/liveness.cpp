@@ -68,28 +68,28 @@ namespace L2 {
 					break;
 				case ret: // special case
 					L2::callee_save.push_back("rax");
-					instr_l->gen = add_items(&f_l, L2::callee_save);
+					instr_l->gen = add_items(&f_l, f_l.callee_save);
 					L2::callee_save.pop_back();
 					break;
 				case call_local: { // special case
 					std::vector<std::string> instr_items;
 					int i;
 					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
-						instr_items.push_back(L2::caller_save[i]);
+						instr_items.push_back(f_l.caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
 					if (instr->items[0]->register_name.compare("rsp") != 0)
 						instr_l->gen.push_back(add_items(&f_l, instr->items[0])[0]);
-					instr_l->kill = add_items(&f_l, L2::caller_save);
+					instr_l->kill = add_items(&f_l, f_l.caller_save);
 					break; }
 				case call_runtime: { // special case
 					std::vector<std::string> instr_items;
 					int i;
 					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
-						instr_items.push_back(L2::caller_save[i]);
+						instr_items.push_back(f_l.caller_save[i]);
 					}
 					instr_l->gen = add_items(&f_l, instr_items);
-					instr_l->kill = add_items(&f_l, L2::caller_save);
+					instr_l->kill = add_items(&f_l, f_l.caller_save);
 					// gen gets only the args dictated by N
 					// kill gets all caller save
 					break; }
@@ -124,8 +124,8 @@ namespace L2 {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
 			if (str.compare("rsp") != 0) {
-				new_set.push_back(str_hash(str));
-				f_l->items_l[str_hash(str)] = str;
+				new_set.push_back(f_l->str_hash(str));
+				f_l->items_l[f_l->str_hash(str)] = str;
 			}
 		}
 		return new_set;
@@ -139,8 +139,8 @@ namespace L2 {
 		else if (item->type == 6)
 			str = item->value;
 		if (str.compare("rsp") != 0) {
-			new_set.push_back(str_hash(str));
-			f_l->items_l[str_hash(str)] = str;
+			new_set.push_back(f_l->str_hash(str));
+			f_l->items_l[f_l->str_hash(str)] = str;
 		}
 		return new_set;
 	}
