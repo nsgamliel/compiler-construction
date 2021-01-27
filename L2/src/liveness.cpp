@@ -141,8 +141,7 @@ namespace L2 {
 					} 
 					f_l.instructions[i]->successors.push_back(i+1); break; }
 				default:
-					if (printV) std::cout << "no special successors" << std::endl;
-					break;
+					f_l.instructions[i]->successors.push_back(i+1); break;
 			}
 		}
 		return f_l;
