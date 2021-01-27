@@ -33,6 +33,7 @@ namespace L2 {
 			switch (instr->op) {
 				case mov: // src is read, dst is written
 				case load:
+					if (printV) std::cout << "move/load" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
@@ -42,6 +43,7 @@ namespace L2 {
 				case aop_ae:
 				case sop_lsh:
 				case sop_rsh: {
+					if (printV) std::cout << "aop sop" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_item.size() > 0)
@@ -50,12 +52,14 @@ namespace L2 {
 					break; }
 				case aop_pp: // src is read and written
 				case aop_mm:
+					if (printV) std::cout << "mm pp" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					instr_l->kill = add_items(&f_l, instr->items[0]);
 					break;
 				case cmp_less: // both srcs are read, dst is written
 				case cmp_le:
 				case cmp_eq: {
+					if (printV) std::cout << "cmp" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_item.size() > 0)
@@ -66,12 +70,14 @@ namespace L2 {
 				case cond_le_jmp:
 				case cond_eq_jmp:
 				case store: {
+					if (printV) std::cout << "condjump store" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					break; }
 				case at: { // base and offset read, dst written
+					if (printV) std::cout << "at" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[1]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[2]);
 					if (new_item.size() > 0)
@@ -79,6 +85,7 @@ namespace L2 {
 					instr_l->kill = add_items(&f_l, instr->items[3]);
 					break; }
 				case ret: // special case
+					if (printV) std::cout << "ret" << std::endl;
 					f_l.callee_save.push_back("rax");
 					instr_l->gen = add_from_vec(&f_l, f_l.callee_save);
 					f_l.callee_save.pop_back();
@@ -99,6 +106,7 @@ namespace L2 {
 					if (printV) std::cout << "set kill" << std::endl;
 					break; }
 				case call_runtime: { // special case
+					if (printV) std::cout << "call runtime" << std::endl;
 					std::vector<std::string> instr_items;
 					int i;
 					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
@@ -110,6 +118,7 @@ namespace L2 {
 					// kill gets all caller save
 					break; }
 				case load_stack: // dst gets written ONLY
+					if (printV) std::cout << "load stack" << std::endl;
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				default:
