@@ -1762,13 +1762,13 @@ namespace L2 {
     return p;
   }
 
-  L2::Function parse_function_file(char* fileName) {
+  L2::Program parse_function_file(char* fileName) {
     pegtl::analyze< function_grammar >();
     file_input< > fileInput(fileName);
-    L2::Function f;
-    parse< function_grammar, action >(fileInput, f);
+    L2::Program p;
+    parse< function_grammar, action >(fileInput, p);
 
-    return f;
+    return p;
   }
 
 }

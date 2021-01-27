@@ -90,7 +90,7 @@ int main(
     /* 
      * Parse an L2 function and the spill arguments.
      */
-    //p = L2::parse_spill_file(argv[optind]);
+    p = L2::parse_spill_file(argv[optind]);
  
   } else if (liveness_only){
 
@@ -98,16 +98,14 @@ int main(
      * Parse an L2 function.
      */
     std::cout << "liveness only" <<std::endl;
-    L2::Function f;
-    f = L2::parse_function_file(argv[optind]);
-    L2::generate_liveness(f);
+    p = L2::parse_function_file(argv[optind]);
 
   } else if (interference_only){
 
     /*
      * Parse an L2 function.
      */
-
+    p = L2::parse_function_file(argv[optind]);
   } else {
 
     /* 
@@ -129,6 +127,7 @@ int main(
    */
   if (liveness_only){
 
+    L2::generate_liveness(p);
 
     return 0;
   }
