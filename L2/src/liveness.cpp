@@ -201,6 +201,7 @@ namespace L2 {
 					f_l.isDirty = true;
 				}
 			}
+			system("pause");
 		} while (f_l.isDirty);
 		return f_l;
 	}
