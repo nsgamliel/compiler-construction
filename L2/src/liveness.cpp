@@ -166,12 +166,13 @@ namespace L2 {
 				std::cout << "instruction " << x << std::endl;
 				std::cout << "gen set: " << std::endl;
 				for (auto elem : instr->gen) {
-					std::cout << f_l.items_l[elem] << std::endl;
+					std::cout << f_l.items_l[elem] << " ";
 				}
-				std::cout << "kill set: " << std::endl;
+				std::cout << "\nkill set: " << std::endl;
 				for (auto elem : instr->kill) {
-					std::cout << f_l.items_l[elem] << std::endl;
+					std::cout << f_l.items_l[elem] << " ";
 				}
+				std::cout << "\n";
 				x++;
 			}
 		}
@@ -291,7 +292,7 @@ namespace L2 {
 		for (auto instr : f_l.instructions) {
 			std::cout << "(";
 			for (i=0; i<instr->out.size(); i++) {
-				std::cout << f_l.items_l[instr->in[i]];
+				std::cout << f_l.items_l[instr->out[i]];
 				if (i != instr->out.size()-1)
 					std::cout << " ";
 			}
