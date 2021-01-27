@@ -203,8 +203,11 @@ namespace L2 {
 					if (succ >= 0) {
 						if (printV) std::cout << i << "entering successor " << succ << " in (" << f_l.instructions[succ]->in.size() << " elements)" << std::endl;
 						for (size_t elem : f_l.instructions[succ]->in) {
-							if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from successor in" << std::endl;
-							new_set.push_back(elem);	
+							if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // elem not already in new_set
+								if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from successor in" << std::endl;
+								new_set.push_back(elem);
+							}
+								
 						}
 					} if (printV) std::cout << i << "finished successor " << succ << std::endl;
 				}
@@ -231,13 +234,17 @@ namespace L2 {
 				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
 				new_set = {};
 				for (size_t elem : f_l.instructions[i]->gen) {
-					if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from gen" << std::endl;
-					new_set.push_back(elem); 
+					if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) {
+						if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from gen" << std::endl;
+						new_set.push_back(elem); 
+					}
 				}
 				for (size_t elem : f_l.instructions[i]->out) {
 					if (std::find(f_l.instructions[i]->kill.begin(), f_l.instructions[i]->kill.end(), elem) == f_l.instructions[i]->kill.end()) {
-						if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from out" << std::endl;
-						new_set.push_back(elem);
+						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) {
+							if (printV) std::cout << i << "adding " << f_l.items_l[elem] << " from out" << std::endl;
+							new_set.push_back(elem);
+						}
 					}
 				}
 
