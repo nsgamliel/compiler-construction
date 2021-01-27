@@ -109,7 +109,7 @@ namespace L2 {
 					if (printV) std::cout << "call runtime" << std::endl;
 					std::vector<std::string> instr_items;
 					int i;
-					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
+					for (i=0; i<std::min(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(f_l.caller_save[i]);
 					}
 					instr_l->gen = add_from_vec(&f_l, instr_items);
@@ -315,6 +315,7 @@ namespace L2 {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
 			if (str.compare("rsp") != 0 && str.compare("") != 0) {
+				if (printV) std::cout << "adding to add_from_vec: " << str << " (" << << str_hash(str) << ")" << std::endl;
 				new_set.push_back(f_l->str_hash(str));
 				f_l->items_l[f_l->str_hash(str)] = str;
 			}
@@ -330,6 +331,7 @@ namespace L2 {
 		else if (item->type == 6)
 			str = item->value;
 		if (str.compare("rsp") != 0 && str.compare("") != 0) {
+			if (printV) std::cout << "adding to add_items: " << str << " (" << << str_hash(str) << ")" << std::endl;
 			new_set.push_back(f_l->str_hash(str));
 			f_l->items_l[f_l->str_hash(str)] = str;
 		}
