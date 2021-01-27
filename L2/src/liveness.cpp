@@ -87,7 +87,7 @@ namespace L2 {
 					if (printV) std::cout << "found call local" << std::endl;
 					std::vector<std::string> instr_items;
 					int i;
-					for (i=0; i<std::max(std::stoi(instr->items[1]->value), 6); i++) {
+					for (i=0; i<std::min(std::stoi(instr->items[1]->value), 6); i++) {
 						instr_items.push_back(f_l.caller_save[i]);
 					}
 					instr_l->gen = add_from_vec(&f_l, instr_items);
