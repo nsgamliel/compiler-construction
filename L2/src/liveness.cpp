@@ -104,14 +104,41 @@ namespace L2 {
 	}
 
 	Function_l find_successors(Function_l f_l, Function& f) {
-		// goto (1, not immediate successor), return/call tensor-error (0), cjump (2, next, label)
-		/*int i;
+		if (f.instructions.size() != f_l.instructions.size()) {
+			std::cerr << "instruction sizes do not match" << std::endl; 
+			exit(1);
+		}
+		int i;
 		for (i=0; i<f.instructions.size(); i++) {
 			switch (f.instructions[i]->op) {
 				case ret:
-					f_l.
+					f_l.instructions[i]->successors.push_back(-1); break;
+				case call_runtime:
+					if (f.instructions[i]->items[0]->value.compare("tensor-error") == 0)
+						f_l.instructions[i]->successors.push_back(-1); 
+					break;
+				case dir_jmp: {
+					int j;
+					for (j=0; j<f.instructions.size(); j++) {
+						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0].compare(f.instructions[i]->items[0]->value) == 0) {
+							f_l.instructions[i]->successors.push_back(j);
+						}
+					} break; }
+				case cond_less_jmp:
+				case cond_le_jmp:
+				case cond_eq_jmp: {
+					int j;
+					for (j=0; j<f.instructions.size(); j++) {
+						if (f.instructions[j]->op == label_def && f.instructions[j]->items[0].compare(f.instructions[i]->items[2]->value) == 0) {
+							f_l.instructions[i]->successors.push_back(j);
+						}
+					} 
+					f_l.instructions[i]->successors.push_back(i+1); break; }
+				default:
+					if (verbose) std::cout << "no special successors" << std::endl;
+					break;
 			}
-		}*/
+		}
 		return f_l;
 	}
 
