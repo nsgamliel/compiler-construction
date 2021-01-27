@@ -129,6 +129,7 @@ int main(
 
     L2::Function_l f_l;
     f_l = L2::generate_liveness(p);
+    L2::generate_inout_output(f_l, argv[optind]);
 
     return 0;
   }

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -144,11 +145,6 @@ namespace L2 {
 	}
 
 	Function_l in_out(Function_l f_l) {
-		/* general plan
-		create a new vector for both out and in each time
-		compare it to the current version at the end of the loop
-		if there is a difference, push the new version and flag the dirty bit
-		*/
 		do {
 			int i;
 			f_l.isDirty = false;
@@ -195,6 +191,15 @@ namespace L2 {
 			}
 		} while (f_l.isDirty);
 		return f_l;
+	}
+
+	void generate_inout_output(Fucntion_l f_l, char* fileName) {
+		std::ofstream outputFile;
+		std::string file(fileName);
+		outputFile.open(file + ".out");
+		outputFile << "lior is dumb\n" << std::endl;
+		outputFile.close();
+		return;
 	}
 
 	std::vector<size_t> add_from_vec(Function_l* f_l, std::vector<std::string>& strs) {
