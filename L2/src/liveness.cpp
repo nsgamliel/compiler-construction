@@ -193,13 +193,15 @@ namespace L2 {
 					for (size_t elem : f_l.instructions[i]->out) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
 							if (printV) std::cout << "found mismatch: " << f_l.items_l[elem] << std::endl;
-							f_l.instructions[i]->out = new_set;
+							for (size_t elem : new_set)
+								f_l.instructions[i]->out.push_back(elem);
 							f_l.isDirty = true;
 						}
 					}	
 				} else {
 					if (printV) std::cout << "old and new not the same length" << std::endl;
-					f_l.instructions[i]->out = new_set;
+					for (size_t elem : new_set)
+						f_l.instructions[i]->out.push_back(elem);
 					f_l.isDirty = true;
 				}
 				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
@@ -219,17 +221,19 @@ namespace L2 {
 				}
 
 				if (printV) std::cout << "checking for dirty" << std::endl;
-				if (new_set.size() == f_l.instructions[i]->out.size()) { // make sure the for loop won't miss anything
-					for (size_t elem : f_l.instructions[i]->out) {
+				if (new_set.size() == f_l.instructions[i]->in.size()) { // make sure the for loop won't miss anything
+					for (size_t elem : f_l.instructions[i]->in) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
 							if (printV) std::cout << "found mismatch: " << f_l.items_l[elem] << std::endl;
-							f_l.instructions[i]->out = new_set;
+							for (size_t elem : new_set)
+								f_l.instructions[i]->in.push_back(elem);
 							f_l.isDirty = true;
 						}
 					}	
 				} else {
 					if (printV) std::cout << "old and new not the same length" << std::endl;
-					f_l.instructions[i]->out = new_set;
+					for (size_t elem : new_set)
+						f_l.instructions[i]->in.push_back(elem);
 					f_l.isDirty = true;
 				}
 				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
