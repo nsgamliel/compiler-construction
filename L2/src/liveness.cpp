@@ -41,13 +41,13 @@ namespace L2 {
 				case aop_te:
 				case aop_ae:
 				case sop_lsh:
-				case sop_rsh:
+				case sop_rsh: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_set.size() > 0)
-						instr_l->gen.push_back(new_set[0]);
+						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[1]);
-					break;
+					break; }
 				case aop_pp: // src is read and written
 				case aop_mm:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
@@ -55,29 +55,29 @@ namespace L2 {
 					break;
 				case cmp_less: // both srcs are read, dst is written
 				case cmp_le:
-				case cmp_eq:
+				case cmp_eq: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_set.size() > 0)
-						instr_l->gen.push_back(new_set[0]);
+						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[2]);
-					break;
+					break; }
 				case cond_less_jmp: // both srcs read, no write
 				case cond_le_jmp:
 				case cond_eq_jmp:
-				case store:
+				case store: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
 					if (new_set.size() > 0)
-						instr_l->gen.push_back(new_set[0]);
-					break;
-				case at: // base and offset read, dst written
+						instr_l->gen.push_back(new_item[0]);
+					break; }
+				case at: { // base and offset read, dst written
 					instr_l->gen = add_items(&f_l, instr->items[1]);
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[2]);
+					std::vector<size_t> new_item = add_items(&f_l, instr->items[2]);
 					if (new_set.size() > 0)
-						instr_l->gen.push_back(new_set[0]);
+						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[3]);
-					break;
+					break; }
 				case ret: // special case
 					f_l.callee_save.push_back("rax");
 					instr_l->gen = add_from_vec(&f_l, f_l.callee_save);
@@ -92,9 +92,9 @@ namespace L2 {
 					}
 					instr_l->gen = add_from_vec(&f_l, instr_items);
 					if (printV) std::cout << "set gen" << std::endl;
-					std::vector<size_t> new_set = add_items(&f_l, instr->items[0]);
+					std::vector<size_t> new_item = add_items(&f_l, instr->items[0]);
 					if (new_set.size() > 0)
-						instr_l->gen.push_back(new_set[0]);
+						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_from_vec(&f_l, f_l.caller_save);
 					if (printV) std::cout << "set kill" << std::endl;
 					break; }
