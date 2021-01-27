@@ -178,7 +178,7 @@ namespace L2 {
 					f_l.instructions[i]->out = new_set;
 					f_l.isDirty = true;
 				}
-				if (printV) std::cout << "dirty is " << isDirty << std::endl;
+				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
 				
 				if (printV) std::cout << "starting in set " << i << std::endl;
 				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
@@ -202,7 +202,7 @@ namespace L2 {
 					f_l.instructions[i]->out = new_set;
 					f_l.isDirty = true;
 				}
-				if (printV) std::cout << "dirty is " << isDirty << std::endl;
+				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
 			}
 			std::cin.get();
 		} while (f_l.isDirty);
