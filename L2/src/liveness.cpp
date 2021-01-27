@@ -160,8 +160,10 @@ namespace L2 {
 				if (printV) std::cout << "examining successors" << std::endl;
 				for (int succ : f_l.instructions[i]->successors) {
 					if (printV) std::cout << "successor " << succ << std::endl;
-					for (size_t elem : f_l.instructions[succ]->in)
-						if (elem >= 0) new_set.push_back(elem);
+					if (succ >= 0) {
+						for (size_t elem : f_l.instructions[succ]->in)
+							new_set.push_back(elem);	
+					}				
 				}
 
 				if (printV) std::cout << "checking for dirty" << std::endl;
