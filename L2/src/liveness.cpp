@@ -43,8 +43,9 @@ namespace L2 {
 				case sop_lsh:
 				case sop_rsh:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					if (instr->items[1]->register_name.compare("rsp") != 0)
-						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
+					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					if (new_set.size() > 0)
+						instr_l->gen.push_back(new_set[0]);
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				case aop_pp: // src is read and written
@@ -56,8 +57,9 @@ namespace L2 {
 				case cmp_le:
 				case cmp_eq:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					if (instr->items[1]->register_name.compare("rsp") != 0)
-						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
+					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					if (new_set.size() > 0)
+						instr_l->gen.push_back(new_set[0]);
 					instr_l->kill = add_items(&f_l, instr->items[2]);
 					break;
 				case cond_less_jmp: // both srcs read, no write
@@ -65,13 +67,15 @@ namespace L2 {
 				case cond_eq_jmp:
 				case store:
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					if (instr->items[1]->register_name.compare("rsp") != 0)
-						instr_l->gen.push_back(add_items(&f_l, instr->items[1])[0]);
+					std::vector<size_t> new_set = add_items(&f_l, instr->items[1]);
+					if (new_set.size() > 0)
+						instr_l->gen.push_back(new_set[0]);
 					break;
 				case at: // base and offset read, dst written
 					instr_l->gen = add_items(&f_l, instr->items[1]);
-					if (instr->items[2]->register_name.compare("rsp") != 0)
-						instr_l->gen.push_back(add_items(&f_l, instr->items[2])[0]);
+					std::vector<size_t> new_set = add_items(&f_l, instr->items[2]);
+					if (new_set.size() > 0)
+						instr_l->gen.push_back(new_set[0]);
 					instr_l->kill = add_items(&f_l, instr->items[3]);
 					break;
 				case ret: // special case
