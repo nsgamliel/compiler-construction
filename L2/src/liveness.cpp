@@ -193,7 +193,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	void generate_inout_output(Fucntion_l f_l, char* fileName) {
+	void generate_inout_output(Function_l f_l, char* fileName) {
 		std::ofstream outputFile;
 		std::string file(fileName);
 		outputFile.open(file + ".out");
