@@ -178,6 +178,7 @@ namespace L2 {
 					f_l.instructions[i]->out = new_set;
 					f_l.isDirty = true;
 				}
+				if (printV) std::cout << "dirty is " << isDirty << std::endl;
 				
 				if (printV) std::cout << "starting in set " << i << std::endl;
 				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
@@ -189,6 +190,7 @@ namespace L2 {
 						new_set.push_back(elem);
 				}
 
+				if (printV) std::cout << "checking for dirty" << std::endl;
 				if (new_set.size() == f_l.instructions[i]->out.size()) { // make sure the for loop won't miss anything
 					for (size_t elem : f_l.instructions[i]->out) {
 						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
@@ -200,8 +202,9 @@ namespace L2 {
 					f_l.instructions[i]->out = new_set;
 					f_l.isDirty = true;
 				}
+				if (printV) std::cout << "dirty is " << isDirty << std::endl;
 			}
-			system("pause");
+			cin.get();
 		} while (f_l.isDirty);
 		return f_l;
 	}
