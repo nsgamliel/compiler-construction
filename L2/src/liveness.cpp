@@ -120,7 +120,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	std::vector<size_t> add_from_vec(Function_l* f_l, const std::vector<std::string>& strs) {
+	std::vector<size_t> add_from_vec(Function_l* f_l, std::vector<std::string>& strs) {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
 			if (str.compare("rsp") != 0) {
