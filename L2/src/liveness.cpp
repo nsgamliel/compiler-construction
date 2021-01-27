@@ -8,14 +8,16 @@
 
 namespace L2 {
 
-	bool verbose = false;
-
 	Function_l generate_liveness(L2::Program p) {
 		Function_l f_l;
 
+		if (L2::verbose) std::cout << "entering gen_kill" << std::endl;
 		f_l = gen_kill(*(p.functions[0]));
+		if (L2::verbose) std::cout << "entering find_successors" << std::endl;
 		f_l = find_successors(f_l, *(p.functions[0]));
+		if (L2::verbose) std::cout << "entering in_out" << std::endl;
 		f_l = in_out(f_l);
+		if (L2::verbose) std::cout << "leaving generate_liveness" << std::endl;
 
 		return f_l;
 	}
