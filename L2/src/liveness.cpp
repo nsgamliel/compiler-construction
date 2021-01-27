@@ -240,6 +240,29 @@ namespace L2 {
 			}
 			//std::cin.get();
 		} while (f_l.isDirty);
+
+
+
+
+		if (printV) {
+			int x=0;
+			for (auto instr: f_l.instructions) {
+				std::cout << "instruction " << x << std::endl;
+				std::cout << "in set: " << std::endl;
+				for (auto elem : instr->in) {
+					std::cout << f_l.items_l[elem] << std::endl;
+				}
+				std::cout << "out set: " << std::endl;
+				for (auto elem : instr->out) {
+					std::cout << f_l.items_l[elem] << std::endl;
+				}
+				x++;
+			}
+		}
+
+
+
+
 		return f_l;
 	}
 
