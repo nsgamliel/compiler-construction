@@ -12,7 +12,7 @@ namespace L2 {
 		Function_l f_l;
 
 		f_l = gen_kill(*(p.functions[0]));
-		f_l = find_successors(f_l, p.functions[0]);
+		f_l = find_successors(f_l, *(p.functions[0]));
 		f_l = in_out(f_l);
 
 		return f_l;
