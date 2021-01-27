@@ -272,7 +272,7 @@ namespace L2 {
 		for (auto instr : f_l.instructions) {
 			std::cout << "(";
 			for (i=0; i<instr->in.size(); i++) {
-				std::cout << f_l.items_l[elem];
+				std::cout << f_l.items_l[instr->in[i]];
 				if (i != instr->in.size()-1)
 					std::cout << " ";
 			}
@@ -282,7 +282,7 @@ namespace L2 {
 		for (auto instr : f_l.instructions) {
 			std::cout << "(";
 			for (i=0; i<instr->out.size(); i++) {
-				std::cout << f_l.items_l[elem];
+				std::cout << f_l.items_l[instr->in[i]];
 				if (i != instr->out.size()-1)
 					std::cout << " ";
 			}
