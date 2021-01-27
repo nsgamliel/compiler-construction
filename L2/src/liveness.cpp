@@ -180,11 +180,12 @@ namespace L2 {
 				for (int succ : f_l.instructions[i]->successors) {
 					if (printV) std::cout << "successor " << succ << std::endl;
 					if (succ >= 0) {
+						if (printV) std::cout << "entering successor " << succ << " in (" << f_l.instructions[succ]->in.size() << " elements)" << std::endl;
 						for (size_t elem : f_l.instructions[succ]->in) {
 							if (printV) std::cout << "adding " << f_l.items_l[elem] << " from successor in" << std::endl;
 							new_set.push_back(elem);	
 						}
-					}				
+					} if (printV) std::cout << "finished successor " << succ << std::endl;
 				}
 
 				if (printV) std::cout << "checking for dirty" << std::endl;
@@ -250,7 +251,7 @@ namespace L2 {
 	std::vector<size_t> add_from_vec(Function_l* f_l, std::vector<std::string>& strs) {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
-			if (str.compare("rsp") != 0) {
+			if (str.compare("rsp") != 0 && str.compare("") != 0) {
 				new_set.push_back(f_l->str_hash(str));
 				f_l->items_l[f_l->str_hash(str)] = str;
 			}
@@ -265,7 +266,7 @@ namespace L2 {
 			str = item->register_name;
 		else if (item->type == 6)
 			str = item->value;
-		if (str.compare("rsp") != 0) {
+		if (str.compare("rsp") != 0 && str.compare("") != 0) {
 			new_set.push_back(f_l->str_hash(str));
 			f_l->items_l[f_l->str_hash(str)] = str;
 		}
