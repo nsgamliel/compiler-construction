@@ -44,7 +44,7 @@ namespace L2 {
 				case sop_rsh: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
-					if (new_set.size() > 0)
+					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break; }
@@ -58,7 +58,7 @@ namespace L2 {
 				case cmp_eq: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
-					if (new_set.size() > 0)
+					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[2]);
 					break; }
@@ -68,13 +68,13 @@ namespace L2 {
 				case store: {
 					instr_l->gen = add_items(&f_l, instr->items[0]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[1]);
-					if (new_set.size() > 0)
+					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					break; }
 				case at: { // base and offset read, dst written
 					instr_l->gen = add_items(&f_l, instr->items[1]);
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[2]);
-					if (new_set.size() > 0)
+					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_items(&f_l, instr->items[3]);
 					break; }
@@ -93,7 +93,7 @@ namespace L2 {
 					instr_l->gen = add_from_vec(&f_l, instr_items);
 					if (printV) std::cout << "set gen" << std::endl;
 					std::vector<size_t> new_item = add_items(&f_l, instr->items[0]);
-					if (new_set.size() > 0)
+					if (new_item.size() > 0)
 						instr_l->gen.push_back(new_item[0]);
 					instr_l->kill = add_from_vec(&f_l, f_l.caller_save);
 					if (printV) std::cout << "set kill" << std::endl;
