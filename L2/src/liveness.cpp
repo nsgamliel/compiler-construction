@@ -143,7 +143,56 @@ namespace L2 {
 	}
 
 	Function_l in_out(Function_l f_l) {
-		//TODO
+		/* general plan
+		create a new vector for both out and in each time
+		compare it to the current version at the end of the loop
+		if there is a difference, push the new version and flag the dirty bit
+		*/
+		do {
+			int i;
+			f_l.isDirty = false;
+			for (int i=f_l.instructions.size()-1; i>=0; i--) {
+				// OUT[i] = U(IN[s]) where s is all successors of i
+				std::vector<size_t> new_set;
+				for (int succ : f_l.instructions[i].successors) {
+					for (size_t elem : f_l.instructions[succ].in)
+						new_set.push_back(elem);
+				}
+
+				if (new_set.size() == f_l.instructions[i].out.size()) { // make sure the for loop won't miss anything
+					for (size_t elem : f_l.instructions[i].out) {
+						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
+							f_l.instructions[i].out = new_set;
+							f_l.isDirty = true;
+						}
+					}	
+				} else {
+					f_l.instructions[i].out = new_set;
+					f_l.isDirty = true;
+				}
+				
+				// IN[i] = GEN[i] U (OUT[i] - KILL[i])
+				new_set = {};
+				for (size_t elem : f_l.instructions[i].gen)
+					new_set.push_back(elem);
+				for (size_t elem : f_l.instructions[i].out) {
+					if (std::find(f_l.instructions[i].kill.begin(), f_l.instructions[i].kill.end(), elem) == f_l.instructions[i].kill.end()) // not in kill
+						new_set.push_back(elem);
+				}
+
+				if (new_set.size() == f_l.instructions[i].out.size()) { // make sure the for loop won't miss anything
+					for (size_t elem : f_l.instructions[i].out) {
+						if (std::find(new_set.begin(), new_set.end(), elem) == new_set.end()) { // vectors are different
+							f_l.instructions[i].out = new_set;
+							f_l.isDirty = true;
+						}
+					}	
+				} else {
+					f_l.instructions[i].out = new_set;
+					f_l.isDirty = true;
+				}
+			}
+		} while (f_l.isDirty);
 		return f_l;
 	}
 
