@@ -18,8 +18,6 @@ namespace L2 {
 		f_l = gen_kill(*(p.functions[0]));
 		if (printV) std::cout << "entering find_successors" << std::endl;
 		f_l = find_successors(f_l, *(p.functions[0]));
-		//if (printV) std::cout << "cleaning gen and kill sets" << std::endl;
-		//f_l = clean_gen_kill(f_l);
 		if (printV) std::cout << "entering in_out" << std::endl;
 		f_l = in_out(f_l);
 		if (printV) std::cout << "leaving generate_liveness" << std::endl;
@@ -37,7 +35,6 @@ namespace L2 {
 				case load:
 					if (printV) std::cout << "move/load" << std::endl;
 					instr_l->gen = add_items(&f_l, instr->items[0]);
-					if (instr_l->gen.size() > 0)
 					instr_l->kill = add_items(&f_l, instr->items[1]);
 					break;
 				case aop_pe: // src is read, dst is read and written
