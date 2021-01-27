@@ -315,7 +315,7 @@ namespace L2 {
 		std::vector<size_t> new_set;
 		for (auto str : strs) {
 			if (str.compare("rsp") != 0 && str.compare("") != 0) {
-				if (printV) std::cout << "adding to add_from_vec: " << str << " (" << str_hash(str) << ")" << std::endl;
+				if (printV) std::cout << "adding to add_from_vec: " << str << " (" << f_l->str_hash(str) << ")" << std::endl;
 				new_set.push_back(f_l->str_hash(str));
 				f_l->items_l[f_l->str_hash(str)] = str;
 			}
@@ -331,7 +331,7 @@ namespace L2 {
 		else if (item->type == 6)
 			str = item->value;
 		if (str.compare("rsp") != 0 && str.compare("") != 0) {
-			if (printV) std::cout << "adding to add_items: " << str << " (" << str_hash(str) << ")" << std::endl;
+			if (printV) std::cout << "adding to add_items: " << str << " (" << f_l->str_hash(str) << ")" << std::endl;
 			new_set.push_back(f_l->str_hash(str));
 			f_l->items_l[f_l->str_hash(str)] = str;
 		}
