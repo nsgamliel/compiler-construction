@@ -152,7 +152,7 @@ namespace L2 {
 	Function_l in_out(Function_l f_l) {
 
 
-		if (verbose) {
+		if (printV) {
 			int x=0;
 			for (auto instr: f_l.instructions) {
 				std::cout << "instruction " << x << std::endl;
