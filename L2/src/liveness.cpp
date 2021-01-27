@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -10,7 +9,7 @@ namespace L2 {
 
 	// if (printV) std::cout << "" << std::endl;
 
-	bool printV = true;
+	bool printV = false;
 
 	Function_l generate_liveness(L2::Program p) {
 		Function_l f_l;
@@ -268,11 +267,28 @@ namespace L2 {
 	}
 
 	void generate_inout_output(Function_l f_l, char* fileName) {
-		std::ofstream outputFile;
-		//std::string file(fileName);
-		outputFile.open("inout.out");
-		outputFile << "lior is dumb\n" << std::endl;
-		outputFile.close();
+		std::cout << "(\n(in\n";
+		int i;
+		for (auto instr : f_l.instructions) {
+			std::cout << "(";
+			for (i=0; i<instr->in.size(); i++) {
+				std::cout << f_l.items_l[elem];
+				if (i != instr->in.size()-1)
+					std::cout << " ";
+			}
+			std::cout << ")\n";
+		}
+		std::cout << ")\n\n(out\n";
+		for (auto instr : f_l.instructions) {
+			std::cout << "(";
+			for (i=0; i<instr->out.size(); i++) {
+				std::cout << f_l.items_l[elem];
+				if (i != instr->out.size()-1)
+					std::cout << " ";
+			}
+			std::cout << ")\n";
+		}
+		std::cout << ")\n\n)";
 		return;
 	}
 
