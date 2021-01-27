@@ -238,7 +238,7 @@ namespace L2 {
 				}
 				if (printV) std::cout << "dirty is " << f_l.isDirty << std::endl;
 			}
-			std::cin.get();
+			//std::cin.get();
 		} while (f_l.isDirty);
 		return f_l;
 	}
