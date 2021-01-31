@@ -13,7 +13,7 @@ namespace L2 {
 		std::vector<bool> adj_matrix;
 
 		void add_edge(size_t start, size_t end) {
-			f_i->i_graph.adj_matrix[f_i->i_graph.indices[start]*f_i->i_graph.indices.size() + f_i->i_graph.indices[end]] = true;
+			this.adj_matrix[this.indices[start]*this.indices.size() + this.indices[end]] = true;
 		}
 	};
 
