@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #include <L2.h>
 #include <liveness.h>
@@ -9,7 +10,7 @@ namespace L2 {
 
 	struct Interference_graph {
 		std::map<size_t, int> indices;
-		bool* adj_matrix;
+		std::vector<bool> adj_matrix;
 	};
 
 	struct Function_i {

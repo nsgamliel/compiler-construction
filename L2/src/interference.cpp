@@ -15,7 +15,7 @@ namespace L2 {
 	Interference_graph interference_graph_setup(L2::Function_l* f_l) {
 		Interference_graph i_graph;
 		std::map<size_t, int> indices;
-		bool* adj_matrix;
+		std::vector<bool> adj_matrix;
 		int index_counter = 0;
 
 		// add all items
@@ -40,9 +40,8 @@ namespace L2 {
 			}
 		}
 		// create the matrix
-		adj_matrix = new bool[index_counter * index_counter];
-		for (int i=0; i<adj_matrix.size(); i++)
-			adj_matrix[i] = false;
+		for (int i=0; i<(index_counter*index_counter); i++)
+			adj_matrix.push_back(false);
 
 		i_graph.indices = indices;
 		i_graph.adj_matrix = adj_matrix;
