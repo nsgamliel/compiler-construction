@@ -16,13 +16,13 @@ namespace L2 {
 
 		// check for gp registers
 		for (auto item : f_l->items_l) {
-			if (registers_hash.find(item.first) != registers_hash.end()) {
+			if (std::find(registers_hash.begin(), registers_hash.end(), item.first) != registers_hash.end()) {
 				for (auto x : registers_hash)
 					f_i->i_graph.adj_matrix[f_i->i_graph.indices[item.first]*f_i->i_graph.indices.size() + f_i->i_graph.indices[x]] = true;
 			}
 		}
 
-		
+
 	}
 
 	Interference_graph interference_graph_setup(L2::Function_l* f_l) {
