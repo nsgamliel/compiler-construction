@@ -14,6 +14,7 @@ namespace L2 {
 
 		void add_edge(size_t start, size_t end) {
 			this->adj_matrix[this->indices[start]*this->indices.size() + this->indices[end]] = true;
+			this->adj_matrix[this->indices[end]*this->indices.size() + this->indices[start]] = true;
 		}
 	};
 

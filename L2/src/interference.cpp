@@ -19,8 +19,10 @@ namespace L2 {
 		// check for gp registers
 		for (auto item : f_l->items_l) {
 			if (std::find(registers_hash.begin(), registers_hash.end(), item.first) != registers_hash.end()) {
-				for (auto x : registers_hash)
-					f_i->i_graph.add_edge(item.first, x);
+				for (auto x : registers_hash) {
+					if (item.first != x)
+						f_i->i_graph.add_edge(item.first, x);
+				}
 			}
 		}
 
@@ -32,6 +34,24 @@ namespace L2 {
 				for (j=0; j<instr->in.size(); j++) {
 					if (i != j)
 						f_i->i_graph.add_edge(instr->in[i], instr->in[j]);
+				}
+			}
+			for (i=0; i<instr->out.size(); i++) {
+				for (j=0; j<instr->out.size(); j++) {
+					if (i != j)
+						f_i->i_graph.add_edge(instr->out[i], instr->out[j]);
+				}
+			}
+		}
+
+		// connect everything in kill[i] with everything in out[i]
+		for (auto instr : f_l->instructions) {
+			int i;
+			int j;
+			for (i=0; i<instr->kill.size(); i++) {
+				for (j=0; j<instr->out.size(); j++) {
+					if (instr->kill[i] != instr->out[j])
+						f_i->i_graph.add_edge(instr->kill[i], instr->out[j]);
 				}
 			}
 		}
