@@ -41,9 +41,8 @@ namespace L2 {
 		}
 		// create the matrix
 		adj_matrix = new bool[index_counter * index_counter];
-		for (auto x : adj_matrix) {
-			x = false;
-		}
+		for (int i=0; i<adj_matrix.size(); i++)
+			adj_matrix[i] = false;
 
 		i_graph.indices = indices;
 		i_graph.adj_matrix = adj_matrix;
