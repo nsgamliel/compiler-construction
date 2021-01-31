@@ -15,6 +15,7 @@
 #include <L2.h>
 #include <parser.h>
 #include <liveness.h>
+#include <interference.h>
 //#include <analysis.h>
 //#include <transformer.h>
 //#include <code_generator.h>
@@ -107,7 +108,9 @@ int main(
     /*
      * Parse an L2 function.
      */
+    if (verbose) std::cout << "parsing for interference" <<std::endl;
     p = L2::parse_function_file(argv[optind]);
+    if (verbose) std::cout << "done parsing" <<std::endl;
   } else {
 
     /* 
@@ -132,7 +135,7 @@ int main(
     L2::Function_l f_l;
     if (verbose) std::cout << "generating liveness" <<std::endl;
     f_l = L2::generate_liveness(p);
-    if (verbose) std::cout << "generating output file for " << argv[optind] <<std::endl;
+    if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
     L2::generate_inout_output(f_l);
     if (verbose) std::cout << "done" <<std::endl;
 
@@ -143,7 +146,16 @@ int main(
    * Interference graph test.
    */
   if (interference_only){
-    // TODO
+    L2::Function_l f_l;
+    L2::Function_i* f_i;
+    if (verbose) std::cout << "generating liveness" <<std::endl;
+    f_l = L2::generate_liveness(p);
+    if (verbose) std::cout << "performing interference analysis" <<std::endl;
+    f_i = L2::interference_analysis(&f_l);
+    if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
+    L2::generate_interference_output(f_i);
+    if (verbose) std::cout << "done" <<std::endl;
+
     return 0;
   }
 

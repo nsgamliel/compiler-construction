@@ -14,7 +14,6 @@ namespace L2 {
 		std::vector<size_t> kill;
 		std::vector<size_t> in;
 		std::vector<size_t> out;
-		// only used in special case
 		std::vector<int> successors;
 	};
 
@@ -44,37 +43,3 @@ namespace L2 {
 	std::vector<size_t> add_items(Function_l* f_l, L2::Item* item);
 
 }
-
-/*
-
-liveness analysis plan:
-
-1 function takes in program p
-2 figure out gen and kill sets - unique to each instruction or set of
-3 while this is going on, flag instructions with multiple successors
-4 in and out while isDirty
-
-data representation
-- each instruction needs a gen, kill, in, out, successors
-	- successors will only have contents if special case
-- Instruction_l and Function_l structs
-- Instruction_l
-	- gen, kill, in, out -> item pointer vectors
-		- will need switch case to determine which member to pull name from
-	- successors -> integer vector
-- Function_l
-	- isDirty bool
-	- instruction_l pointer vector
-
-- design problem:
-	- how to set up the items in each vector so that it is easy to check for their existence? ie for duplicates or for in/out sets
-	- consider defining new item:
-		- type
-		- integer unique id -- how to generate this consistently? -> hash
-		- string representation
-
-	- instead, instructions contain vectors of size_t hashes and look items up in a master dictionary
-		- only need to perform the lookup when generating the in/out sets output file
-		- use std::map<>
-
-*/
