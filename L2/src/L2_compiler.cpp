@@ -153,7 +153,7 @@ int main(
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
     f_i = L2::interference_analysis(&f_l);
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
-    L2::generate_interference_output(f_i);
+    //L2::generate_interference_output(f_i);
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;

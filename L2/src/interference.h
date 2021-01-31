@@ -7,11 +7,11 @@ namespace L2 {
 	struct Interference_graph {
 		std::map<size_t, int> indices;
 		bool* adj_matrix;
-	}
+	};
 
 	struct Function_i {
 		Interference_graph i_graph;
-	}
+	};
 
 	// main entry point for interference analysis
 	Function_i* interference_analysis(L2::Function_l* f_l);
