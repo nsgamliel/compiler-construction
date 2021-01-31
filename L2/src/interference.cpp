@@ -20,10 +20,21 @@ namespace L2 {
 		for (auto item : f_l->items_l) {
 			if (std::find(registers_hash.begin(), registers_hash.end(), item.first) != registers_hash.end()) {
 				for (auto x : registers_hash)
-					f_i->i_graph.adj_matrix[f_i->i_graph.indices[item.first]*f_i->i_graph.indices.size() + f_i->i_graph.indices[x]] = true;
+					f_i->i_graph.add_edge(item.first, x);
 			}
 		}
 
+		// connect everything in IN and OUT sets
+		for (auto instr : f_l->instructions) {
+			int i;
+			int j;
+			for (i=0; i<instr->in.size(); i++) {
+				for (j=0; j<instr->in.size(); j++) {
+					if (i != j)
+						f_i->i_graph.add_edge(instr->in[i], instr->in[j]);
+				}
+			}
+		}
 
 	}
 

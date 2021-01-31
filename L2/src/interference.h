@@ -11,6 +11,10 @@ namespace L2 {
 	struct Interference_graph {
 		std::map<size_t, int> indices;
 		std::vector<bool> adj_matrix;
+
+		void add_edge(size_t start, size_t end) {
+			f_i->i_graph.adj_matrix[f_i->i_graph.indices[start]*f_i->i_graph.indices.size() + f_i->i_graph.indices[end]] = true;
+		}
 	};
 
 	struct Function_i {
