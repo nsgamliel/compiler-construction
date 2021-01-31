@@ -56,6 +56,7 @@ namespace L2 {
 			}
 		}
 
+		return f_i;
 	}
 
 	Interference_graph interference_graph_setup(L2::Function_l* f_l) {
