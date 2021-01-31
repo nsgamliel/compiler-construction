@@ -17,8 +17,8 @@ namespace L2 {
 
 		// add all items
 		for (auto item : f_l->items_l) {
-			if (indices.find(item->first) == indices.end()) { // not here
-				indices[item->first] = index_counter;
+			if (indices.find(item.first) == indices.end()) { // not here
+				indices[item.first] = index_counter;
 				index_counter++;
 			}
 		}
