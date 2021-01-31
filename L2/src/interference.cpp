@@ -7,6 +7,9 @@ namespace L2 {
 	Function_i* interference_analysis(L2::Function_l* f_l) {
 		Function_i* f_i;
 		f_i->i_graph = interference_graph_setup(f_l);
+
+		// check for gp registers
+		// 
 	}
 
 	Interference_graph interference_graph_setup(L2::Function_l* f_l) {
@@ -38,6 +41,9 @@ namespace L2 {
 		}
 		// create the matrix
 		adj_matrix = new bool[index_counter * index_counter];
+		for (auto x : adj_matrix) {
+			x = false;
+		}
 
 		i_graph.indices = indices;
 		i_graph.adj_matrix = adj_matrix;
