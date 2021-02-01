@@ -98,7 +98,6 @@ namespace L2 {
 		if (printAll) std::cout << "adding referenced items" << std::endl;
 		for (auto item : f_l->items_l) {
 			if (indices.find(item.first) == indices.end()) {
-				std::cout << "found " << f_l->items_l[item.first] << std::endl;
 				indices[item.first] = index_counter;
 				hashes.push_back(item.first);
 				index_counter++;
@@ -117,7 +116,6 @@ namespace L2 {
 		if (printAll) std::cout << "adding unused caller-save" << std::endl;
 		for (auto str : f_l->caller_save) {
 			if (indices.find(f_l->str_hash(str)) == indices.end()) {
-				std::cout << "found " << str << std::endl;
 				indices[f_l->str_hash(str)] = index_counter;
 				hashes.push_back(f_l->str_hash(str));
 				index_counter++;
