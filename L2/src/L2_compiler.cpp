@@ -150,7 +150,6 @@ int main(
     L2::Function_i f_i;
     if (verbose) std::cout << "generating liveness" <<std::endl;
     f_l = L2::generate_liveness(p);
-    L2::generate_liveness_output(f_l);
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
     f_i = L2::interference_analysis(f_l);
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
