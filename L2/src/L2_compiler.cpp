@@ -147,7 +147,7 @@ int main(
    */
   if (interference_only){
     L2::Function_l f_l;
-    L2::Function_i* f_i;
+    L2::Function_i f_i;
     if (verbose) std::cout << "generating liveness" <<std::endl;
     f_l = L2::generate_liveness(p);
     if (verbose) std::cout << "performing interference analysis" <<std::endl;

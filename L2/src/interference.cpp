@@ -10,7 +10,7 @@ namespace L2 {
 	bool printAll = true;
 	//if (printAll) std::cout << "" << std::endl;
 
-	Function_i interference_analysis(L2::Function_l* f_l) {
+	Function_i interference_analysis(L2::Function_l f_l) {
 		Function_i f_i;
 		if (printAll) std::cout << "in interference_analysis" << std::endl;
 		//f_i->items_i.insert(f_l->items_l.begin(), f_l->items_l.end());
