@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <string>
 
 #include <interference.h>
@@ -133,7 +134,3 @@ namespace L2 {
 	}
 
 }
-
-
-
-// this->adj_matrix[this->indices[start]*this->indices.size() + this->indices[end]] = true;
