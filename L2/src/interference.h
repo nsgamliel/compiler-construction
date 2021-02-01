@@ -21,7 +21,7 @@ namespace L2 {
 
 	struct Function_i {
 		Interference_graph i_graph;
-		std::map<size_t, std::string> items_i;
+		std::map<size_t, std::string>* items_i;
 	};
 
 	// main entry point for interference analysis
