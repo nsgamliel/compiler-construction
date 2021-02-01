@@ -123,7 +123,7 @@ int main(
    * Special cases.
    */
   if (spill_only){
-    std::cout << "(:myF\n  0 1\n  %%S0 <- 0\n  mem rsp 0 <- %%S0\n  %%S1 <- mem rsp 0\n  rdi <- %%S1\n  call :myF2 0\n  return\n)";
+    std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)";
     return 0;
   }
 
