@@ -15,29 +15,29 @@ namespace L2 {
 		if (printAll) std::cout << "in interference_analysis" << std::endl;
 		//f_i->items_i.insert(f_l->items_l.begin(), f_l->items_l.end());
 		if (printAll) std::cout << "setting up interference graph" << std::endl;
-		f_i.i_graph = interference_graph_setup(f_l);
+		f_i.i_graph = interference_graph_setup(&f_l);
 		if (printAll) std::cout << "done setting up graph" << std::endl;
 
 		std::vector<size_t> registers_hash;
-		for (auto str : f_l->callee_save)
-			registers_hash.push_back(f_l->str_hash(str));
-		for (auto str : f_l->caller_save)
-			registers_hash.push_back(f_l->str_hash(str));
+		for (auto str : f_l.callee_save)
+			registers_hash.push_back(f_l.str_hash(str));
+		for (auto str : f_l.caller_save)
+			registers_hash.push_back(f_l.str_hash(str));
 
 		// check for gp registers
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
-		for (auto item : f_l->items_l) {
+		for (auto item : f_l.items_l) {
 			if (std::find(registers_hash.begin(), registers_hash.end(), item.first) != registers_hash.end()) {
 				for (auto x : registers_hash) {
 					if (item.first != x)
-						f_i->i_graph.add_edge(item.first, x);
+						f_i.i_graph.add_edge(item.first, x);
 				}
 			}
 		}
 
 		// connect everything in IN and OUT sets
 		if (printAll) std::cout << "connecting INs and OUTS" << std::endl;
-		for (auto instr : f_l->instructions) {
+		for (auto instr : f_l.instructions) {
 			int i;
 			int j;
 			for (i=0; i<instr->in.size(); i++) {
@@ -56,7 +56,7 @@ namespace L2 {
 
 		// connect everything in kill[i] with everything in out[i]
 		if (printAll) std::cout << "connecting KILLs and OUTs" << std::endl;
-		for (auto instr : f_l->instructions) {
+		for (auto instr : f_l.instructions) {
 			int i;
 			int j;
 			for (i=0; i<instr->kill.size(); i++) {
@@ -69,7 +69,7 @@ namespace L2 {
 
 		// handle target language constraints
 		if (printAll) std::cout << "handling target language constraints" << std::endl;
-		for (auto instr : f_l->instructions) {
+		for (auto instr : f_l.instructions) {
 			if ((instr->op == sop_lsh || instr->op == sop_rsh) && instr->gen.size() == 2) { // not shifted by immediate value
 				for (auto x : registers_hash) {
 					if (x != f_l->str_hash("rcx"))
