@@ -123,7 +123,7 @@ namespace L2 {
 
 	void generate_interference_output(Function_i* f_i) {
 		for (int i=0; i<f_i->i_graph.indices.size(); i++) {
-			std::cout << f_i->items_i[f_i->i_graph.hashes[i]];
+			std::cout << *(f_i->items_i[f_i->i_graph.hashes[i]]);
 			for (int j=1; j<f_i->i_graph.indices.size(); j++) {
 				if (f_i->i_graph.adj_matrix[i*f_i->i_graph.indices.size() + j])
 					std::cout << " " << f_i->items_i[f_i->i_graph.hashes[i]];
