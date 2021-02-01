@@ -36,8 +36,7 @@ namespace L2 {
 			for (auto y : registers_hash) {
 				if (x != y) {
 					std::cout << "connecting " << f_i.items_i[x] << " and " << f_i.items_i[y] << std::endl;
-					f_i.i_graph.adj_matrix[f_i.i_graph.indices[x]*f_i.i_graph.indices.size() + f_i.i_graph.indices[y]] = true;
-					f_i.i_graph.adj_matrix[f_i.i_graph.indices[y]*f_i.i_graph.indices.size() + f_i.i_graph.indices[x]] = true;
+					f_i.i_graph.add_edge(x, y);
 				}
 			}
 		}
@@ -143,7 +142,7 @@ namespace L2 {
 		for (int i=0; i<f_i.i_graph.indices.size(); i++) {
 			std::cout << f_i.items_i[f_i.i_graph.hashes[i]];
 			for (int j=1; j<f_i.i_graph.indices.size(); j++) {
-				if (f_i.i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j])
+				if (f_i.i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j] || f_i.i_graph.adj_matrix[j*f_i.i_graph.indices.size() + i])
 					std::cout << " " << f_i.items_i[f_i.i_graph.hashes[j]];
 			}
 			std::cout << "\n";
