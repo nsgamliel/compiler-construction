@@ -88,7 +88,10 @@ namespace L2 {
 		std::vector<bool> adj_matrix;
 		int index_counter = 0;
 
+		if (printAll) std::cout << "in interference_graph_setup" << std::endl;
+
 		// add all items
+		if (printAll) std::cout << "adding referenced items" << std::endl;
 		for (auto item : f_l->items_l) {
 			if (indices.find(item.first) == indices.end()) {
 				indices[item.first] = index_counter;
@@ -97,6 +100,7 @@ namespace L2 {
 			}
 		}
 		// add any unused callee-save registers
+		if (printAll) std::cout << "adding unused callee-save" << std::endl;
 		for (auto str : f_l->callee_save) {
 			if (indices.find(f_l->str_hash(str)) == indices.end()) {
 				indices[f_l->str_hash(str)] = index_counter;
@@ -105,6 +109,7 @@ namespace L2 {
 			}
 		}
 		// add any unused caller-save registers
+		if (printAll) std::cout << "adding unused caller-save" << std::endl;
 		for (auto str : f_l->caller_save) {
 			if (indices.find(f_l->str_hash(str)) == indices.end()) {
 				indices[f_l->str_hash(str)] = index_counter;
