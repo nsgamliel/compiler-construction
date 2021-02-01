@@ -142,7 +142,7 @@ namespace L2 {
 		for (int i=0; i<f_i.i_graph.indices.size(); i++) {
 			std::cout << f_i.items_i[f_i.i_graph.hashes[i]];
 			for (int j=1; j<f_i.i_graph.indices.size(); j++) {
-				std::cout << "checking " << f_i.items_i[i] << " and " << f_i.items_i[j];
+				std::cout << "\nchecking " << f_i.items_i[f_i.i_graph.hashes[i]] << " and " << f_i.items_i[f_i.i_graph.hashes[j]] << "\n";
 				if (f_i.i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j] || f_i.i_graph.adj_matrix[j*f_i.i_graph.indices.size() + i]) {
 					std::cout << ": yes!!" << std::endl;
 					std::cout << " " << f_i.items_i[f_i.i_graph.hashes[j]];
