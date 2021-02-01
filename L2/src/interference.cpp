@@ -28,8 +28,6 @@ namespace L2 {
 			f_i.items_i[f_l.str_hash(str)] = str;
 		}
 
-		std::cout << f_i.items_i[f_l.str_hash("rbp")] << std::endl;
-
 		// check for gp registers
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
 		for (auto item : f_l.items_l) {
