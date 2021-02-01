@@ -19,8 +19,6 @@ namespace L2 {
 		if (printAll) std::cout << "done setting up graph" << std::endl;
 
 		std::vector<size_t> registers_hash;
-		registers_hash.push_back(f_l.str_hash("rbp"));
-		f_i.items_i[f_l.str_hash("rbp")] = "rbp";
 		for (auto str : f_l.callee_save) {
 			registers_hash.push_back(f_l.str_hash(str));
 			f_i.items_i[f_l.str_hash(str)] = str;
@@ -29,6 +27,8 @@ namespace L2 {
 			registers_hash.push_back(f_l.str_hash(str));
 			f_i.items_i[f_l.str_hash(str)] = str;
 		}
+
+		std::cout << f_i.items_i[f_l.str_hash("rbp")] << std::endl;
 
 		// check for gp registers
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
