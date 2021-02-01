@@ -340,6 +340,7 @@ namespace L2 {
 			str = item->register_name;
 		else if (item->type == 6)
 			str = item->value;
+		if (printV) std::cout << "checking " << str << ":" << std::endl;
 		if (str.compare("rsp") != 0 && str.compare("") != 0) {
 			if (printV) std::cout << "adding to add_items: " << str << " (" << f_l->str_hash(str) << ")" << std::endl;
 			new_set.push_back(f_l->str_hash(str));
