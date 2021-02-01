@@ -1005,7 +1005,10 @@ namespace L2 {
       // get offset from number at back of vector
       src->value = parsed_items.back().value;
       parsed_items.pop_back();
-      src->register_name = parsed_items.back().register_name;
+      if (parsed_items.back().type == 6)
+        src->register_name = parsed_items.back().value;
+      else
+        src->register_name = parsed_items.back().register_name;
       parsed_items.pop_back();
 
       dst->type = parsed_items.back().type;
