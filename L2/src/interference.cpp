@@ -13,7 +13,7 @@ namespace L2 {
 	Function_i* interference_analysis(L2::Function_l* f_l) {
 		Function_i* f_i;
 		if (printAll) std::cout << "in interference_analysis" << std::endl;
-		f_i->items_i(f_l->items_l);
+		f_i->items_i = &(std::map<size_t, std::string>(f_l->items_l));
 		if (printAll) std::cout << "setting up interference graph" << std::endl;
 		f_i->i_graph = interference_graph_setup(f_l);
 		if (printAll) std::cout << "done setting up graph" << std::endl;
