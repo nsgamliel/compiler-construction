@@ -18,6 +18,8 @@ namespace L2 {
 		f_i.i_graph = interference_graph_setup(&f_l);
 		if (printAll) std::cout << "done setting up graph" << std::endl;
 
+		if (printAll) std::cout << "num indices: " << f_i.i_graph.indices.size() << std::endl;
+
 		std::vector<size_t> registers_hash;
 		for (auto str : f_l.callee_save) {
 			registers_hash.push_back(f_l.str_hash(str));
