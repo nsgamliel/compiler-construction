@@ -30,6 +30,7 @@ namespace L2 {
 		for (auto instr : f.instructions) {
 			if (printV) std::cout << "examining instruction" << std::endl;
 			auto instr_l = new Instruction_l();
+			instr_l->op = instr->op;
 			switch (instr->op) {
 				case mov: // src is read, dst is written
 				case load:

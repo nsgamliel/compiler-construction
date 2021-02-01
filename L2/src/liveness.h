@@ -10,6 +10,7 @@ namespace L2 {
 
 	struct Instruction_l {
 		// store hashed values of variable strings
+		L2::Opcode op;
 		std::vector<size_t> gen;
 		std::vector<size_t> kill;
 		std::vector<size_t> in;

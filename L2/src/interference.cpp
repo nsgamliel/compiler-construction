@@ -56,6 +56,16 @@ namespace L2 {
 			}
 		}
 
+		// handle target language constraints
+		for (auto instr : f_l->instructions) {
+			if ((instr->op == sop_lsh || instr->op == sop_rsh) && instr->gen.size() == 2) { // not shifted by immediate value
+				for (auto x : registers_hash) {
+					if (x != f_l->str_hash("rcx"))
+						f_i->i_graph.add_edge(instr->gen[0], x);
+				}
+			}
+		}
+
 		return f_i;
 	}
 
