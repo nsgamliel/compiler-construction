@@ -8,6 +8,7 @@ namespace L2 {
 
 	Function_i* interference_analysis(L2::Function_l* f_l) {
 		Function_i* f_i;
+		f_i->items_i = f_l->items_l;
 		f_i->i_graph = interference_graph_setup(f_l);
 
 		std::vector<size_t> registers_hash;
@@ -71,14 +72,16 @@ namespace L2 {
 
 	Interference_graph interference_graph_setup(L2::Function_l* f_l) {
 		Interference_graph i_graph;
+		std::vector<size_t> hashes;
 		std::map<size_t, int> indices;
 		std::vector<bool> adj_matrix;
 		int index_counter = 0;
 
 		// add all items
 		for (auto item : f_l->items_l) {
-			if (indices.find(item.first) == indices.end()) { // not here
+			if (indices.find(item.first) == indices.end()) {
 				indices[item.first] = index_counter;
+				hashes.push_back(item.first);
 				index_counter++;
 			}
 		}
@@ -86,6 +89,7 @@ namespace L2 {
 		for (auto str : f_l->callee_save) {
 			if (indices.find(f_l->str_hash(str)) == indices.end()) {
 				indices[f_l->str_hash(str)] = index_counter;
+				hashes.push_back(f_l->str_hash(str));
 				index_counter++;
 			}
 		}
@@ -93,6 +97,7 @@ namespace L2 {
 		for (auto str : f_l->caller_save) {
 			if (indices.find(f_l->str_hash(str)) == indices.end()) {
 				indices[f_l->str_hash(str)] = index_counter;
+				hashes.push_back(f_l->str_hash(str));
 				index_counter++;
 			}
 		}
@@ -100,9 +105,25 @@ namespace L2 {
 		for (int i=0; i<(index_counter*index_counter); i++)
 			adj_matrix.push_back(false);
 
+		i_graph.hashes = hashes;
 		i_graph.indices = indices;
 		i_graph.adj_matrix = adj_matrix;
 		return i_graph;
 	}
 
+	void generate_interference_output(Function_i* f_i) {
+		for (int i=0; i<f_i->i_graph.indices.size(); i++) {
+			std::cout << f_i->items_i[f_i->i_graph.hashes[i]];
+			for (int j=1; j<f_i->i_graph.indices.size(); j++) {
+				if (f_i->i_graph.adj_matrix[i*f_i->i_graph.indices.size() + j])
+					std::cout << " " << f_i->items_i[f_i->i_graph.hashes[i]];
+			}
+			std::cout << "\n";
+		}
+	}
+
 }
+
+
+
+// this->adj_matrix[this->indices[start]*this->indices.size() + this->indices[end]] = true;

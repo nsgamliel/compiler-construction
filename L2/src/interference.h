@@ -9,6 +9,7 @@
 namespace L2 {
 
 	struct Interference_graph {
+		std::vector<size_t> hashes;
 		std::map<size_t, int> indices;
 		std::vector<bool> adj_matrix;
 
@@ -20,12 +21,15 @@ namespace L2 {
 
 	struct Function_i {
 		Interference_graph i_graph;
+		std::map<size_t, std::string> items_i;
 	};
 
 	// main entry point for interference analysis
 	Function_i* interference_analysis(L2::Function_l* f_l);
 
-	// helper functions
+	void generate_interference_output(Function_i* f_i);
+
+	// helper function
 	Interference_graph interference_graph_setup(L2::Function_l* f_l);
 
 }

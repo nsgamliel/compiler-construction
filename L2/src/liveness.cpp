@@ -295,7 +295,7 @@ namespace L2 {
 		return f_l;
 	}
 
-	void generate_inout_output(Function_l f_l) {
+	void generate_liveness_output(Function_l f_l) {
 		std::cout << "(\n(in\n";
 		int i;
 		for (auto instr : f_l.instructions) {
