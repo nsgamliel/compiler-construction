@@ -72,7 +72,7 @@ namespace L2 {
 		for (auto instr : f_l.instructions) {
 			if ((instr->op == sop_lsh || instr->op == sop_rsh) && instr->gen.size() == 2) { // not shifted by immediate value
 				for (auto x : registers_hash) {
-					if (x != f_l->str_hash("rcx"))
+					if (x != f_l.str_hash("rcx"))
 						f_i.i_graph.add_edge(instr->gen[0], x);
 				}
 			}
@@ -133,8 +133,8 @@ namespace L2 {
 	void generate_interference_output(Function_i f_i, L2::Function_l f_l) {
 		for (int i=0; i<f_i.i_graph.indices.size(); i++) {
 			std::cout << f_l.items_l[f_i.i_graph.hashes[i]];
-			for (int j=1; j<f_i->i_graph.indices.size(); j++) {
-				if (f_i->i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j])
+			for (int j=1; j<f_i.i_graph.indices.size(); j++) {
+				if (f_i.i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j])
 					std::cout << " " << f_l.items_l[f_i.i_graph.hashes[i]];
 			}
 			std::cout << "\n";
