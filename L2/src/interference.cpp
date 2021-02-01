@@ -30,12 +30,10 @@ namespace L2 {
 
 		// check for gp registers
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
-		for (auto item : f_l.items_l) {
-			if (std::find(registers_hash.begin(), registers_hash.end(), item.first) != registers_hash.end()) {
-				for (auto x : registers_hash) {
-					if (item.first != x)
-						f_i.i_graph.add_edge(item.first, x);
-				}
+		for (auto x : registers_hash) {
+			for (auto y : registers_hash) {
+				if (x != y)
+					f_i.i_graph.add_edge(x, y);
 			}
 		}
 
