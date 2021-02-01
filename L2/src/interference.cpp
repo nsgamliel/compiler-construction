@@ -96,7 +96,7 @@ namespace L2 {
 		if (printAll) std::cout << "adding referenced items" << std::endl;
 		for (auto item : f_l->items_l) {
 			if (indices.find(item.first) == indices.end()) {
-				std::cout << "found " << item.first << std::endl;
+				std::cout << "found " << f_l->items_l[item.first] << std::endl;
 				indices[item.first] = index_counter;
 				hashes.push_back(item.first);
 				index_counter++;
