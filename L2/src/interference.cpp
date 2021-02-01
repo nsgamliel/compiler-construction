@@ -19,10 +19,14 @@ namespace L2 {
 		if (printAll) std::cout << "done setting up graph" << std::endl;
 
 		std::vector<size_t> registers_hash;
-		for (auto str : f_l.callee_save)
+		for (auto str : f_l.callee_save) {
 			registers_hash.push_back(f_l.str_hash(str));
-		for (auto str : f_l.caller_save)
+			f_i.items_i[f_l.str_hash(str)] = str;
+		}
+		for (auto str : f_l.caller_save) {
 			registers_hash.push_back(f_l.str_hash(str));
+			f_i.items_i[f_l.str_hash(str)] = str;
+		}
 
 		// check for gp registers
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
@@ -132,10 +136,10 @@ namespace L2 {
 
 	void generate_interference_output(Function_i f_i, L2::Function_l f_l) {
 		for (int i=0; i<f_i.i_graph.indices.size(); i++) {
-			std::cout << f_l.items_l[f_i.i_graph.hashes[i]];
+			std::cout << f_i.items_i[f_i.i_graph.hashes[i]];
 			for (int j=1; j<f_i.i_graph.indices.size(); j++) {
 				if (f_i.i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j])
-					std::cout << " " << f_l.items_l[f_i.i_graph.hashes[j]];
+					std::cout << " " << f_i.items_i[f_i.i_graph.hashes[j]];
 			}
 			std::cout << "\n";
 		}
