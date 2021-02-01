@@ -13,7 +13,7 @@ namespace L2 {
 	Function_i* interference_analysis(L2::Function_l* f_l) {
 		Function_i* f_i;
 		if (printAll) std::cout << "in interference_analysis" << std::endl;
-		f_i->items_i.insert(f_l->items_l.begin(), f_l->items_l.end());
+		//f_i->items_i.insert(f_l->items_l.begin(), f_l->items_l.end());
 		if (printAll) std::cout << "setting up interference graph" << std::endl;
 		f_i->i_graph = interference_graph_setup(f_l);
 		if (printAll) std::cout << "done setting up graph" << std::endl;
@@ -122,12 +122,12 @@ namespace L2 {
 		return i_graph;
 	}
 
-	void generate_interference_output(Function_i* f_i) {
+	void generate_interference_output(Function_i* f_i, L2::Function_l f_l) {
 		for (int i=0; i<f_i->i_graph.indices.size(); i++) {
-			std::cout << f_i->items_i[f_i->i_graph.hashes[i]];
+			std::cout << f_l.items_l[f_i->i_graph.hashes[i]];
 			for (int j=1; j<f_i->i_graph.indices.size(); j++) {
 				if (f_i->i_graph.adj_matrix[i*f_i->i_graph.indices.size() + j])
-					std::cout << " " << f_i->items_i[f_i->i_graph.hashes[i]];
+					std::cout << " " << f_l.items_l[f_i->i_graph.hashes[i]];
 			}
 			std::cout << "\n";
 		}
