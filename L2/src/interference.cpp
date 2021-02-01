@@ -32,8 +32,10 @@ namespace L2 {
 		if (printAll) std::cout << "checking for general purpose registers" << std::endl;
 		for (auto x : registers_hash) {
 			for (auto y : registers_hash) {
-				if (x != y)
+				if (x != y) {
+					std::cout << "connecting " << f_i.items_i[x] << " and " << f_i.items_i[y] << std::endl;
 					f_i.i_graph.add_edge(x, y);
+				}
 			}
 		}
 
