@@ -7,7 +7,7 @@
 
 namespace L2 {
 
-	bool printAll = false;
+	bool printAll = true;
 	//if (printAll) std::cout << "" << std::endl;
 
 	Function_i interference_analysis(L2::Function_l f_l) {
