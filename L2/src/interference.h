@@ -28,7 +28,7 @@ namespace L2 {
 	// main entry point for interference analysis
 	Function_i* interference_analysis(L2::Function_l* f_l);
 
-	void generate_interference_output(Function_i* f_i);
+	void generate_interference_output(Function_i* f_i, L2::Function_l f_l);
 
 	// helper function
 	Interference_graph interference_graph_setup(L2::Function_l* f_l);
