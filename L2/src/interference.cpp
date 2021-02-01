@@ -10,12 +10,12 @@ namespace L2 {
 	bool printAll = true;
 	//if (printAll) std::cout << "" << std::endl;
 
-	Function_i* interference_analysis(L2::Function_l* f_l) {
-		Function_i* f_i;
+	Function_i interference_analysis(L2::Function_l* f_l) {
+		Function_i f_i;
 		if (printAll) std::cout << "in interference_analysis" << std::endl;
 		//f_i->items_i.insert(f_l->items_l.begin(), f_l->items_l.end());
 		if (printAll) std::cout << "setting up interference graph" << std::endl;
-		f_i->i_graph = interference_graph_setup(f_l);
+		f_i.i_graph = interference_graph_setup(f_l);
 		if (printAll) std::cout << "done setting up graph" << std::endl;
 
 		std::vector<size_t> registers_hash;
@@ -43,13 +43,13 @@ namespace L2 {
 			for (i=0; i<instr->in.size(); i++) {
 				for (j=0; j<instr->in.size(); j++) {
 					if (i != j)
-						f_i->i_graph.add_edge(instr->in[i], instr->in[j]);
+						f_i.i_graph.add_edge(instr->in[i], instr->in[j]);
 				}
 			}
 			for (i=0; i<instr->out.size(); i++) {
 				for (j=0; j<instr->out.size(); j++) {
 					if (i != j)
-						f_i->i_graph.add_edge(instr->out[i], instr->out[j]);
+						f_i.i_graph.add_edge(instr->out[i], instr->out[j]);
 				}
 			}
 		}
@@ -62,7 +62,7 @@ namespace L2 {
 			for (i=0; i<instr->kill.size(); i++) {
 				for (j=0; j<instr->out.size(); j++) {
 					if (instr->kill[i] != instr->out[j])
-						f_i->i_graph.add_edge(instr->kill[i], instr->out[j]);
+						f_i.i_graph.add_edge(instr->kill[i], instr->out[j]);
 				}
 			}
 		}
@@ -73,7 +73,7 @@ namespace L2 {
 			if ((instr->op == sop_lsh || instr->op == sop_rsh) && instr->gen.size() == 2) { // not shifted by immediate value
 				for (auto x : registers_hash) {
 					if (x != f_l->str_hash("rcx"))
-						f_i->i_graph.add_edge(instr->gen[0], x);
+						f_i.i_graph.add_edge(instr->gen[0], x);
 				}
 			}
 		}
@@ -130,12 +130,12 @@ namespace L2 {
 		return i_graph;
 	}
 
-	void generate_interference_output(Function_i* f_i, L2::Function_l f_l) {
-		for (int i=0; i<f_i->i_graph.indices.size(); i++) {
-			std::cout << f_l.items_l[f_i->i_graph.hashes[i]];
+	void generate_interference_output(Function_i f_i, L2::Function_l f_l) {
+		for (int i=0; i<f_i.i_graph.indices.size(); i++) {
+			std::cout << f_l.items_l[f_i.i_graph.hashes[i]];
 			for (int j=1; j<f_i->i_graph.indices.size(); j++) {
-				if (f_i->i_graph.adj_matrix[i*f_i->i_graph.indices.size() + j])
-					std::cout << " " << f_l.items_l[f_i->i_graph.hashes[i]];
+				if (f_i->i_graph.adj_matrix[i*f_i.i_graph.indices.size() + j])
+					std::cout << " " << f_l.items_l[f_i.i_graph.hashes[i]];
 			}
 			std::cout << "\n";
 		}
