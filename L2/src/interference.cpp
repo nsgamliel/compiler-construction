@@ -118,12 +118,15 @@ namespace L2 {
 			}
 		}
 		// create the matrix
+		if (printAll) std::cout << "creating the matrix" << std::endl;
 		for (int i=0; i<(index_counter*index_counter); i++)
 			adj_matrix.push_back(false);
 
+		if (printAll) std::cout << "setting values" << std::endl;
 		i_graph.hashes = hashes;
 		i_graph.indices = indices;
 		i_graph.adj_matrix = adj_matrix;
+		if (printAll) std::cout << "returning" << std::endl;
 		return i_graph;
 	}
 
