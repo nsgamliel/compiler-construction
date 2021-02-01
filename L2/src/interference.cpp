@@ -36,7 +36,8 @@ namespace L2 {
 			for (auto y : registers_hash) {
 				if (x != y) {
 					std::cout << "connecting " << f_i.items_i[x] << " and " << f_i.items_i[y] << std::endl;
-					f_i.i_graph.add_edge(x, y);
+					f_i.i_graph.adj_matrix[f_i.i_graph.indices[x]*f_i.i_graph.indices.size() + f_i.i_graph.indices[y]] = true;
+					f_i.i_graph.adj_matrix[f_i.i_graph.indices[y]*f_i.i_graph.indices.size() + f_i.i_graph.indices[x]] = true;
 				}
 			}
 		}
