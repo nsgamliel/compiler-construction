@@ -11,6 +11,8 @@ namespace L2 {
 	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
 		if (printS) std::cout << "in spill" << std::endl;
 		L2::Function f_s;
+		f_s.name = f->name;
+		f_s.arguments = f->arguments;
 		f_s.locals = f->locals;
 		bool reg_match;
 		bool val_match;
