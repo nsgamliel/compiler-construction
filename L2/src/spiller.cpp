@@ -170,8 +170,10 @@ namespace L2 {
 		std::string str;
 		switch (item->type) {
 			case 0:
+				if (printS) std::cout << "case 0" << std::endl;
 				str = item->register_name; break;
 			case 1:
+				if (printS) std::cout << "case 1" << std::endl;
 				str = "mem " + item->register_name + " " + item->value; break;
 			case 2:
 			case 3:
@@ -179,6 +181,7 @@ namespace L2 {
 			case 5:
 			case 6:
 			case -1:
+				if (printS) std::cout << "case 2-6 and -1" << std::endl;
 				str = item->value; break;
 		}
 		return str;
