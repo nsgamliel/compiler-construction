@@ -49,7 +49,7 @@ namespace L2 {
 							auto dst = new L2::Item();
 							auto src = new L2::Item();
 							dst->type = 6;
-							dst->value = prefix + std::to_string(num_replace);
+							dst->value = prefix + std::to_string(f_s.num_replace);
 							src->type = 1;
 							src->value = f_s.locals * 8;
 							src->register_name = "rsp";
@@ -63,9 +63,9 @@ namespace L2 {
 						for (auto item : instr->items) {
 							auto replace_item = new L2::Item();
 							replace_item->type = item->type;
-							if (reg_match) replace_item->register_name = prefix + std::to_string(num_replace);
+							if (reg_match) replace_item->register_name = prefix + std::to_string(f_s.num_replace);
 							else replace_item->register_name = item->register_name;
-							if (val_match) replace_item->value = prefix + std::to_string(num_replace);
+							if (val_match) replace_item->value = prefix + std::to_string(f_s.num_replace);
 							else replace_item->value = item->value;
 							replace_instr->items.push_back(replace_item);
 						}
@@ -75,7 +75,7 @@ namespace L2 {
 						auto dst = new L2::Item();
 						auto src = new L2::Item();
 						src->type = 6;
-						src->value = prefix + std::to_string(num_replace);
+						src->value = prefix + std::to_string(f_s.num_replace);
 						dst->type = 1;
 						dst->value = f_s.locals * 8;
 						dst->register_name = "rsp";
