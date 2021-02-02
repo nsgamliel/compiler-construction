@@ -30,6 +30,7 @@ namespace L2 {
   struct Function{
     std::string name;
     int64_t arguments;
+    int64_t locals = 0;
     std::vector<Instruction *> instructions;
   };
 

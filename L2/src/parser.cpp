@@ -746,6 +746,10 @@ namespace L2 {
       seps,
       argument_number,
       seps,
+      pegtl::opt<
+        local_number
+      >,
+      seps,
       Instructions_rule,
       seps,
       pegtl::one< ')' >
@@ -856,6 +860,15 @@ namespace L2 {
     if (printActions) std::cout << "function arguments number: " << in.string() << std::endl;
       auto currentF = p.functions.back();
       currentF->arguments = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < local_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function locals number: " << in.string() << std::endl;
+      auto currentF = p.functions.back();
+      currentF->locals = std::stoll(in.string());
     }
   };
 
