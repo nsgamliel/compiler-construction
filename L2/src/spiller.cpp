@@ -4,8 +4,8 @@
 
 namespace L2 {
 
-	L2::Function_s spill(L2::Function* f, std::string var, std::string prefix) {
-		Function_s f_s;
+	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
+		Function f_s;
 
 
 		return f_s;
