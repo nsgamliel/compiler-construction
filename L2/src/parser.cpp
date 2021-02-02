@@ -775,6 +775,9 @@ namespace L2 {
       seps
     > { };
 
+  struct spill_var_rule:
+    variable {};
+
   struct spill_file_rule:
     pegtl::seq<
       seps,
@@ -785,9 +788,6 @@ namespace L2 {
       spill_var_rule,
       seps
     > {};
-
-  struct spill_var_rule:
-    variable {};
 
   struct grammar : 
     pegtl::must< 
