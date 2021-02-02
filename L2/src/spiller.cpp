@@ -73,9 +73,9 @@ namespace L2 {
 						for (auto item : instr->items) {
 							auto replace_item = new L2::Item();
 							replace_item->type = item->type;
-							if (reg_match) replace_item->register_name = prefix + std::to_string(f_s.num_replace);
+							if (item->register_name.compare(var) == 0) replace_item->register_name = prefix + std::to_string(f_s.num_replace);
 							else replace_item->register_name = item->register_name;
-							if (val_match) replace_item->value = prefix + std::to_string(f_s.num_replace);
+							if (item->value.compare(var) == 0) replace_item->value = prefix + std::to_string(f_s.num_replace);
 							else replace_item->value = item->value;
 							replace_instr->items.push_back(replace_item);
 						}
