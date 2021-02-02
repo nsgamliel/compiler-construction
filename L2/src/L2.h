@@ -31,6 +31,7 @@ namespace L2 {
     std::string name;
     int64_t arguments;
     int64_t locals = 0;
+    int num_replace = 0;
     std::vector<Instruction *> instructions;
   };
 
