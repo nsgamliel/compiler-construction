@@ -127,7 +127,7 @@ int main(
    */
   if (spill_only){
     //std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)\n";
-    L2::Function_s f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
+    L2::Function f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
     L2::generate_spill_output(f_s);
     return 0;
   }
