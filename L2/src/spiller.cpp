@@ -106,7 +106,80 @@ namespace L2 {
 	}
 
 	void generate_spill_output(L2::Function f_s) {
+		std::cout << "(" << f_s.name << "\n";
+		std::cout << "\t" << f_s.arguments << " " << f_s.locals << "\n";
+		for (auto instr : f_s.instructions) {
+			std::cout << "\t";
+			switch (instr->op) {
+				case ret:
+					std::cout << "return"; break;
+				case mov:
+				case load:
+				case store:
+					std::cout << find_name(instr->items[1]) << " <- " << find_name(instr->items[0]); break;
+				case label_def:
+					std::cout << find_name(instr->items[0]); break;
+				case aop_pe:
+					std::cout << find_name(instr->items[1]) << " += " << find_name(instr->items[0]); break;
+				case aop_me:
+				   	std::cout << find_name(instr->items[1]) << " -= " << find_name(instr->items[0]); break;
+				case aop_te:
+				   	std::cout << find_name(instr->items[1]) << " *= " << find_name(instr->items[0]); break;
+				case aop_ae:
+				   	std::cout << find_name(instr->items[1]) << " &= " << find_name(instr->items[0]); break;
+				case aop_pp:
+					std::cout << find_name(instr->items[0]) << "++"; break;
+				case aop_mm:
+					std::cout << find_name(instr->items[0]) << "++"; break;
+				case sop_lsh:
+				   	std::cout << find_name(instr->items[1]) << " <<= " << find_name(instr->items[0]); break;
+				case sop_rsh:
+				   	std::cout << find_name(instr->items[1]) << " >>= " << find_name(instr->items[0]); break;
+				case dir_jmp:
+					std::cout << "goto " << find_name(instr->items[0]); break;
+				case cmp_less:
+					std::cout << find_name(instr->items[2]) << " <- " << find_name(instr->items[1]) << " < " << find_name(instr->items[0]); break;
+				case cmp_le:
+					std::cout << find_name(instr->items[2]) << " <- " << find_name(instr->items[1]) << " <= " << find_name(instr->items[0]); break;
+				case cmp_eq:
+					std::cout << find_name(instr->items[2]) << " <- " << find_name(instr->items[1]) << " = " << find_name(instr->items[0]); break;
+				case cond_less_jmp:
+					std::cout << "cjump " << find_name(instr->items[1]) << " < " << find_name(instr->items[0]) << " " << find_name(instr->items[2]); break;
+				case cond_le_jmp:
+					std::cout << "cjump " << find_name(instr->items[1]) << " <= " << find_name(instr->items[0]) << " " << find_name(instr->items[2]); break;
+				case cond_eq_jmp:
+					std::cout << "cjump " << find_name(instr->items[1]) << " = " << find_name(instr->items[0]) << " " << find_name(instr->items[2]); break;
+				case at:
+					std::cout << find_name(instr->items[3]) << " @ " << find_name(instr->items[2]) << " " << find_name(instr->items[1]) << " " << find_name(instr->items[0]); break;
+				case call_local:
+				case call_runtime:
+					std::cout << "call " << find_name(instr->items[0]) << " " << find_name(instr->items[1]); break;
+				case load_stack:
+					std::cout << find_name(instr->items[1]) << " <- stack-arg " << find_name(instr->items[0]); break;
+				default:
+					std::cerr << "no match found" << std::endl; break;
+			}
+			std::cout << "\n";
+		}
+		std::cout << ")\n";
+	}
 
+	std::string find_name(L2::Item* item) {
+		std::string str;
+		switch (item->type) {
+			case 0:
+				str = item->register_name; break;
+			case 1:
+				str = "mem " + item->register_name + " " + item->value; break;
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case -1:
+				str = item->value; break;
+		}
+		return str;
 	}
 
 }

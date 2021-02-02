@@ -10,4 +10,6 @@ namespace L2 {
 
 	void generate_spill_output(L2::Function f_s);
 
+	std::string find_name(L2::Item* item);
+
 }
