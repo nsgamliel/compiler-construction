@@ -61,7 +61,7 @@ namespace L2 {
 							dst->type = 6;
 							dst->value = prefix + std::to_string(f_s.num_replace);
 							src->type = 1;
-							src->value = f_s.locals * 8;
+							src->value = std::to_string(f_s.locals * 8);
 							src->register_name = "rsp";
 							load_instr->items.push_back(src);
 							load_instr->items.push_back(dst);
@@ -87,7 +87,7 @@ namespace L2 {
 						src->type = 6;
 						src->value = prefix + std::to_string(f_s.num_replace);
 						dst->type = 1;
-						dst->value = f_s.locals * 8;
+						dst->value = std::to_string(f_s.locals * 8);
 						dst->register_name = "rsp";
 						store_instr->items.push_back(src);
 						store_instr->items.push_back(dst);
