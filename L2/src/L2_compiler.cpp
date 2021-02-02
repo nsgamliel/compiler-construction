@@ -93,7 +93,9 @@ int main(
     /* 
      * Parse an L2 function and the spill arguments.
      */
+    if (verbose) std::cout << "parsing for spill only" <<std::endl;
     p = L2::parse_spill_file(argv[optind]);
+    if (verbose) std::cout << "done parsing" <<std::endl;
  
   } else if (liveness_only){
 
@@ -127,8 +129,11 @@ int main(
    */
   if (spill_only){
     //std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)\n";
+    if (verbose) std::cout << "processing spill" <<std::endl;
     L2::Function f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
+    if (verbose) std::cout << "generating output" <<std::endl;
     L2::generate_spill_output(f_s);
+    if (verbose) std::cout << "done" <<std::endl;
     return 0;
   }
 

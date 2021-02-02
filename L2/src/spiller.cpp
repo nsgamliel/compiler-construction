@@ -5,12 +5,17 @@
 
 namespace L2 {
 
+	bool printS = true;
+	// if (printS) std::cout << "" << std::endl;
+
 	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
+		if (printS) std::cout << "in spill" << std::endl;
 		L2::Function f_s;
 		f_s.locals = f->locals;
 		bool reg_match;
 		bool val_match;
 
+		if (printS) std::cout << "entering instructions" << std::endl;
 		for (auto instr : f->instructions) {
 			auto new_instr = new L2::Instruction();
 			reg_match = false;
@@ -36,6 +41,7 @@ namespace L2 {
 				case store:
 				case call_local:
 				case load_stack: {
+					if (printS) std::cout << "found possible" << std::endl;
 					for (auto item : instr->items) {
 						if (item->register_name.compare(var) == 0)
 							reg_match = true;
@@ -43,7 +49,9 @@ namespace L2 {
 							val_match = true;
 					}
 					if (reg_match || val_match) {
+						if (printS) std::cout << "found match" << std::endl;
 						if (f_s.num_replace > 0) {
+							if (printS) std::cout << "loading previous store" << std::endl;
 							auto load_instr = new L2::Instruction();
 							load_instr->op = load;
 							auto dst = new L2::Item();
@@ -86,12 +94,14 @@ namespace L2 {
 						f_s.instructions.push_back(instr);
 					} break; }
 				default:
+					if (printS) std::cout << "no possible" << std::endl;
 					f_s.instructions.push_back(instr); break;
 			}
 			f_s.num_replace++;
 		}
 
 		f_s.locals++;
+		if (printS) std::cout << "leaving spill" << std::endl;
 		return f_s;
 	}
 
