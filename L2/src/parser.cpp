@@ -746,6 +746,10 @@ namespace L2 {
       seps,
       argument_number,
       seps,
+      pegtl::opt<
+        local_number
+      >,
+      seps,
       Instructions_rule,
       seps,
       pegtl::one< ')' >
@@ -771,6 +775,20 @@ namespace L2 {
       seps
     > { };
 
+  struct spill_file_rule:
+    pegtl::seq<
+      seps,
+      Function_rule,
+      seps,
+      spill_var_rule,
+      seps,
+      spill_var_rule,
+      seps
+    > {};
+
+  struct spill_var_rule:
+    variable {};
+
   struct grammar : 
     pegtl::must< 
       entry_point_rule
@@ -779,6 +797,11 @@ namespace L2 {
   struct function_grammar:
     pegtl::must<
       Function_rule
+    > {};
+
+  struct spill_file_grammar:
+    pegtl::must<
+      spill_file_rule
     > {};
 
   /* 
@@ -796,6 +819,17 @@ namespace L2 {
       } else {
         abort();
       }
+    }
+  };
+
+  template<> struct action < spill_var_rule > {
+    template< typename Input > 
+    static void apply( const Input & in, Program & p){
+      if (printActions) std::cout << "spill_label_rule (push): " << in.string() << std::endl;
+      // this is cheating
+      auto newF = new Function();
+      newF->name = in.string();
+      p.functions.push_back(newF);
     }
   };
 
@@ -826,6 +860,15 @@ namespace L2 {
     if (printActions) std::cout << "function arguments number: " << in.string() << std::endl;
       auto currentF = p.functions.back();
       currentF->arguments = std::stoll(in.string());
+    }
+  };
+
+  template<> struct action < local_number > {
+    template< typename Input >
+  static void apply( const Input & in, Program & p){
+    if (printActions) std::cout << "function locals number: " << in.string() << std::endl;
+      auto currentF = p.functions.back();
+      currentF->locals = std::stoll(in.string());
     }
   };
 
@@ -1770,6 +1813,15 @@ namespace L2 {
     file_input< > fileInput(fileName);
     L2::Program p;
     parse< function_grammar, action >(fileInput, p);
+
+    return p;
+  }
+
+  L2::Program parse_spill_file(char* fileName) {
+    pegtl::analyze< spill_file_grammar >();
+    file_input< > fileInput(fileName);
+    L2::Program p;
+    parse< spill_file_grammar, action >(fileInput, p);
 
     return p;
   }

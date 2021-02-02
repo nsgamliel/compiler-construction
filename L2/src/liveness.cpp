@@ -7,8 +7,6 @@
 
 namespace L2 {
 
-	// if (printV) std::cout << "" << std::endl;
-
 	bool printV = false;
 
 	Function_l generate_liveness(L2::Program p) {

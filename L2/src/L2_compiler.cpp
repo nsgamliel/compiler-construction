@@ -16,6 +16,7 @@
 #include <parser.h>
 #include <liveness.h>
 #include <interference.h>
+#include <spiller.h>
 //#include <analysis.h>
 //#include <transformer.h>
 //#include <code_generator.h>
@@ -92,7 +93,7 @@ int main(
     /* 
      * Parse an L2 function and the spill arguments.
      */
-    //p = L2::parse_spill_file(argv[optind]);
+    p = L2::parse_spill_file(argv[optind]);
  
   } else if (liveness_only){
 
@@ -119,11 +120,15 @@ int main(
     p = L2::parse_file(argv[optind]);
   }
 
+
+
   /*
    * Special cases.
    */
   if (spill_only){
-    std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)\n";
+    //std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)\n";
+    L2::Function_s f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
+    L2::generate_spill_output(f_s);
     return 0;
   }
 
