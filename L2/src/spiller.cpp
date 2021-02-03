@@ -2,6 +2,7 @@
 #include <string>
 
 #include <spiller.h>
+#include <liveness.h>
 
 namespace L2 {
 
