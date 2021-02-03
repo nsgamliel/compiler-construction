@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -52,7 +53,7 @@ namespace L2 {
 					if (found_match) {
 						var_replaced = true;
 						if (printS) std::cout << "found match" << std::endl;
-						if (f_s.num_replace > 0 && std::find(f_l.instructions[ind]->gen.begin(), f_l.instructions[ind]->gen.end(), (unsigned long) f_l.str_hash(var)) != f_l.instructions[ind]->gen.end()) {
+						if (f_s.num_replace > 0 && std::find(f_l.instructions[ind]->gen.begin(), f_l.instructions[ind]->gen.end(), f_l.str_hash(var)) != f_l.instructions[ind]->gen.end()) {
 							if (printS) std::cout << "loading previous store" << std::endl;
 							auto load_instr = new L2::Instruction();
 							load_instr->op = load;
@@ -91,7 +92,7 @@ namespace L2 {
 							replace_instr->items.push_back(replace_item);
 						}
 						f_s.instructions.push_back(replace_instr);
-						if (std::find(f_l.instructions[ind]->kill.begin(), f_l.instructions[ind]->kill.end(), (unsigned long) f_l.str_hash(var)) != f_l.instructions[ind]->kill.end()) {
+						if (std::find(f_l.instructions[ind]->kill.begin(), f_l.instructions[ind]->kill.end(), f_l.str_hash(var)) != f_l.instructions[ind]->kill.end()) {
 							if (printS) std::cout << "storing var" << std::endl;
 							auto store_instr = new L2::Instruction();
 							store_instr->op = store;
