@@ -12,4 +12,6 @@ namespace L2 {
 
 	std::string find_name(L2::Item* item);
 
+	// include a remove_last_store helper
+
 }
