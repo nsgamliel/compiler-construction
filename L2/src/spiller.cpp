@@ -75,20 +75,20 @@ namespace L2 {
 						bool must_store = true;
 						for (int i=0; i<instr->items.size(); i++) {
 							auto replace_item = new L2::Item();
-							replace_item->type = instr->items[i].type;
-							if (instr->items[i].register_name.compare(var) == 0)								
+							replace_item->type = instr->items[i]->type;
+							if (instr->items[i]->register_name.compare(var) == 0)								
 								replace_item->register_name = prefix + std::to_string(f_s.num_replace);
 							else {
 								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
 									must_store = false;
-								replace_item->register_name = item->register_name;
+								replace_item->register_name = instr->items[i]->register_name;
 							}
-							if (instr->items[i].value.compare(var) == 0)
+							if (instr->items[i]->value.compare(var) == 0)
 								replace_item->value = prefix + std::to_string(f_s.num_replace);
 							else {
 								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
 									must_store = false;
-								replace_item->value = item->value;
+								replace_item->value = instr->items[i]->value;
 							}
 							replace_instr->items.push_back(replace_item);
 						}
