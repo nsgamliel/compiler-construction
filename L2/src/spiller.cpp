@@ -92,6 +92,8 @@ namespace L2 {
 						store_instr->items.push_back(src);
 						store_instr->items.push_back(dst);
 						f_s.instructions.push_back(store_instr);
+
+						f_s.num_replace++;
 					} else {
 						f_s.instructions.push_back(instr);
 					} break; }
@@ -99,7 +101,6 @@ namespace L2 {
 					if (printS) std::cout << "no possible" << std::endl;
 					f_s.instructions.push_back(instr); break;
 			}
-			f_s.num_replace++;
 		}
 
 		//remove extraneous store
