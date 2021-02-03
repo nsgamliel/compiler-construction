@@ -5,7 +5,7 @@
 
 namespace L2 {
 
-	bool printS = true;
+	bool printS = false;
 	// if (printS) std::cout << "" << std::endl;
 
 	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
