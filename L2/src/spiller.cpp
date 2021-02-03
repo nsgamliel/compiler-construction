@@ -102,6 +102,15 @@ namespace L2 {
 			f_s.num_replace++;
 		}
 
+		//remove extraneous store
+		std::string target = prefix + std::to_string(f_s.num_replace-1);
+		for (int i=0; i<f_s.instructions.size(); i++) {
+			if (f_s.instructions[i]->op == store && f_s.instructions[i]->items[0]->value.compare(target) == 0) {
+				f_s.instructions.erase(f_s.instructions.begin()+i);
+				break;
+			}
+		}
+
 		f_s.locals++;
 		if (printS) std::cout << "leaving spill" << std::endl;
 		return f_s;
