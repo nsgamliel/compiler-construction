@@ -118,7 +118,7 @@ namespace L2 {
 		}
 
 		//remove extraneous store
-		if (printS) std::cout << "removing extraneous store" << std::endl;
+		/*if (printS) std::cout << "removing extraneous store" << std::endl;
 		std::string target = prefix + std::to_string(f_s.num_replace-1);
 		if (printS) std::cout << "looking for: " << target << std::endl;
 		for (int i=0; i<f_s.instructions.size(); i++) {
@@ -128,7 +128,7 @@ namespace L2 {
 				if (printS) std::cout << "found!" << std::endl;
 				break;
 			}
-		}
+		}*/
 
 		if (var_replaced) f_s.locals++;
 		if (printS) std::cout << "leaving spill" << std::endl;
