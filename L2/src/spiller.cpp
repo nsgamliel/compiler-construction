@@ -72,29 +72,41 @@ namespace L2 {
 						// actual use followed by store instr
 						auto replace_instr = new L2::Instruction();
 						replace_instr->op = instr->op;
-						for (auto item : instr->items) {
+						bool must_store = true;
+						for (int i=0; i<instr->items.size(); i++) {
 							auto replace_item = new L2::Item();
-							replace_item->type = item->type;
-							if (item->register_name.compare(var) == 0) replace_item->register_name = prefix + std::to_string(f_s.num_replace);
-							else replace_item->register_name = item->register_name;
-							if (item->value.compare(var) == 0) replace_item->value = prefix + std::to_string(f_s.num_replace);
-							else replace_item->value = item->value;
+							replace_item->type = instr->items[i].type;
+							if (instr->items[i].register_name.compare(var) == 0)								
+								replace_item->register_name = prefix + std::to_string(f_s.num_replace);
+							else {
+								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
+									must_store = false;
+								replace_item->register_name = item->register_name;
+							}
+							if (instr->items[i].value.compare(var) == 0)
+								replace_item->value = prefix + std::to_string(f_s.num_replace);
+							else {
+								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
+									must_store = false;
+								replace_item->value = item->value;
+							}
 							replace_instr->items.push_back(replace_item);
 						}
 						f_s.instructions.push_back(replace_instr);
-						auto store_instr = new L2::Instruction();
-						store_instr->op = store;
-						auto dst = new L2::Item();
-						auto src = new L2::Item();
-						src->type = 6;
-						src->value = prefix + std::to_string(f_s.num_replace);
-						dst->type = 1;
-						dst->value = std::to_string(f_s.locals * 8);
-						dst->register_name = "rsp";
-						store_instr->items.push_back(src);
-						store_instr->items.push_back(dst);
-						f_s.instructions.push_back(store_instr);
-
+						if (must_store && instr->op != cond_less_jmp && instr->op != cond_le_jmp && instr->op != cond_eq_jmp) {
+							auto store_instr = new L2::Instruction();
+							store_instr->op = store;
+							auto dst = new L2::Item();
+							auto src = new L2::Item();
+							src->type = 6;
+							src->value = prefix + std::to_string(f_s.num_replace);
+							dst->type = 1;
+							dst->value = std::to_string(f_s.locals * 8);
+							dst->register_name = "rsp";
+							store_instr->items.push_back(src);
+							store_instr->items.push_back(dst);
+							f_s.instructions.push_back(store_instr);	
+						}
 						f_s.num_replace++;
 					} else {
 						f_s.instructions.push_back(instr);
