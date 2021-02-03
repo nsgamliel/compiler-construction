@@ -11,19 +11,18 @@ namespace L2 {
 	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
 		if (printS) std::cout << "in spill" << std::endl;
 		L2::Function f_s;
+		L2::Fucntion_l f_l = L2::gen_kill(*(f));
 		f_s.name = f->name;
 		f_s.arguments = f->arguments;
 		f_s.locals = f->locals;
-		bool reg_match;
-		bool val_match;
+		bool found_match;
 		bool var_replaced = false;
 
 		if (printS) std::cout << "entering instructions" << std::endl;
-		for (auto instr : f->instructions) {
+		for (int ind=0; ind<f->instructions.size(); ind++) {
 			auto new_instr = new L2::Instruction();
-			reg_match = false;
-			val_match = false;
-			switch (instr->op) {
+			found_match = false;
+			switch (f->instructions[ind]->op) {
 				case mov:
 				case aop_pe:
 				case aop_me:
@@ -45,16 +44,14 @@ namespace L2 {
 				case call_local:
 				case load_stack: {
 					if (printS) std::cout << "found possible" << std::endl;
-					for (auto item : instr->items) {
-						if (item->register_name.compare(var) == 0)
-							reg_match = true;
-						if (item->value.compare(var) == 0)
-							val_match = true;
+					for (auto item : f->instructions[ind]->items) {
+						if (item->register_name.compare(var) == 0 || item->value.compare(var) == 0)
+							found_match = true;
 					}
-					if (reg_match || val_match) {
+					if (found_match) {
 						var_replaced = true;
 						if (printS) std::cout << "found match" << std::endl;
-						if (f_s.num_replace > 0) {
+						if (f_s.num_replace > 0 && std::find(f_l.instructions[ind]->gen.begin(), f_l.instructions[ind]->gen.end(), f_l.str_hash(var)) != f_l.instructions[ind]->gen.end()) {
 							if (printS) std::cout << "loading previous store" << std::endl;
 							auto load_instr = new L2::Instruction();
 							load_instr->op = load;
@@ -71,29 +68,30 @@ namespace L2 {
 						}
 						// actual use followed by store instr
 						auto replace_instr = new L2::Instruction();
-						replace_instr->op = instr->op;
+						replace_instr->op = f->instructions[ind]->op;
 						bool must_store = true;
-						for (int i=0; i<instr->items.size(); i++) {
+						for (int i=0; i<f->instructions[ind]->items.size(); i++) {
 							auto replace_item = new L2::Item();
-							replace_item->type = instr->items[i]->type;
-							if (instr->items[i]->register_name.compare(var) == 0)								
+							replace_item->type = f->instructions[ind]->items[i]->type;
+							if (f->instructions[ind]->items[i]->register_name.compare(var) == 0)								
 								replace_item->register_name = prefix + std::to_string(f_s.num_replace);
 							else {
-								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
-									must_store = false;
-								replace_item->register_name = instr->items[i]->register_name;
+								//if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
+									//must_store = false;
+								replace_item->register_name = f->instructions[ind]->items[i]->register_name;
 							}
-							if (instr->items[i]->value.compare(var) == 0)
+							if (f->instructions[ind]->items[i]->value.compare(var) == 0)
 								replace_item->value = prefix + std::to_string(f_s.num_replace);
 							else {
-								if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
-									must_store = false;
-								replace_item->value = instr->items[i]->value;
+								//if (i == 2 && (instr->op == cmp_less || instr->op == cmp_le || instr->op == cmp_eq))
+									//must_store = false;
+								replace_item->value = f->instructions[ind]->items[i]->value;
 							}
 							replace_instr->items.push_back(replace_item);
 						}
 						f_s.instructions.push_back(replace_instr);
-						if (must_store && instr->op != cond_less_jmp && instr->op != cond_le_jmp && instr->op != cond_eq_jmp) {
+						if (std::find(f_l.instructions[ind]->kill.begin(), f_l.instructions[ind]->kill.end(), f_l.str_hash(var)) != f_l.instructions[ind]->kill.end()) {
+							if (printS) std::cout << "storing var" << std::endl;
 							auto store_instr = new L2::Instruction();
 							store_instr->op = store;
 							auto dst = new L2::Item();
@@ -109,11 +107,11 @@ namespace L2 {
 						}
 						f_s.num_replace++;
 					} else {
-						f_s.instructions.push_back(instr);
+						f_s.instructions.push_back(f->instructions[ind]);
 					} break; }
 				default:
 					if (printS) std::cout << "no possible" << std::endl;
-					f_s.instructions.push_back(instr); break;
+					f_s.instructions.push_back(f->instructions[ind]); break;
 			}
 		}
 
