@@ -5,7 +5,7 @@
 
 namespace L2 {
 
-	bool printS = false;
+	bool printS = true;
 	// if (printS) std::cout << "" << std::endl;
 
 	L2::Function spill(L2::Function* f, std::string var, std::string prefix) {
@@ -103,10 +103,14 @@ namespace L2 {
 		}
 
 		//remove extraneous store
+		if (printS) std::cout << "removing extraneous store" << std::endl;
 		std::string target = prefix + std::to_string(f_s.num_replace-1);
+		if (printS) std::cout << "looking for: " << target << std::endl;
 		for (int i=0; i<f_s.instructions.size(); i++) {
+			if (printS) std::cout << "examining: " << f_s.instructions[i]->items[0]->value << std::endl;
 			if (f_s.instructions[i]->op == store && f_s.instructions[i]->items[0]->value.compare(target) == 0) {
 				f_s.instructions.erase(f_s.instructions.begin()+i);
+				if (printS) std::cout << "found!" << std::endl;
 				break;
 			}
 		}
