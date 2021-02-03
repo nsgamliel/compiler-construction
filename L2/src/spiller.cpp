@@ -16,6 +16,7 @@ namespace L2 {
 		f_s.locals = f->locals;
 		bool reg_match;
 		bool val_match;
+		bool var_replaced = false;
 
 		if (printS) std::cout << "entering instructions" << std::endl;
 		for (auto instr : f->instructions) {
@@ -51,6 +52,7 @@ namespace L2 {
 							val_match = true;
 					}
 					if (reg_match || val_match) {
+						var_replaced = true;
 						if (printS) std::cout << "found match" << std::endl;
 						if (f_s.num_replace > 0) {
 							if (printS) std::cout << "loading previous store" << std::endl;
@@ -116,7 +118,7 @@ namespace L2 {
 			}
 		}
 
-		f_s.locals++;
+		if (var_replaced) f_s.locals++;
 		if (printS) std::cout << "leaving spill" << std::endl;
 		return f_s;
 	}
