@@ -52,7 +52,7 @@ namespace L2 {
 					if (found_match) {
 						var_replaced = true;
 						if (printS) std::cout << "found match" << std::endl;
-						if (f_s.num_replace > 0 && std::find(f_l.instructions[ind]->gen.begin(), f_l.instructions[ind]->gen.end(), f_l.str_hash(var)) != f_l.instructions[ind]->gen.end()) {
+						if (f_s.num_replace > 0 && std::find(f_l.instructions[ind]->gen.begin(), f_l.instructions[ind]->gen.end(), uint64(f_l.str_hash(var))) != f_l.instructions[ind]->gen.end()) {
 							if (printS) std::cout << "loading previous store" << std::endl;
 							auto load_instr = new L2::Instruction();
 							load_instr->op = load;
