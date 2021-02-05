@@ -4,25 +4,46 @@
 
 #include <code_generator.h>
 
-using namespace std;
+//using namespace std;
 
 
 namespace L1{
 
-  bool printGActions = true;
+	Code_Generator::Code_Generator(const std::ofstream& output_file) {
+		this->output_file = output_file;
+	}
 
-  void generate_code(Program p){
-    /* 
-     * Open the output file.
-     */ 
+	void Code_Generator::visit(Instruction_return* i) {
+		output_file << "\treturn\n";
+		return;
+	}
+
+	void convert_L1_to_x64(const Program& p) {
+		std::ofstream output_file;
+		output_file.open("prog.S");
+		auto cg = new Code_Generator(output_file);
+
+		for (auto f : p.functions) {
+			for (auto i : f->instructions) {
+				i->accept(cg);
+			}
+		}
+
+		output_file.close();
+
+		return;
+	}
+
+  //bool printGActions = true;
+
+  /*void generate_code(Program p){
+    
     if (printGActions) std::cout << "opening prog.S..." << std::endl;
     std::ofstream outputFile;
     outputFile.open("prog.S");
     if (printGActions) std::cout << "prog.S opened" << std::endl;
    
-    /* 
-     * Generate target code
-     */ 
+    
     if (printGActions) std::cout << "constructing base template..." << std::endl;
     outputFile << "    .text\n    .globl go\ngo:\n    pushq %rbx\n    pushq %rbp\n    pushq %r12\n    pushq %r13\n    pushq %r14\n    pushq %r15\n";
     outputFile << "\n    call " << conv_label(p.entryPointLabel) << "\n\n";
@@ -197,15 +218,13 @@ namespace L1{
     }
 
 
-    /* 
-     * Close the output file.
-     */ 
+   
     if (printGActions) std::cout << "closing prog.S..." << std::endl;
     outputFile.close();
     if (printGActions) std::cout << "prog.S closed" << std::endl;
    
     return;
-  }
+  }*/
 
   std::string conv_operand(const Item* item) {
     if (printGActions) std::cout << "converting operand ";
