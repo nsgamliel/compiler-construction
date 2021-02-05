@@ -216,7 +216,7 @@ namespace L1 {
 
   struct Instruction_rule:
     pegtl::sor<
-      pegtl::seq< pegtl::at<Instruction_return_rule>    , Instruction_return_rule     >,
+      pegtl::seq< pegtl::at<Instruction_return_rule>    , Instruction_return_rule     >
     > {};
 
   struct Instructions_rule:
@@ -326,7 +326,7 @@ namespace L1 {
 
   template<> struct action < local_number > {
     template< typename Input >
-  	static void apply( const Input & in, Program & p){
+  	static void apply(const Input & in, Program & p) {
     	if (printActions) std::cout << "function locals number: " << in.string() << std::endl;
       auto currentF = p.functions.back();
       currentF->locals = std::stoll(in.string());
@@ -335,7 +335,7 @@ namespace L1 {
 
   template<> struct action < str_return > {
     template< typename Input >
-    static void apply( const Input & in, Program & p){
+    static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "return instruction" << std::endl;
       // TODO
     }
@@ -343,13 +343,13 @@ namespace L1 {
 
   template<> struct action < register_rdi_rule > {
     template< typename Input >
-    static void apply( const Input & in, Program & p){
+    static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "register rdi (push)" << std::endl;
       // TODO
     }
   };
 
-  Program parse_file (char *fileName){
+  Program parse_file(char *fileName) {
 
     pegtl::analyze< grammar >();
 

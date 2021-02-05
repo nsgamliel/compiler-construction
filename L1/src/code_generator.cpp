@@ -9,7 +9,7 @@
 
 namespace L1{
 
-	Code_Generator::Code_Generator(const std::ofstream& output_file) {
+	Code_Generator::Code_Generator(std::ofstream output_file) {
 		this->output_file = output_file;
 	}
 
@@ -21,7 +21,7 @@ namespace L1{
 	void convert_L1_to_x64(const Program& p) {
 		std::ofstream output_file;
 		output_file.open("prog.S");
-		auto cg = new Code_Generator(output_file);
+		auto cg = new Code_Generator(output_file); /// just create the member in the constructor itself
 
 		for (auto f : p.functions) {
 			for (auto i : f->instructions) {
@@ -224,7 +224,7 @@ namespace L1{
     if (printGActions) std::cout << "prog.S closed" << std::endl;
    
     return;
-  }*/
+  }
 
   std::string conv_operand(const Item* item) {
     if (printGActions) std::cout << "converting operand ";
@@ -310,5 +310,5 @@ namespace L1{
     }
     if (printGActions) std::cout << "new register name " << new_i->register_name << std::endl;
     return new_i;
-  }
+  }*/
 }

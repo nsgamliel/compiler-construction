@@ -1,3 +1,7 @@
 L1/src/TODO.txt
 L2/src/TODO.txt
 .vscode
+L1/obj
+L2/*.L2
+L2/*.L2~
+test-unzip
