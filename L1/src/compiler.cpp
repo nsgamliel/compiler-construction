@@ -12,8 +12,8 @@
 #include <unistd.h>
 #include <iostream>
 
-#include <parser.h>
 #include <code_generator.h>
+#include <parser.h>
 
 using namespace std;
 
@@ -64,14 +64,6 @@ int main(
   if (verbose) std::cout << "==== parsing ====" << std::endl;
   auto p = L1::parse_file(argv[optind]);
   if (verbose) std::cout << "==== done parsing ====" << std::endl;
-  /* 
-   * Print the source program.
-   */
-  if (verbose){
-    for (auto f : p.functions){
-      //TODO
-    }
-  }
 
   /*
    * Generate x86_64 assembly.
