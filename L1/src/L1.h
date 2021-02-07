@@ -5,16 +5,17 @@
 
 namespace L1 {
 
-	// enum Opcode {ret, mov, label_def, aop_pe, aop_me, aop_te, aop_ae, aop_pp, aop_mm, sop_lsh, sop_rsh, dir_jmp, cmp_less, cmp_le, cmp_eq, cond_less_jmp, cond_le_jmp, cond_eq_jmp, at, load, store, call_local, call_runtime};
-
 	class Visitor;
 
-	// TODO: items
+	/*
+	 * items
+	 */
+
 	class Item {};
 
-	class Variable : public Item {
+	class Label : public Item {
 		public:
-			Variable(std::string name);
+			Label(const std::string& name);
 			
 		private:
 			std::string name;
@@ -22,13 +23,29 @@ namespace L1 {
 
 	class Register : public Item {
 		public:
-			Register(std::string name);
+			Register(const std::string& name);
 			
 		private:
 			std::string name;
 	};
 
-	// TODO: instructions
+	class Number : public Item {
+		public:
+			Number(int64_t num);
+
+		private:
+			int64_t value;
+	}
+
+	class Memory : public Item {
+		public:
+			Memory(const Register& reg, const Number)
+	}
+
+	/*
+	 * instructions
+	 */
+
 	class Instruction {
 		public:
 			virtual void accept(Visitor* v) = 0;
@@ -38,6 +55,120 @@ namespace L1 {
 		public:
 			void accept(Visitor* v) override;
 	};
+
+	class Instruction_mov : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_label : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_pe : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_me : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_te : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_ae : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_pp : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_aop_mm : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_sop_lsh : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_sop_rsh : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_dir_jmp : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cmp_less : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cmp_le : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cmp_eq : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cnd_jmp_less : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cnd_jmp_le : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_cnd_jmp_eq : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_at : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_load : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_store : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_call_local : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	class Instruction_call_runtime : public Instruction {
+		public:
+			void accept(Visitor* v) override;
+	};
+
+	/*
+	 * general
+	 */
 
   class Function{
 		public:
@@ -53,10 +184,31 @@ namespace L1 {
   	  std::vector<Function *> functions;
   };
 
-	// TODO: visitor
 	class Visitor {
 		public:
-			virtual void visit(Instruction_return* i) = 0;
+			virtual void visit(Instruction_return* i)       = 0;
+			virtual void visit(Instruction_mov* i)          = 0;
+			virtual void visit(Instruction_label* i)        = 0;
+			virtual void visit(Instruction_aop_pe* i)       = 0;
+			virtual void visit(Instruction_aop_me* i)       = 0;
+			virtual void visit(Instruction_aop_te* i)       = 0;
+			virtual void visit(Instruction_aop_ae* i)       = 0;
+			virtual void visit(Instruction_aop_pp* i)       = 0;
+			virtual void visit(Instruction_aop_mm* i)       = 0;
+			virtual void visit(Instruction_sop_lsh* i)      = 0;
+			virtual void visit(Instruction_sop_rsh* i)      = 0;
+			virtual void visit(Instruction_dir_jmp* i)      = 0;
+			virtual void visit(Instruction_cmp_less* i)     = 0;
+			virtual void visit(Instruction_cmp_le* i)       = 0;
+			virtual void visit(Instruction_cmp_eq* i)       = 0;
+			virtual void visit(Instruction_cnd_jmp_less* i) = 0;
+			virtual void visit(Instruction_cnd_jmp_le* i)   = 0;
+			virtual void visit(Instruction_cnd_jmp_eq* i)   = 0;
+			virtual void visit(Instruction_at* i)           = 0;
+			virtual void visit(Instruction_load* i)         = 0;
+			virtual void visit(Instruction_store* i)        = 0;
+			virtual void visit(Instruction_call_local* i)   = 0;
+			virtual void visit(Instruction_call_runtime* i) = 0;
 	};
 
 }

@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include <fstream>
 
 #include <code_generator.h>
 
@@ -9,14 +8,9 @@
 
 namespace L1{
 
-	void Code_Generator::visit(Instruction_return* i) {
-		output_file << "\treturn\n";
-		return;
-	}
-
 	void convert_L1_to_x64(const Program& p) {
-		auto cg = new Code_Generator(); /// just create the member in the constructor itself
-		cg->output_file.open("prog.S");
+		auto cg = new Code_Generator();
+		cg->output_file.open("prog.S"); // TODO: make outpur_file a private member and give cg a publicly facing method to open/close it
 
 		for (auto f : p.functions) {
 			for (auto i : f->instructions) {
@@ -26,6 +20,15 @@ namespace L1{
 
 		cg->output_file.close();
 
+		return;
+	}
+
+	/*
+	 * code generator visit overrides
+	 */
+
+	void Code_Generator::visit(Instruction_return* i) {
+		output_file << "\treturn\n";
 		return;
 	}
 
