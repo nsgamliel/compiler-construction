@@ -15,14 +15,11 @@ namespace L1{
 	// TODO: code generator class
 	class Code_Generator : public L1::Visitor {
 		public:
-			Code_Generator(std::ofstream output_file);
-			void visit(Instruction_return* i) override;
-
-		private:
 			std::ofstream output_file;
+			void visit(Instruction_return* i) override;
 	};
 
 	// TODO: code generation function
-	void convert_L1_to_x64(Program p);
+	void convert_L1_to_x64(const Program& p);
 
 }

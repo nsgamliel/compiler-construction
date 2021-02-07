@@ -9,19 +9,14 @@
 
 namespace L1{
 
-	Code_Generator::Code_Generator(std::ofstream output_file) {
-		this->output_file = output_file;
-	}
-
 	void Code_Generator::visit(Instruction_return* i) {
 		output_file << "\treturn\n";
 		return;
 	}
 
 	void convert_L1_to_x64(const Program& p) {
-		std::ofstream output_file;
-		output_file.open("prog.S");
-		auto cg = new Code_Generator(output_file); /// just create the member in the constructor itself
+		auto cg = new Code_Generator(); /// just create the member in the constructor itself
+		cg->output_file.open("prog.S");
 
 		for (auto f : p.functions) {
 			for (auto i : f->instructions) {
@@ -29,7 +24,7 @@ namespace L1{
 			}
 		}
 
-		output_file.close();
+		cg->output_file.close();
 
 		return;
 	}
