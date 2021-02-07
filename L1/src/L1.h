@@ -39,7 +39,7 @@ namespace L1 {
 
 	class Memory : public Item {
 		public:
-			Memory(const Register& reg, const Number)
+			Memory(const Register& reg, )
 	}
 
 	/*
