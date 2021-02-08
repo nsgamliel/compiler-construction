@@ -6,19 +6,69 @@
 //using namespace std;
 
 
-namespace L1{
+namespace L1::x64{
 
-	void convert_L1_to_x64(const Program& p) {
+	bool printGActions = true;
+
+	void generate_code(const Program& p) {
 		auto cg = new Code_Generator();
-		cg->output_file.open("prog.S"); // TODO: make outpur_file a private member and give cg a publicly facing method to open/close it
+
+		cg->open_file("prog.S");
+		cg->convert_L1_to_x64(p);
+		cg->close_file();
+
+		return;
+	}
+
+	std::string conv_label(const std::string& str) {
+    if (printGActions) std::cout << "converting label " << str << std::endl;
+    return "_" + str.substr(1);
+  }
+
+	std::string conv_operand(Item* item) {
+		if (dynamic_cast<L1::Register*> (item)) {
+			auto item_c = dynamic_cast<L1::Register*> (item);
+			return "%" + item_c->name;
+		} if (dynamic_cast<L1::Number*> (item)){
+			auto item_c = dynamic_cast<L1::Number*> (item);
+			return "$" + std::to_string(item_c->value);
+		} if (dynamic_cast<L1::Label*> (item)) {
+			auto item_c = dynamic_cast<L1::Label*> (item);
+			return "$" + L1::x64::conv_label(item_c->name);
+		} if (dynamic_cast<L1::Memory*> (item)) {
+			auto item_c = dynamic_cast<L1::Memory*> (item);
+			return std::to_string(item_c->offset->value) + "(%" + item_c->reg->name;
+		} else
+			return "<<error>>";
+	}
+
+	std::string conv_to_8_bit(Item* item) {
+		if (!dynamic_cast<L1::Register*> (item))
+			return conv_operand(item);
+		auto item_c = dynamic_cast<Register*> (item);
+		
+	}
+
+	void Code_Generator::open_file(std::string file_name) {
+		output_file.open(file_name);
+		return;
+	}
+
+	void Code_Generator::close_file() {
+		output_file.close();
+		return;
+	}
+
+	void Code_Generator::convert_L1_to_x64(const Program& p) {
+		output_file << "\t.text\n\t.globl go\ngo:\n\tpushq %rbx\n\tpushq %rbp\n\tpushq %r12\n\tpushq %r13\n\tpushq %r14\n\tpushq %r15\n";
+		output_file << "\n\tcall " << L1::x64::conv_label(p.entryPointLabel) << "\n\n";
+		output_file << "\tpopq %r15\n\tpopq %r14\n\tpopq %r13\n\tpopq %r12\n\tpopq %rbp\n\tpopq %rbx\n\tretq\n\n";
 
 		for (auto f : p.functions) {
 			for (auto i : f->instructions) {
-				i->accept(cg);
+				i->accept(this);
 			}
 		}
-
-		cg->output_file.close();
 
 		return;
 	}
@@ -32,9 +82,72 @@ namespace L1{
 		return;
 	}
 
+	void Code_Generator::visit(Instruction_mov* i) {
+		output_file << "\tmovq " << L1::x64::conv_operand(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_label* i) {
+		output_file << L1::x64::conv_label(i->label->value) << ":\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_pe* i) {
+		output_file << "\taddq " << L1::x64::conv_operand(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_me* i) {
+		output_file << "\tsubq " << L1::x64::conv_operand(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_te* i) {
+		output_file << "\timulq " << L1::x64::conv_operand(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_ae* i) {
+		output_file << "\tandq " << L1::x64::conv_operand(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_pp* i) {
+		output_file << "\tinc " << L1::x64::conv_operand(i->src) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_aop_mm* i) {
+		output_file << "\tdec " << L1::x64::conv_operand(i->src) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_sop_lsh* i) {
+		output_file << "\tsalq " << L1::x64::conv_to_8_bit(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+
+	void Code_Generator::visit(Instruction_sop_rsh* i) {
+		output_file << "\tsarq " << L1::x64::conv_to_8_bit(i->src) << ", " << L1::x64::conv_operand(i->dst) << "\n";
+	}
+	void Code_Generator::visit(Instruction_dir_jmp* i)
+	void Code_Generator::visit(Instruction_cmp_less* i)
+	void Code_Generator::visit(Instruction_cmp_le* i)
+	void Code_Generator::visit(Instruction_cmp_eq* i)
+	void Code_Generator::visit(Instruction_cnd_jmp_less* i)
+	void Code_Generator::visit(Instruction_cnd_jmp_le* i)
+	void Code_Generator::visit(Instruction_cnd_jmp_eq* i)
+	void Code_Generator::visit(Instruction_at* i)
+	void Code_Generator::visit(Instruction_load* i)
+	void Code_Generator::visit(Instruction_store* i)
+	void Code_Generator::visit(Instruction_call* i)
+	void Code_Generator::visit(Instruction_call_print* i)
+	void Code_Generator::visit(Instruction_call_input* i)
+	void Code_Generator::visit(Instruction_call_allocate* i)
+	void Code_Generator::visit(Instruction_call_tensor_error* i)
+
+
+
+/*
+
+
+
+
+
   //bool printGActions = true;
 
-  /*void generate_code(Program p){
+  void generate_code(Program p){
     
     if (printGActions) std::cout << "opening prog.S..." << std::endl;
     std::ofstream outputFile;
