@@ -10,9 +10,9 @@ namespace L1::x64{
 	void generate_code(const Program& p);
   
 	// TODO
-  std::string conv_label(const std::string& str);
+  std::string conv_label(Item* item);
   std::string conv_operand(Item* item);
-  std::string conv_to_8_bit(Item* item)
+  std::string conv_to_8_bit(Item* item);
 
 	class Code_Generator : public L1::Visitor {
 		public:

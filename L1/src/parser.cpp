@@ -25,7 +25,7 @@ using namespace pegtl;
 
 namespace L1 {
 
-  bool printActions = true;
+  bool printActions = false;
 
   /* 
    * Data required to parse
@@ -370,7 +370,7 @@ namespace L1 {
 			str_goto,
 			seps,
 			label_operand_rule,
-			seps,
+			seps
 		> {};
 
 	struct Instruction_cmp_less_rule:
@@ -483,6 +483,8 @@ namespace L1 {
 			seps,
 			register_rule,
 			seps,
+			str_arrow,
+			seps,
 			memory_operand_rule,
 			seps
 		> {};
@@ -491,6 +493,8 @@ namespace L1 {
 		pegtl::seq<
 			seps,
 			memory_operand_rule,
+			seps,
+			str_arrow,
 			seps,
 			reg_num_lbl,
 			seps
@@ -554,6 +558,14 @@ namespace L1 {
   struct Instruction_rule:
     pegtl::sor<
       pegtl::seq< pegtl::at<Instruction_return_rule           >, Instruction_return_rule           >,
+			pegtl::seq< pegtl::at<Instruction_cmp_less_rule         >, Instruction_cmp_less_rule         >,
+			pegtl::seq< pegtl::at<Instruction_cmp_le_rule           >, Instruction_cmp_le_rule           >,
+			pegtl::seq< pegtl::at<Instruction_cmp_eq_rule           >, Instruction_cmp_eq_rule           >,
+			pegtl::seq< pegtl::at<Instruction_cnd_jmp_less_rule     >, Instruction_cnd_jmp_less_rule     >,
+			pegtl::seq< pegtl::at<Instruction_cnd_jmp_le_rule       >, Instruction_cnd_jmp_le_rule       >,
+			pegtl::seq< pegtl::at<Instruction_cnd_jmp_eq_rule       >, Instruction_cnd_jmp_eq_rule       >,
+			pegtl::seq< pegtl::at<Instruction_load_rule             >, Instruction_load_rule             >,
+			pegtl::seq< pegtl::at<Instruction_store_rule            >, Instruction_store_rule            >,
 			pegtl::seq< pegtl::at<Instruction_mov_rule              >, Instruction_mov_rule              >,
 			pegtl::seq< pegtl::at<Instruction_label_rule            >, Instruction_label_rule            >,
 			pegtl::seq< pegtl::at<Instruction_aop_pe_rule           >, Instruction_aop_pe_rule           >,
@@ -565,15 +577,7 @@ namespace L1 {
 			pegtl::seq< pegtl::at<Instruction_sop_lsh_rule          >, Instruction_sop_lsh_rule          >,
 			pegtl::seq< pegtl::at<Instruction_sop_rsh_rule          >, Instruction_sop_rsh_rule          >,
 			pegtl::seq< pegtl::at<Instruction_dir_jmp_rule          >, Instruction_dir_jmp_rule          >,
-			pegtl::seq< pegtl::at<Instruction_cmp_less_rule         >, Instruction_cmp_less_rule         >,
-			pegtl::seq< pegtl::at<Instruction_cmp_le_rule           >, Instruction_cmp_le_rule           >,
-			pegtl::seq< pegtl::at<Instruction_cmp_eq_rule           >, Instruction_cmp_eq_rule           >,
-			pegtl::seq< pegtl::at<Instruction_cnd_jmp_less_rule     >, Instruction_cnd_jmp_less_rule     >,
-			pegtl::seq< pegtl::at<Instruction_cnd_jmp_le_rule       >, Instruction_cnd_jmp_le_rule       >,
-			pegtl::seq< pegtl::at<Instruction_cnd_jmp_eq_rule       >, Instruction_cnd_jmp_eq_rule       >,
 			pegtl::seq< pegtl::at<Instruction_at_rule               >, Instruction_at_rule               >,
-			pegtl::seq< pegtl::at<Instruction_load_rule             >, Instruction_load_rule             >,
-			pegtl::seq< pegtl::at<Instruction_store_rule            >, Instruction_store_rule            >,
 			pegtl::seq< pegtl::at<Instruction_call_rule             >, Instruction_call_rule             >,
 			pegtl::seq< pegtl::at<Instruction_call_print_rule       >, Instruction_call_print_rule       >,
 			pegtl::seq< pegtl::at<Instruction_call_input_rule       >, Instruction_call_input_rule       >,
@@ -710,8 +714,374 @@ namespace L1 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "mov rule" << std::endl;
 			auto curr_f = p.functions.back();
-      auto instr = new Instruction_mov(parsed_items[parsed_items.size()-1], parsed_items[parsed_items.size()-2]);
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = dynamic_cast<Register*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (dst) {
+				auto instr = new Instruction_mov(src, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+	template<> struct action < Instruction_label_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "label rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto label = dynamic_cast<Label*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (label) {
+				auto instr = new Instruction_label(label);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+	template<> struct action < Instruction_aop_pe_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_pe rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_pe(src, dst);
 			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_aop_me_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_me rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_me(src, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_aop_te_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_te rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_te(src, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_aop_ae_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_ae rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_ae(src, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_aop_pp_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_pp rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_pp(src);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_aop_mm_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "aop_mm rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_aop_mm(src);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_sop_lsh_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "sop_lsh rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_sop_lsh(src, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_sop_rsh_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "sop_rsh rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_sop_rsh(src, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_dir_jmp_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "dir_jmp rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto label = dynamic_cast<Label*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (label) {
+				auto instr = new Instruction_dir_jmp(label);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+	template<> struct action < Instruction_cmp_less_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cmp_less rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cmp_less(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_cmp_le_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cmp_le rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cmp_le(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_cmp_eq_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cmp_eq rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cmp_eq(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_cnd_jmp_less_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cnd_jmp_less rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_cnd_jmp_le_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cnd_jmp_le rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cnd_jmp_le(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_cnd_jmp_eq_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "cnd_jmp_eq rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			auto right = parsed_items.back();
+			parsed_items.pop_back();
+			auto left = parsed_items.back();
+			parsed_items.pop_back();
+			auto instr = new Instruction_cnd_jmp_eq(left, right, dst);
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+	template<> struct action < Instruction_at_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "at rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto scale = dynamic_cast<Number*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto index = dynamic_cast<Register*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto base = dynamic_cast<Register*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto dst = dynamic_cast<Register*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (scale && index && base && dst) {
+				auto instr = new Instruction_at(base, index, scale, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_load_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "load rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = dynamic_cast<Memory*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			if (src) {
+				auto instr = new Instruction_load(src, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_store_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "store rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto src = parsed_items.back();
+			parsed_items.pop_back();
+			auto dst = dynamic_cast<Memory*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (dst) {
+				auto instr = new Instruction_store(src, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_call_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto args = dynamic_cast<Number*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			if (args) {
+				auto instr = new Instruction_call(dst, args);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_call_print_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_print rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto instr = new Instruction_call_print();
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < Instruction_call_input_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_input rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto instr = new Instruction_call_input();
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < Instruction_call_allocate_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_allocate rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto instr = new Instruction_call_allocate();
+			curr_f->instructions.push_back(instr);
+    }
+  };
+
+  template<> struct action < Instruction_call_tensor_error_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_tensor_error rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto args = dynamic_cast<Number*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (args) {
+				auto instr = new Instruction_call_tensor_error(args);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 
@@ -737,12 +1107,16 @@ namespace L1 {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "memory operand (pop x2, push x1)" << std::endl;
-			auto num = parsed_items.back();
-			parsed_items.pop_back()
-			auto reg = parsed_items.back();
+			auto num = dynamic_cast<Number*> (parsed_items.back());
 			parsed_items.pop_back();
-			auto new_item = new Memory(reg, num);
-			parsed_items.push_back(new_item);
+			auto reg = dynamic_cast<Register*> (parsed_items.back());
+			parsed_items.pop_back();
+			if (num && reg)  {
+				auto new_item = new Memory(reg, num);
+				parsed_items.push_back(new_item);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 

@@ -70,7 +70,7 @@ int main(
    */
   if (verbose) std::cout << "==== generating x86_64 code ====" << std::endl;
   if (enable_code_generator){
-    L1::convert_L1_to_x64(p);
+    L1::x64::generate_code(p);
   }
   if (verbose) std::cout << "==== done generating x86_64 code ====" << std::endl;
 

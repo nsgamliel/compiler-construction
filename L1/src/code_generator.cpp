@@ -8,7 +8,7 @@
 
 namespace L1::x64{
 
-	bool printGActions = true;
+	bool printGActions = false;
 
 	void generate_code(const Program& p) {
 		auto cg = new Code_Generator();
@@ -20,9 +20,15 @@ namespace L1::x64{
 		return;
 	}
 
-	std::string conv_label(const std::string& str) {
-    if (printGActions) std::cout << "converting label " << str << std::endl;
-    return "_" + str.substr(1);
+	std::string conv_label(Item* item) {
+		auto item_c = dynamic_cast<Label*> (item);
+		if (printGActions) std::cout << "converting label" << std::endl;
+		if (item_c) {
+    	return "_" + item_c->name.substr(1);
+		} else {
+			std::cerr << "not a label type" << std::endl;
+			return "";
+		}
   }
 
 	std::string conv_operand(Item* item) {
@@ -34,10 +40,10 @@ namespace L1::x64{
 			return "$" + std::to_string(item_c->value);
 		} if (dynamic_cast<L1::Label*> (item)) {
 			auto item_c = dynamic_cast<L1::Label*> (item);
-			return "$" + L1::x64::conv_label(item_c->name);
+			return "$" + L1::x64::conv_label(item_c);
 		} if (dynamic_cast<L1::Memory*> (item)) {
 			auto item_c = dynamic_cast<L1::Memory*> (item);
-			return std::to_string(item_c->offset->value) + "(%" + item_c->reg->name;
+			return std::to_string(item_c->offset->value) + "(%" + item_c->reg->name + ")";
 		} else
 			return "<<error>>";
 	}
@@ -94,11 +100,12 @@ namespace L1::x64{
 
 	void Code_Generator::convert_L1_to_x64(const Program& p) {
 		output_file << "\t.text\n\t.globl go\ngo:\n\tpushq %rbx\n\tpushq %rbp\n\tpushq %r12\n\tpushq %r13\n\tpushq %r14\n\tpushq %r15\n";
-		output_file << "\n\tcall " << L1::x64::conv_label(p.entryPointLabel) << "\n\n";
+		output_file << "\n\tcall _" << p.entryPointLabel.substr(1) << "\n\n";
 		output_file << "\tpopq %r15\n\tpopq %r14\n\tpopq %r13\n\tpopq %r12\n\tpopq %rbp\n\tpopq %rbx\n\tretq\n\n";
 
 		for (auto f : p.functions) {
-			if (f->locals > 0) output_file << "\tsubq $" std::to_string(f->locals*8) << ", %rsp\n";
+			output_file << "_" << f->name.substr(1) << ":\n";
+			if (f->locals > 0) output_file << "\tsubq $" << std::to_string(f->locals*8) << ", %rsp\n";
 			for (auto i : f->instructions) {
 				i->accept(this);
 			}
@@ -112,7 +119,7 @@ namespace L1::x64{
 	 */
 
 	void Code_Generator::visit(Instruction_return* i) {
-		if (i->stack_alloc > 0) output_file << "\taddq $" std::to_string(i->stack_alloc*8) << ", %rsp\n";
+		if (i->stack_alloc > 0) output_file << "\taddq $" << std::to_string(i->stack_alloc*8) << ", %rsp\n";
 		output_file << "\tretq\n";
 		return;
 	}
@@ -123,7 +130,7 @@ namespace L1::x64{
 	}
 
 	void Code_Generator::visit(Instruction_label* i) {
-		output_file << L1::x64::conv_label(i->label->value) << ":\n";
+		output_file << L1::x64::conv_label(i->label) << ":\n";
 		return;
 	}
 
@@ -269,7 +276,7 @@ namespace L1::x64{
 	}
 
 	void Code_Generator::visit(Instruction_at* i) {
-		output_file << "\tlea (" << L1::x64::conv_operand(i->base) << ", " << L1::x64::conv_operand(i->index) << ", " << L1::x64::conv_operand(i->scale) << "), " << L1::x64::conv_operand(i->dst) << "\n";
+		output_file << "\tlea (" << L1::x64::conv_operand(i->base) << ", " << L1::x64::conv_operand(i->index) << ", " << L1::x64::conv_operand(i->scale).substr(1) << "), " << L1::x64::conv_operand(i->dst) << "\n";
 		return;
 	}
 
