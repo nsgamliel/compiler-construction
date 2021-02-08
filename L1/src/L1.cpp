@@ -10,8 +10,9 @@ namespace L1 {
 		name = str;
 	}
 
-	Register::Register(const std::string& str) {
-		name = str;
+	Register::Register(const std::string& n, RegisterId r) {
+		name = n;
+		rid = r;
 	}
 
 	Number::Number(int64_t n) {
@@ -38,6 +39,10 @@ namespace L1 {
 
 	Instruction_label::Instruction_label(Label* l) {
 		label = l;
+	}
+
+	Instruction_return::Instruction_return(int64_t n) {
+		stack_alloc = n;
 	}
 
 	Instruction_mov::Instruction_mov(Item* s, Register* d)

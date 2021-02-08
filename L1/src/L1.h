@@ -24,11 +24,11 @@ namespace L1 {
 			std::string name;
 	};
 
-	enum RegisterId {rdi, rsi, rdx, rcx, r8, r9, rax, rbx, rbp, r10, r11, r12, r13, r14, r15, rsp};
+	enum RegisterId {rax, rbx, rcx, rdx, rdi, rsi, rbp, r8, r9, r10, r11, r12, r13, r14, r15, rsp};
 
 	class Register : public Item {
 		public:
-			Register(const std::string& str);
+			Register(const std::string& n, RegisterId r);
 			
 		//private:
 			std::string name;
@@ -82,7 +82,11 @@ namespace L1 {
 
 	class Instruction_return : public Instruction {
 		public:
+			Instruction_return(int64_t n);
 			void accept(Visitor* v) override;
+		
+		//private:
+			int64_t stack_alloc;
 	};
 
 	class Instruction_mov : public Instruction_op_two {
