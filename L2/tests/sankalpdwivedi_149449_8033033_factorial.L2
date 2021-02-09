@@ -3,18 +3,18 @@
 0
 %rcx <- 1
 %r11 <- 6
-r12 <- 1
-r13 <- 1
+%newVariable <- 1
+%newVariable2 <- 1
 :loop
-cjump r12<=%r11 :loop2
-rdi <- r13
+cjump %newVariable<=%r11 :loop2
+rdi <- %newVariable2
 rdi <<= %rcx
 rdi += 1
 call print 1
 return
 :loop2
-r13 *= r12
-r12++
+%newVariable2 *= %newVariable
+%newVariable++
 goto :loop
 return
 )

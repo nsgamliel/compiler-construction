@@ -19,8 +19,8 @@
         mem rsp -8 <- :encode_ret
         call :encode 1
         :encode_ret
-        r14 <- %address
-        mem r14 0 <- rax // store index in array
+        %newVariable14 <- %address
+        mem %newVariable14 0 <- rax // store index in array
         rdi <- rax  
         call print 1
         %count++ 

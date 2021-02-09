@@ -6,8 +6,8 @@
       rdi <- 5
       rsi <- 5
       call allocate 2
-      rbx <- 85
-      mem rax 8 <- rbx
+      %newVariableBx <- 85
+      mem rax 8 <- %newVariableBx
 
 
       %array <- rax
@@ -42,8 +42,8 @@ goto :continue
       :loopCheck
       rax <- mem rdi 0
       rax >>= 1
-      rbx <- %i
-      cjump rax < rbx :retTrue 
+      %newVariableBx <- %i
+      cjump rax < %newVariableBx :retTrue 
 goto :loop
 
 

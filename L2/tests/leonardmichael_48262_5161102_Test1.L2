@@ -51,9 +51,9 @@ goto :out
 
  (:print_arr
 2
-%variable2F8TRY1Z0J <- r12
-%variableFZ3ZVU0BND <- r13
-%variableI816RHBLV6 <- r14
+%variable2F8TRY1Z0J <- %newVariable12
+%variableFZ3ZVU0BND <- %newVariable13
+%variableI816RHBLV6 <- %newVariable14
 
   %counter <- 0
   %size <- rdi
@@ -61,8 +61,8 @@ goto :out
 
   :print_val
   %addr += 8
-  r13 <- %addr
-  rdi <- mem r13 0
+  %newVariable13 <- %addr
+  rdi <- mem %newVariable13 0
   rdi <<= 1
   rdi += 1
   call print 1
@@ -75,9 +75,9 @@ goto :get_out
 
 
   :get_out
-  r14 <- stack-arg -8
-  r13 <- stack-arg -16
-  r12 <- stack-arg -24
+  %newVariable14 <- stack-arg -8
+  %newVariable13 <- stack-arg -16
+  %newVariable12 <- stack-arg -24
   return
   )
  )

@@ -1,12 +1,12 @@
 (:entry
   (:entry
 0
-    r12 <- 1
-    r13 <- 2
-    r14 <- 3
-    r15 <- 4
-    rbp <- 5
-    rbx <- 6
+    %newVariable12 <- 1
+    %newVariable13 <- 2
+    %newVariable14 <- 3
+    %newVariable <- 4
+    %newVariableBp <- 5
+    %newVariableBx <- 6
     %my_var_1 <- 7
     %my_var_2 <- 8
     %my_var_3 <- 9
@@ -18,27 +18,27 @@
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- r12
+    rdi <- %newVariable12
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- r13
+    rdi <- %newVariable13
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- r14
+    rdi <- %newVariable14
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- r15
+    rdi <- %newVariable
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- rbp
+    rdi <- %newVariableBp
     rdi <<= 1
     rdi += 1
     call print 1
-    rdi <- rbx
+    rdi <- %newVariableBx
     rdi <<= 1
     rdi += 1
     call print 1

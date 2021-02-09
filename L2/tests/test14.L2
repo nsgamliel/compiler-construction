@@ -2,12 +2,12 @@
   (:go
 0
 
-    // Use r12
-%variable4B1MBE1NBG <- r12
-    r12 <- 1
+    // Use %newVariable
+%variable4B1MBE1NBG <- %newVariable
+    %newVariable <- 1
 
-    // Print r12
-    rdi <- r12
+    // Print %newVariable
+    rdi <- %newVariable
     call print 1
 
     %var1 <- 5
@@ -17,8 +17,8 @@
 
     %var1++
 
-    // Restore r12
-r12 <- %variable4B1MBE1NBG
+    // Restore %newVariable
+%newVariable <- %variable4B1MBE1NBG
 
     return
   )

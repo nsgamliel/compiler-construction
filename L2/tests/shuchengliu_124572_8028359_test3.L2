@@ -26,21 +26,21 @@
     r9 <- 0
 
     // get length of the array (not encoded)
-    r10 <- mem rax 0
+    %newVariable10 <- mem rax 0
 
     // current number to save
-    r11 <- 1
+    %newVariable11 <- 1
 
     :INIT
 
     rax += 8
 
-    mem rax 0 <- r11
+    mem rax 0 <- %newVariable11
 
     r9 += 1
-    r11 += 2
+    %newVariable11 += 2
 
-    cjump r9 < r10 :INIT
+    cjump r9 < %newVariable10 :INIT
 
     rdi <- %my_array
     call print 1

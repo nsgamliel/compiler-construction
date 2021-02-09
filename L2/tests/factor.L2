@@ -5,10 +5,10 @@
  %n<- rdi
  %sqrt <- 1
  :sqrt_start
- r12 <- %sqrt
- r12 *= r12
+ %newVariable12 <- %sqrt
+ %newVariable12 *= %newVariable12
  rdi <- %n
- cjump rdi < r12 :sqrt_end
+ cjump rdi < %newVariable12 :sqrt_end
  %sqrt += 1
  goto :sqrt_start
  :sqrt_end

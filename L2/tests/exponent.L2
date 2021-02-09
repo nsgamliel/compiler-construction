@@ -12,14 +12,14 @@
   )
   (:array
     2
-    r15 <- -1
-    r14 <- rsi
-    r13 <- rdi
+    %newVariable <- -1
+    %newVariable4 <- rsi
+    %newVariable2 <- rdi
     :array_begin
-    cjump r14 <= r15 :array_end
-    r15 += 1
-    rsi <- r15
-    rdi <- r13
+    cjump %newVariable4 <= %newVariable :array_end
+    %newVariable += 1
+    rsi <- %newVariable
+    rdi <- %newVariable2
     mem rsp -8 <- :rtn2
     call :calculate 2
     :rtn2
@@ -34,11 +34,11 @@
   (:calculate
     2
     rax <- 1
-    r12 <- 0
+    %newVariable <- 0
     :loop_begin
-    cjump rsi <= r12 :loop_end
+    cjump rsi <= %newVariable :loop_end
     rax *= rdi
-    r12 += 1
+    %newVariable += 1
     goto :loop_begin
     :loop_end
     return

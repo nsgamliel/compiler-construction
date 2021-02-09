@@ -12,24 +12,24 @@
 		mem rsp -24 <- 12
 		call :printVars 8
 		:ret
-		rbx <- rcx
-		rax <- rbx
-		rbp <- 2
-		r10 <- 4
-		r11 <- 6
-		r12 <- 8
-		r13 <- 10
-		r14 <- 12
-		r15 <- r14
-		r15++
-%variable6DJ4M87ZC8 <- r15
-		rdi <- r15
+		%newVariableBx <- rcx
+		rax <- %newVariableBx
+		%newVariableBp <- 2
+		%newVariable10 <- 4
+		%newVariable11 <- 6
+		%newVariable12 <- 8
+		%newVariable13 <- 10
+		%newVariable14 <- 12
+		%newVariable <- %newVariable14
+		%newVariable++
+%variable6DJ4M87ZC8 <- %newVariable
+		rdi <- %newVariable
 		call print 1
-r15 <- %variable6DJ4M87ZC8
-		rbp -= 1
-		r10 += 2
-		r11 *= 3
-		r12 &= 4
+%newVariable <- %variable6DJ4M87ZC8
+		%newVariableBp -= 1
+		%newVariable10 += 2
+		%newVariable11 *= 3
+		%newVariable12 &= 4
 		rax <- 5
 		cjump rdi = 1 :true 
 goto :false
@@ -37,7 +37,7 @@ goto :false
 		:true
 		goto :false
 		:false
-		r14 >>= 5				
+		%newVariable14 >>= 5				
 		return)
   (:printVars
 8

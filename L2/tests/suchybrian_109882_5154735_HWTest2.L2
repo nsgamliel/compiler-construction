@@ -59,15 +59,15 @@
   )
   (:IGotIt
 7
-%variableHGCBNMPSVK <- r12
-    r12 <- stack-arg 0
+%variableHGCBNMPSVK <- %newVariable12
+    %newVariable12 <- stack-arg 0
     rdi <- rsi
     rdi <- rdx
     rdi <- rcx
     rdi <- r8
     rdi <- r9
-    rdi <- r12
-r12 <- %variableHGCBNMPSVK
+    rdi <- %newVariable12
+%newVariable12 <- %variableHGCBNMPSVK
     return
   )
 )

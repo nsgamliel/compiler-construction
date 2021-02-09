@@ -13,7 +13,7 @@
 		call :PopulateArray1 2
 		:pop_array1
 
-		r12 <- rdi
+		%newVariable12 <- rdi
 		mem rsp -8 <- :print_ret1
 		call :printResultArray 1
 		:print_ret1
@@ -22,15 +22,15 @@
 		mem rsp -8 <- :GetArray_ret2
 		call :GetArray 1
 		:GetArray_ret2
+    %myArray <- rax
 
 		rdi <- rax
 		rsi <- 10
-
 		mem rsp -8 <- :pop_array2
 		call :PopulateArray2 2
 		:pop_array2
-		r13 <- rdi
 
+    rdi <- %myArray
 		mem rsp -8 <- :print_ret2
 		call :printResultArray 1
 		:print_ret2
@@ -49,14 +49,14 @@
 
 	(:PopulateArray1
 		2
-		r10 <- rdi
-		r10 += 8
+		%newVariable10 <- rdi
+		%newVariable10 += 8
 
 		%incr <- 1
 		:loopStart1
 		cjump rsi <= %incr :loopEnd2
-		mem r10 0 <- %incr
-		r10 += 8
+		mem %newVariable10 0 <- %incr
+		%newVariable10 += 8
 		%incr += 2
 		goto :loopStart1
 		:loopEnd2
@@ -66,15 +66,15 @@
 
 	(:PopulateArray2
 		2
-		r10 <- rdi
-		r10 += 8
+		%newVariable10 <- rdi
+		%newVariable10 += 8
 		
-		r11 <- 1
+		%newVariable11 <- 1
 		:loopStart2
-		mem r10 0 <- 11
-		r10 += 8
-		r11 += 1
-		cjump r11 < rsi :loopStart2
+		mem %newVariable10 0 <- 11
+		%newVariable10 += 8
+		%newVariable11 += 1
+		cjump %newVariable11 < rsi :loopStart2
 		return
 	)
 

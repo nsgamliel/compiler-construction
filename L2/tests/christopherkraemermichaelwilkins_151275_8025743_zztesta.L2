@@ -18,11 +18,11 @@
 		rdi <- 5
 		rsi <- %my_V1
 		call allocate 2
-		r14 <- rax
-		mem r14 16 <- %my_V2
-		rdi <- r14
+		%newVariable14 <- rax
+		mem %newVariable14 16 <- %my_V2
+		rdi <- %newVariable14
 		call print 1
-		rdi <- r14
+		rdi <- %newVariable14
 		mem rsp -8 <- :arrayprint_ret
 		call :arrayprint 1
 		:arrayprint_ret

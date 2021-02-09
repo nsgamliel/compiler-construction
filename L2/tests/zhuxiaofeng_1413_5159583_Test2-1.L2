@@ -16,7 +16,7 @@
 rdi <- %variableQOYINHC10Z
 		call print 1
 
-		r12 <- 15
+		%newVariable12 <- 15
 		mem rsp -8 <- :f2_ret
 		rdx <- 13
 		call :f2 1
@@ -49,13 +49,13 @@ rsi <- %variableF0RNXAYSRB
 			return)
 		(:f2
 1
-%variable7QGVRJNPET <- r12
-			r12 <- rdx
-			%value <- r12
+%variable7QGVRJNPET <- %newVariable12
+			%newVariable12 <- rdx
+			%value <- %newVariable12
 			%value <<= 1
 			%value++
 			rdi <- %value
 			call print 1
-r12 <- %variable7QGVRJNPET
+%newVariable12 <- %variable7QGVRJNPET
 			return)
 			)

@@ -4,7 +4,7 @@
 0
 
     %array_size <- 40
-    r12 <- %array_size
+    %newVariable12 <- %array_size
     rdi <- %array_size
     rdi <<= 1
     rdi += 1
@@ -13,25 +13,25 @@
     call allocate 2
     %arr_ptr <- rax
     %loop_val <- 0
-    r11 <- %loop_val
+    %newVariable11 <- %loop_val
     :loop_start
-    rdx <- r11
+    rdx <- %newVariable11
     rdx <<= 1
     rdx += 1
-    rcx <- r11
+    rcx <- %newVariable11
     rcx <<= 3
     rcx += %arr_ptr
     mem rcx 8 <- rdx
     mem rsp -8 <- :loop_inc
-    %unknownVar <- r11
-    rdi <- r11
+    %unknownVar <- %newVariable11
+    rdi <- %newVariable11
     call :loop_inc_gen 1
     :loop_inc
     %inc_amount <- rax
     %loop_val <- %unknownVar
     %loop_val += %inc_amount
-    r11 <- %loop_val
-    cjump r11 < r12 :loop_start 
+    %newVariable11 <- %loop_val
+    cjump %newVariable11 < %newVariable12 :loop_start 
 goto :loop_end
 
     :loop_end

@@ -2,9 +2,9 @@
   (:go
 0
 	rax <- 2
-	rbx <- 3
+	%newVariableBx <- 3
 	%var1 <- rax
-	%var2 <- rbx
+	%var2 <- %newVariableBx
 	cjump %var1 <= %var2 :true 
 goto :false
 
@@ -23,35 +23,35 @@ goto :false
   )
   (:loopy
 0
-    rbx <- 1
+    %newVariableBx <- 1
     :start
-    cjump rbx = 11 :done 
+    cjump %newVariableBx = 11 :done 
 goto :notdone
 
     :notdone
-    rdi <- rbx
-%variableUODNNFAVDY <- rbx
+    rdi <- %newVariableBx
+%variableUODNNFAVDY <- %newVariableBx
     call print 1
-rbx <- %variableUODNNFAVDY
-    rbx += 2
+%newVariableBx <- %variableUODNNFAVDY
+    %newVariableBx += 2
     goto :start
     :done
     return
   )
   (:false_loopy
 0
-    rbx <- 1
+    %newVariableBx <- 1
     :false_start
-    cjump rbx = 11 :false_done 
+    cjump %newVariableBx = 11 :false_done 
 goto :false_notdone
 
     :false_notdone
-    rdi <- rbx
+    rdi <- %newVariableBx
     rdi *= 5
-%variableEU0HW83MOT <- rbx
+%variableEU0HW83MOT <- %newVariableBx
     call print 1
-rbx <- %variableEU0HW83MOT
-    rbx += 2
+%newVariableBx <- %variableEU0HW83MOT
+    %newVariableBx += 2
     goto :false_start
     :false_done
     return

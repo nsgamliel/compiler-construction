@@ -24,11 +24,11 @@
 		rdi <- %hello
         %my_var3 <- :fib_ret2
 		mem rsp -8 <- %my_var3
-		mem rsp 0 <- rax
+		%newV <- rax
 		rdi -= 2
 		call :fib 1
 		:fib_ret2
-		rdi <- mem rsp 0
+		rdi <- %newV
         
 		rdi >>= %one
 		rax >>= %one

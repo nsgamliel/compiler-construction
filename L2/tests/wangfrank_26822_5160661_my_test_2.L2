@@ -33,10 +33,10 @@
 
     (:extend_array
 2
-%variableMP8KZ0NE7Z <- r12
-%variableDC178I3ZWH <- r13
-        r12 <- rdi //pointer to array1
-        r13 <- rsi //pointer to array2
+%variableMP8KZ0NE7Z <- %newVariable12
+%variableDC178I3ZWH <- %newVariable13
+        %newVariable12 <- rdi //pointer to array1
+        %newVariable13 <- rsi //pointer to array2
 
         r8 <- mem rdi 0
         rdi <- mem rsi 0
@@ -48,36 +48,36 @@
         rdx <- rax
 
         //copy first array
-        rcx <- mem r12 0
+        rcx <- mem %newVariable12 0
         :loop1
-        r12 += 8
+        %newVariable12 += 8
         rdx += 8
         cjump rcx = 0 :finish1 
 goto :cont1
 
 
         :cont1
-        rdi <- mem r12 0
+        rdi <- mem %newVariable12 0
         mem rdx 0 <- rdi
         rcx -= 1
         goto :loop1
 
         :finish1
         //copy second array
-        rcx <- mem r13 0
+        rcx <- mem %newVariable13 0
         :loop2
-        r13 += 8
+        %newVariable13 += 8
         cjump rcx = 0 :finish2 
 goto :cont2
 
 
         :cont2
-        rdi <- mem r13 0
+        rdi <- mem %newVariable13 0
         mem rdx 0 <- rdi
         rdx += 8
         rcx -= 1
         goto :loop2
         :finish2
-r12 <- %variableMP8KZ0NE7Z
-r13 <- %variableDC178I3ZWH
+%newVariable12 <- %variableMP8KZ0NE7Z
+%newVariable13 <- %variableDC178I3ZWH
         return))
