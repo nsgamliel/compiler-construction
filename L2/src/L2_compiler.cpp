@@ -15,14 +15,8 @@
 #include <L2.h>
 #include <parser.h>
 #include <liveness.h>
-#include <interference.h>
-#include <spiller.h>
-//#include <analysis.h>
-//#include <transformer.h>
-//#include <code_generator.h>
+//#include <interference.h>
 //#include <spiller.h>
-//#include <register_allocation.h>
-//#include <utils.h>
 
 using namespace std;
 
@@ -94,7 +88,7 @@ int main(
      * Parse an L2 function and the spill arguments.
      */
     if (verbose) std::cout << "parsing for spill only" <<std::endl;
-    p = L2::parse_spill_file(argv[optind]);
+    //p = L2::parse_spill_file(argv[optind]);
     if (verbose) std::cout << "done parsing" <<std::endl;
  
   } else if (liveness_only){
@@ -112,7 +106,7 @@ int main(
      * Parse an L2 function.
      */
     if (verbose) std::cout << "parsing for interference" <<std::endl;
-    p = L2::parse_function_file(argv[optind]);
+    //p = L2::parse_function_file(argv[optind]);
     if (verbose) std::cout << "done parsing" <<std::endl;
   } else {
 
@@ -130,9 +124,9 @@ int main(
   if (spill_only){
     //std::cout << "(:myF\n\t0 1\n\t%S0 <- 0\n\tmem rsp 0 <- %S0\n\t%S1 <- mem rsp 0\n\trdi <- %S1\n\tcall :myF2 0\n\treturn\n)\n";
     if (verbose) std::cout << "processing spill" <<std::endl;
-    L2::Function f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
+    //L2::Function f_s = L2::spill(p.functions[0], p.functions[1]->name, p.functions[2]->name);
     if (verbose) std::cout << "generating output" <<std::endl;
-    L2::generate_spill_output(f_s);
+    //L2::generate_spill_output(f_s);
     if (verbose) std::cout << "done" <<std::endl;
     return 0;
   }
@@ -141,12 +135,10 @@ int main(
    * Liveness test.
    */
   if (liveness_only){
-
-    L2::Function_l f_l;
     if (verbose) std::cout << "generating liveness" <<std::endl;
-    f_l = L2::generate_liveness(p);
+    p.functions[0]->generate_liveness();
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
-    L2::generate_liveness_output(f_l);
+    L2::generate_liveness_output(p.functions[0]);
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;
@@ -156,14 +148,14 @@ int main(
    * Interference graph test.
    */
   if (interference_only){
-    L2::Function_l f_l;
-    L2::Function_i f_i;
+    //L2::Function_l f_l;
+    //L2::Function_i f_i;
     if (verbose) std::cout << "generating liveness" <<std::endl;
-    f_l = L2::generate_liveness(p);
+    //f_l = L2::generate_liveness(p);
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
-    f_i = L2::interference_analysis(f_l);
+    //f_i = L2::interference_analysis(f_l);
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
-    L2::generate_interference_output(f_i, f_l);
+    //L2::generate_interference_output(f_i, f_l);
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;

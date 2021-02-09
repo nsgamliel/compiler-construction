@@ -1,6 +1,8 @@
-#include <L1.h>
+#include <iostream>
 
-namespace L1 {
+#include <L2.h>
+
+namespace L2 {
 
 	/*
 	 * items
@@ -10,8 +12,20 @@ namespace L1 {
 		name = str;
 	}
 
-	Register::Register(const std::string& n, RegisterId r) {
+	Variable::Variable(const std::string& n) {
 		name = n;
+	}
+
+	bool Variable::is_in(std::vector<Variable*> vec) {
+		bool exists = false;
+		for(auto var : vec) {
+			if (this->name.compare(var->name) == 0) exists = true;
+		}
+		return exists;
+	}
+
+	Register::Register(const std::string& n, RegisterId r)
+	: Variable(n) {
 		rid = r;
 	}
 
@@ -19,8 +33,8 @@ namespace L1 {
 		value = n;
 	}
 
-	Memory::Memory(Register* r, Number* n) {
-		reg = r;
+	Memory::Memory(Variable* v, Number* n) {
+		var = v;
 		offset = n;
 	}
 
@@ -45,7 +59,7 @@ namespace L1 {
 		stack_alloc = n;
 	}
 
-	Instruction_mov::Instruction_mov(Item* s, Register* d)
+	Instruction_mov::Instruction_mov(Item* s, Variable* d)
 	: Instruction_op_two(s, d) {}
 
 	Instruction_aop_pe::Instruction_aop_pe(Item* s, Item* d)
@@ -90,14 +104,20 @@ namespace L1 {
 	Instruction_cmp_eq::Instruction_cmp_eq(Item* l, Item* r, Item* d)
 	: Instruction_cmp(l, r, d) {}
 
-	Instruction_cnd_jmp_less::Instruction_cnd_jmp_less(Item* l, Item* r, Item* d)
-	: Instruction_cmp(l, r, d) {}
+	Instruction_cnd_jmp::Instruction_cnd_jmp(Item* l, Item* r, Label* d) {
+		left = l;
+		right = r;
+		dst = d;
+	}
 
-	Instruction_cnd_jmp_le::Instruction_cnd_jmp_le(Item* l, Item* r, Item* d)
-	: Instruction_cmp(l, r, d) {}
+	Instruction_cnd_jmp_less::Instruction_cnd_jmp_less(Item* l, Item* r, Label* d)
+	: Instruction_cnd_jmp(l, r, d) {}
 
-	Instruction_cnd_jmp_eq::Instruction_cnd_jmp_eq(Item* l, Item* r, Item* d)
-	: Instruction_cmp(l, r, d) {}
+	Instruction_cnd_jmp_le::Instruction_cnd_jmp_le(Item* l, Item* r, Label* d)
+	: Instruction_cnd_jmp(l, r, d) {}
+
+	Instruction_cnd_jmp_eq::Instruction_cnd_jmp_eq(Item* l, Item* r, Label* d)
+	: Instruction_cnd_jmp(l, r, d) {}
 
 	Instruction_at::Instruction_at(Register* b, Register* i, Number* s, Register* d) {
 		base = b;
@@ -129,6 +149,11 @@ namespace L1 {
 	Instruction_call_tensor_error::Instruction_call_tensor_error(Number* a)
 	: Instruction_call(new Label("tensor-error"), a) {}
 
+	Instruction_load_stack_arg::Instruction_load_stack_arg(Number* s, Item* d) {
+		offset = s;
+		dst = d;
+	}
+
 	/*
 	 * accept overrides
 	 */
@@ -159,5 +184,6 @@ namespace L1 {
 	void Instruction_call_input::accept       (Visitor* v) { v->visit(this); return; }
 	void Instruction_call_allocate::accept    (Visitor* v) { v->visit(this); return; }
 	void Instruction_call_tensor_error::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_load_stack_arg::accept   (Visitor* v) { v->visit(this); return; }
 
 }

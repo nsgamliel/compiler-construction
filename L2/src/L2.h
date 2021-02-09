@@ -2,8 +2,9 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
-namespace L1 {
+namespace L2 {
 
 	class Visitor;
 
@@ -24,14 +25,22 @@ namespace L1 {
 			std::string name;
 	};
 
+	class Variable : public Item {
+		public:
+			Variable(const std::string& n);
+			bool is_in(std::vector<Variable*> vec);
+
+		//private:
+			std::string name;
+	};
+
 	enum RegisterId {rax, rbx, rcx, rdx, rdi, rsi, rbp, r8, r9, r10, r11, r12, r13, r14, r15, rsp};
 
-	class Register : public Item {
+	class Register : public Variable {
 		public:
 			Register(const std::string& n, RegisterId r);
 			
 		//private:
-			std::string name;
 			RegisterId rid;
 	};
 
@@ -45,10 +54,10 @@ namespace L1 {
 
 	class Memory : public Item {
 		public:
-			Memory(Register* r, Number* n);
+			Memory(Variable* r, Number* n);
 
 		//private:
-			Register* reg;
+			Variable* var;
 			Number* offset;
 	};
 
@@ -59,6 +68,13 @@ namespace L1 {
 	class Instruction {
 		public:
 			virtual void accept(Visitor* v) = 0;
+			
+		//private:
+			std::vector<Variable*> gen;
+			std::vector<Variable*> kill;
+			std::vector<Variable*> in;
+			std::vector<Variable*> out;
+			std::vector<Instruction*> successors;
 	};
 
 	class Instruction_op_one : public Instruction {
@@ -91,7 +107,7 @@ namespace L1 {
 
 	class Instruction_mov : public Instruction_op_two {
 		public:
-			Instruction_mov(Item* s, Register* d);
+			Instruction_mov(Item* s, Variable* d);
 			void accept(Visitor* v) override;
 	};
 
@@ -187,21 +203,32 @@ namespace L1 {
 			void accept(Visitor* v) override;
 	};
 
-	class Instruction_cnd_jmp_less : public Instruction_cmp {
+	class Instruction_cnd_jmp : public Instruction {
 		public:
-			Instruction_cnd_jmp_less(Item* l, Item* r, Item* d);
+			Instruction_cnd_jmp(Item* l, Item* r, Label* d);
+			virtual void accept(Visitor* v) = 0;
+
+		//private:
+			Item* left;
+			Item* right;
+			Label* dst;
+	};
+
+	class Instruction_cnd_jmp_less : public Instruction_cnd_jmp {
+		public:
+			Instruction_cnd_jmp_less(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 	};
 
-	class Instruction_cnd_jmp_le : public Instruction_cmp {
+	class Instruction_cnd_jmp_le : public Instruction_cnd_jmp {
 		public:
-			Instruction_cnd_jmp_le(Item* l, Item* r, Item* d);
+			Instruction_cnd_jmp_le(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 	};
 
-	class Instruction_cnd_jmp_eq : public Instruction_cmp {
+	class Instruction_cnd_jmp_eq : public Instruction_cnd_jmp {
 		public:
-			Instruction_cnd_jmp_eq(Item* l, Item* r, Item* d);
+			Instruction_cnd_jmp_eq(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 	};
 
@@ -264,16 +291,36 @@ namespace L1 {
 			void accept(Visitor* v) override;
 	};
 
+	class Instruction_load_stack_arg : public Instruction {
+		public:
+			Instruction_load_stack_arg(Number* s, Item* d);
+			void accept(Visitor* v) override;
+
+		//private:
+			Number* offset;
+			Item* dst;
+	};
+
 	/*
 	 * general
 	 */
 
   class Function{
 		public:
+			void generate_liveness();
+			// helpers
+			void gen_kill();
+			void find_successors();
+			void in_out();
+
 	    std::string name;
   	  int64_t arguments;
-   		int64_t locals;
+   		int64_t locals = 0;
+			int num_replace = 0;
     	std::vector<Instruction *> instructions;
+			// additions for liveness etc
+			bool isDirty;
+			std::map<size_t, std::string> items_l;
   };
 
   class Program{
@@ -310,6 +357,7 @@ namespace L1 {
 			virtual void visit(Instruction_call_input* i)        = 0;
 			virtual void visit(Instruction_call_allocate* i)     = 0;
 			virtual void visit(Instruction_call_tensor_error* i) = 0;
+			virtual void visit(Instruction_load_stack_arg* i)    = 0;
 	};
 
 }

@@ -15,7 +15,7 @@
 #include <tao/pegtl/analyze.hpp>
 #include <tao/pegtl/contrib/raw_string.hpp>
 
-#include <L1.h>
+#include <L2.h>
 #include <parser.h>
 
 namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
@@ -23,7 +23,7 @@ namespace pegtl = tao::TAO_PEGTL_NAMESPACE;
 using namespace pegtl;
 //using namespace std;
 
-namespace L1 {
+namespace L2 {
 
   bool printActions = false;
 
@@ -90,6 +90,7 @@ namespace L1 {
   struct str_alloc  : TAOCPP_PEGTL_STRING( "allocate" ) {};
   struct str_inp    : TAOCPP_PEGTL_STRING( "input" ) {};
   struct str_tensor : TAOCPP_PEGTL_STRING( "tensor-error" ) {};
+	struct str_stack  : TAOCPP_PEGTL_STRING( "stack-arg" ) {};
   struct str_arrow  : TAOCPP_PEGTL_STRING( "<-" ) {};
   struct str_le     : TAOCPP_PEGTL_STRING( "<="  ) {};
   struct str_less   : TAOCPP_PEGTL_STRING( "<"   ) {};
@@ -211,43 +212,60 @@ namespace L1 {
 	struct number_operand_rule:
 		number {};
 
+	struct variable_operand_rule:
+    pegtl::seq<
+      pegtl::one<'%'>,
+      name
+    > {};
+
+	struct reg_var:
+		pegtl::sor<
+			register_rule,
+			variable_operand_rule
+		> {};
+
 	struct memory_operand_rule:
 		pegtl::seq<
 			str_mem,
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			number_operand_rule
 		> {};
 
-	struct reg_lbl: // u
+	struct reg_var_lbl: // u
 		pegtl::sor<
 			register_rule,
-			label_operand_rule
+			label_operand_rule,
+			variable_operand_rule
 		> {};
 
-	struct reg_num: // t
+	struct reg_var_num: // t
 		pegtl::sor<
 			register_rule,
+			variable_operand_rule,
 			number_operand_rule
 		> {};
 	
-	struct reg_num_lbl: // s
+	struct reg_var_num_lbl: // s
 		pegtl::sor<
 			register_rule,
+			variable_operand_rule,
 			number_operand_rule,
 			label_operand_rule
 		> {};
 
-	struct reg_mem: // aop_pe/me only
+	struct reg_var_mem: // aop_pe/me only
 		pegtl::sor<
 			register_rule,
+			variable_operand_rule,
 			memory_operand_rule
 		> {};
 	
-	struct reg_mem_num_lbl:
+	struct reg_var_mem_num_lbl:
 		pegtl::sor<
 			register_rule,
+			variable_operand_rule,
 			memory_operand_rule,
 			number_operand_rule,
 			label_operand_rule
@@ -265,11 +283,11 @@ namespace L1 {
 	struct Instruction_mov_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_arrow,
 			seps,
-			reg_num_lbl,
+			reg_var_num_lbl,
 			seps
 		> {};
 
@@ -283,51 +301,51 @@ namespace L1 {
 	struct Instruction_aop_pe_rule:
 		pegtl::seq<
 			seps,
-			reg_mem,
+			reg_var_mem,
 			seps,
 			str_pe,
 			seps,
-			reg_mem_num_lbl,
+			reg_var_mem_num_lbl,
 			seps
 		> {};
 
 	struct Instruction_aop_me_rule:
 		pegtl::seq<
 			seps,
-			reg_mem,
+			reg_var_mem,
 			seps,
 			str_me,
 			seps,
-			reg_mem_num_lbl,
+			reg_var_mem_num_lbl,
 			seps
 		> {};
 
 	struct Instruction_aop_te_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_te,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
 	struct Instruction_aop_ae_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_ae,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
 	struct Instruction_aop_pp_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_pp,
 			seps
@@ -336,7 +354,7 @@ namespace L1 {
 	struct Instruction_aop_mm_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_mm,
 			seps
@@ -345,22 +363,22 @@ namespace L1 {
 	struct Instruction_sop_lsh_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_lsh,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
 	struct Instruction_sop_rsh_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_rsh,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
@@ -376,45 +394,45 @@ namespace L1 {
 	struct Instruction_cmp_less_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_arrow,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_less,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
 	struct Instruction_cmp_le_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_arrow,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_le,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
 	struct Instruction_cmp_eq_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_arrow,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_eq,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps
 		> {};
 
@@ -423,11 +441,11 @@ namespace L1 {
 			seps,
 			str_cjump,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_less,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			label_operand_rule,
 			seps
@@ -438,11 +456,11 @@ namespace L1 {
 			seps,
 			str_cjump,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_le,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			label_operand_rule,
 			seps
@@ -453,11 +471,11 @@ namespace L1 {
 			seps,
 			str_cjump,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			str_eq,
 			seps,
-			reg_num,
+			reg_var_num,
 			seps,
 			label_operand_rule,
 			seps
@@ -466,13 +484,13 @@ namespace L1 {
 	struct Instruction_at_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_at,
 			seps,
-			register_rule,
+			reg_var,
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			number_operand_rule,
 			seps
@@ -481,7 +499,7 @@ namespace L1 {
 	struct Instruction_load_rule:
 		pegtl::seq<
 			seps,
-			register_rule,
+			reg_var,
 			seps,
 			str_arrow,
 			seps,
@@ -496,7 +514,7 @@ namespace L1 {
 			seps,
 			str_arrow,
 			seps,
-			reg_num_lbl,
+			reg_var_num_lbl,
 			seps
 		> {};
 
@@ -505,7 +523,7 @@ namespace L1 {
 			seps,
 			str_call,
 			seps,
-			reg_lbl,
+			reg_var_lbl,
 			seps,
 			number_operand_rule,
 			seps
@@ -555,6 +573,19 @@ namespace L1 {
 			seps
 		> {};
 
+	struct Instruction_load_stack_arg_rule:
+		pegtl::seq<
+			seps,
+			reg_var,
+			seps,
+			str_arrow,
+			seps,
+			str_stack,
+			seps,
+			number_operand_rule,
+			seps
+		> {};
+
   struct Instruction_rule:
     pegtl::sor<
       pegtl::seq< pegtl::at<Instruction_return_rule           >, Instruction_return_rule           >,
@@ -582,7 +613,8 @@ namespace L1 {
 			pegtl::seq< pegtl::at<Instruction_call_print_rule       >, Instruction_call_print_rule       >,
 			pegtl::seq< pegtl::at<Instruction_call_input_rule       >, Instruction_call_input_rule       >,
 			pegtl::seq< pegtl::at<Instruction_call_allocate_rule    >, Instruction_call_allocate_rule    >,
-			pegtl::seq< pegtl::at<Instruction_call_tensor_error_rule>, Instruction_call_tensor_error_rule>
+			pegtl::seq< pegtl::at<Instruction_call_tensor_error_rule>, Instruction_call_tensor_error_rule>,
+			pegtl::seq< pegtl::at<Instruction_load_stack_arg_rule   >, Instruction_load_stack_arg_rule   >
     > {};
 
   struct Instructions_rule:
@@ -616,7 +648,9 @@ namespace L1 {
       seps,
       argument_number,
       seps,
-      local_number,
+			pegtl::opt<
+      	local_number
+			>,
       seps,
       Instructions_rule,
       seps,
@@ -647,10 +681,15 @@ namespace L1 {
       seps
     > { };
 
-  struct grammar : 
+  struct grammar: 
     pegtl::must< 
       entry_point_rule
     > {};
+
+	struct function_grammar:
+		pegtl::must<
+			Function_rule
+		> {};
 
   /* 
    * actions
@@ -716,7 +755,7 @@ namespace L1 {
 			auto curr_f = p.functions.back();
 			auto src = parsed_items.back();
 			parsed_items.pop_back();
-			auto dst = dynamic_cast<Register*> (parsed_items.back());
+			auto dst = dynamic_cast<Variable*> (parsed_items.back());
 			parsed_items.pop_back();
 			if (dst) {
 				auto instr = new Instruction_mov(src, dst);
@@ -920,14 +959,18 @@ namespace L1 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "cnd_jmp_less rule" << std::endl;
 			auto curr_f = p.functions.back();
-			auto dst = parsed_items.back();
+			auto dst = dynamic_cast<Label*> (parsed_items.back());
 			parsed_items.pop_back();
 			auto right = parsed_items.back();
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			auto instr = new Instruction_cnd_jmp_less(left, right, dst);
-			curr_f->instructions.push_back(instr);
+			if (dst) {
+				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 
@@ -936,14 +979,18 @@ namespace L1 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "cnd_jmp_le rule" << std::endl;
 			auto curr_f = p.functions.back();
-			auto dst = parsed_items.back();
+			auto dst = dynamic_cast<Label*> (parsed_items.back());
 			parsed_items.pop_back();
 			auto right = parsed_items.back();
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			auto instr = new Instruction_cnd_jmp_le(left, right, dst);
-			curr_f->instructions.push_back(instr);
+			if (dst) {
+				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 
@@ -952,14 +999,18 @@ namespace L1 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "cnd_jmp_eq rule" << std::endl;
 			auto curr_f = p.functions.back();
-			auto dst = parsed_items.back();
+			auto dst = dynamic_cast<Label*> (parsed_items.back());
 			parsed_items.pop_back();
 			auto right = parsed_items.back();
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			auto instr = new Instruction_cnd_jmp_eq(left, right, dst);
-			curr_f->instructions.push_back(instr);
+			if (dst) {
+				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 
@@ -1085,6 +1136,24 @@ namespace L1 {
     }
   };
 
+  template<> struct action < Instruction_load_stack_arg_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "load_stack_arg rule" << std::endl;
+			auto curr_f = p.functions.back();
+			auto offset = dynamic_cast<Number*> (parsed_items.back());
+			parsed_items.pop_back();
+			auto dst = parsed_items.back();
+			parsed_items.pop_back();
+			if (offset) {
+				auto instr = new Instruction_load_stack_arg(offset, dst);
+				curr_f->instructions.push_back(instr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
 	template<> struct action < label_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
@@ -1109,7 +1178,7 @@ namespace L1 {
       if (printActions) std::cout << "memory operand (pop x2, push x1)" << std::endl;
 			auto num = dynamic_cast<Number*> (parsed_items.back());
 			parsed_items.pop_back();
-			auto reg = dynamic_cast<Register*> (parsed_items.back());
+			auto reg = dynamic_cast<Variable*> (parsed_items.back());
 			parsed_items.pop_back();
 			if (num && reg)  {
 				auto new_item = new Memory(reg, num);
@@ -1117,6 +1186,15 @@ namespace L1 {
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
+    }
+  };
+
+	template<> struct action < variable_operand_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "variable operand (push)" << std::endl;
+			auto new_item = new Variable(in.string());
+			parsed_items.push_back(new_item);
     }
   };
 
@@ -1265,15 +1343,31 @@ namespace L1 {
     }
   };
 
-  Program parse_file(char *fileName) {
-
-    pegtl::analyze< grammar >();
-
+  L2::Program parse_file (char *fileName){
+    pegtl::analyze< grammar >(); 
     file_input< > fileInput(fileName);
-    Program p;
+    L2::Program p;
     parse< grammar, action >(fileInput, p);
 
     return p;
   }
+
+  L2::Program parse_function_file(char* fileName) {
+    pegtl::analyze< function_grammar >();
+    file_input< > fileInput(fileName);
+    L2::Program p;
+    parse< function_grammar, action >(fileInput, p);
+
+    return p;
+  }
+
+  /*L2::Program parse_spill_file(char* fileName) {
+    pegtl::analyze< spill_file_grammar >();
+    file_input< > fileInput(fileName);
+    L2::Program p;
+    parse< spill_file_grammar, action >(fileInput, p);
+
+    return p;
+  }*/
 
 }
