@@ -6,3 +6,5 @@ L2/*.L2
 L2/*.L2~
 test-unzip
 L1/bin
+L2/obj
+L2/bin
