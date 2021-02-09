@@ -28,7 +28,9 @@ namespace L2 {
 	class Variable : public Item {
 		public:
 			Variable(const std::string& n);
+			Variable* get_dup(std::vector<Variable*> vec);
 			bool is_in(std::vector<Variable*> vec);
+
 
 		//private:
 			std::string name;
@@ -234,15 +236,15 @@ namespace L2 {
 
 	class Instruction_at : public Instruction {
 		public:
-			Instruction_at(Register* b, Register* i, Number* s, Register* d);
+			Instruction_at(Variable* b, Variable* i, Number* s, Variable* d);
 			void accept(Visitor* v) override;
 
 		//private:
 			// dst = base + index*scale
-			Register* base;
-			Register* index;
+			Variable* base;
+			Variable* index;
 			Number* scale;
-			Register* dst;
+			Variable* dst;
 	};
 
 	class Instruction_load : public Instruction_op_two {
@@ -308,24 +310,30 @@ namespace L2 {
   class Function{
 		public:
 			void generate_liveness();
-			// helpers
 			void gen_kill();
 			void find_successors();
 			void in_out();
+			void spill(Variable* svar, Variable* prefix);
 
 	    std::string name;
   	  int64_t arguments;
    		int64_t locals = 0;
-			int num_replace = 0;
     	std::vector<Instruction *> instructions;
 			// additions for liveness etc
 			bool isDirty;
+			std::map<Variable*, Variable*> reduce_v;
+			std::vector<Variable*> items;
+			//int num_replace = 0;
   };
 
   class Program{
 		public:
 	    std::string entryPointLabel;
   	  std::vector<Function *> functions;
+
+			L2::Spiller sp;
+			L2::Variable* spill_var;
+			std::string spill_prefix;
   };
 
 	class Visitor {

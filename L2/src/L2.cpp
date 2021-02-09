@@ -16,12 +16,18 @@ namespace L2 {
 		name = n;
 	}
 
-	bool Variable::is_in(std::vector<Variable*> vec) {
-		bool exists = false;
+	Variable* Variable::get_dup(std::vector<Variable*> vec) {
 		for(auto var : vec) {
-			if (this->name.compare(var->name) == 0) exists = true;
+			if (this->name.compare(var->name) == 0) return var;
 		}
-		return exists;
+		return nullptr;
+	}
+
+	bool Variable::is_in(std::vector<Variable*> vec) {
+		for(auto var : vec) {
+			if (this->name.compare(var->name) == 0) return true;
+		}
+		return false;
 	}
 
 	Register::Register(const std::string& n, RegisterId r)
@@ -119,7 +125,7 @@ namespace L2 {
 	Instruction_cnd_jmp_eq::Instruction_cnd_jmp_eq(Item* l, Item* r, Label* d)
 	: Instruction_cnd_jmp(l, r, d) {}
 
-	Instruction_at::Instruction_at(Register* b, Register* i, Number* s, Register* d) {
+	Instruction_at::Instruction_at(Variable* b, Variable* i, Number* s, Variable* d) {
 		base = b;
 		index = i;
 		scale = s;

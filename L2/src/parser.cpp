@@ -206,6 +206,12 @@ namespace L2 {
       register_r15_rule
     > {};
 
+	struct variable:
+    pegtl::seq<
+      pegtl::one<'%'>,
+      name
+    > {};
+
 	struct label_operand_rule:
 		label {};
 
@@ -213,10 +219,13 @@ namespace L2 {
 		number {};
 
 	struct variable_operand_rule:
-    pegtl::seq<
-      pegtl::one<'%'>,
-      name
-    > {};
+    variable {};
+
+	struct spill_var_rule:
+		variable {};
+
+	struct spill_prefix_rule:
+		variable {};
 
 	struct reg_var:
 		pegtl::sor<
@@ -679,7 +688,7 @@ namespace L2 {
       seps,
       pegtl::one< ')' >,
       seps
-    > { };
+    > {};
 
   struct grammar: 
     pegtl::must< 
@@ -689,6 +698,17 @@ namespace L2 {
 	struct function_grammar:
 		pegtl::must<
 			Function_rule
+		> {};
+
+	struct spill_file_grammar:
+		pegtl::seq<
+			seps,
+			Function_rule,
+			seps,
+			spill_var_rule,
+			seps,
+			spill_prefix_rule,
+			seps
 		> {};
 
   /* 
@@ -1198,6 +1218,22 @@ namespace L2 {
     }
   };
 
+	template<> struct action < spill_var_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "spill var" << std::endl;
+			p.spill_var = new Variable(in.string());
+    }
+  };
+
+	template<> struct action < spill_prefix_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "spill prefix" << std::endl;
+			p.spill_prefix = in.string();
+    }
+  };
+
   template<> struct action < register_rax_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
@@ -1361,13 +1397,13 @@ namespace L2 {
     return p;
   }
 
-  /*L2::Program parse_spill_file(char* fileName) {
+  L2::Program parse_spill_file(char* fileName) {
     pegtl::analyze< spill_file_grammar >();
     file_input< > fileInput(fileName);
     L2::Program p;
     parse< spill_file_grammar, action >(fileInput, p);
 
     return p;
-  }*/
+  }
 
 }

@@ -7,7 +7,7 @@
 
 namespace L2 {
 
-	bool printV = true;
+	bool printV = false;
 
 	void L2::Function::generate_liveness() {
 		// todo
@@ -24,6 +24,8 @@ namespace L2 {
 	void L2::Function::gen_kill() {
 		auto gkg = new GenKill_Generator();
 		for (auto i : this->instructions) {
+			i->gen.clear();
+			i->kill.clear();
 			i->accept(gkg);
 		}
 
@@ -39,6 +41,7 @@ namespace L2 {
 		std::map<int, std::string> jumps;
 		std::map<int, std::string> labels;
 		for (int x=0; x<this->instructions.size(); x++) {
+			this->instructions[x]->successors.clear();
 			// case no successors
 			if (dynamic_cast<Instruction_return*> (this->instructions[x]) || dynamic_cast<Instruction_call_tensor_error*> (this->instructions[x]))
 				continue;
@@ -84,6 +87,10 @@ namespace L2 {
 
 	void L2::Function::in_out() {
 		if (printV) std::cout << "in inout\n";
+		for (auto i : this->instructions) {
+			i->in.clear();
+			i->out.clear();
+		}
 		do {
 			this->isDirty = false;
 			std::vector<Variable*> new_vec;
@@ -96,7 +103,7 @@ namespace L2 {
 					if (printV) std::cout << "in instruction successors\n";
 					for (auto var : succ->in) {
 						if (printV) std::cout << "in successor ins\n";
-						if (!(var->is_in(new_vec)) && !(var->is_in(new_vec))) {
+						if (!(var->is_in(new_vec))) {
 							if (printV) std::cout << "new var added\n";
 							new_vec.push_back(var);
 						}
