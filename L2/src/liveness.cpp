@@ -7,7 +7,7 @@
 
 namespace L2 {
 
-	bool printV = false;
+	bool printV = true;
 
 	void L2::Function::generate_liveness() {
 		// todo
@@ -25,18 +25,6 @@ namespace L2 {
 		auto gkg = new GenKill_Generator();
 		for (auto i : this->instructions) {
 			i->accept(gkg);
-		}
-
-		for (auto i : this->instructions) {
-			for (auto var : i->gen)
-				if (!(var->is_in(this->items))) this->items.push_back(var);
-			for (auto var : i->kill)
-				if (!(var->is_in(this->items))) this->items.push_back(var);
-			for (auto var : gkg->caller_save)
-				if (!(var->is_in(this->items))) this->items.push_back(var);
-			for (auto var : gkg->callee_save)
-				if (!(var->is_in(this->items))) this->items.push_back(var);
-			if (!((new Variable("rsp"))->is_in(this->items))) this->items.push_back(new Variable("rsp"));
 		}
 
 		if (printV) {

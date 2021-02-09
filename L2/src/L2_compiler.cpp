@@ -15,7 +15,7 @@
 #include <L2.h>
 #include <parser.h>
 #include <liveness.h>
-//#include <interference.h>
+#include <interference.h>
 //#include <spiller.h>
 
 using namespace std;
@@ -106,7 +106,7 @@ int main(
      * Parse an L2 function.
      */
     if (verbose) std::cout << "parsing for interference" <<std::endl;
-    //p = L2::parse_function_file(argv[optind]);
+    p = L2::parse_function_file(argv[optind]);
     if (verbose) std::cout << "done parsing" <<std::endl;
   } else {
 
@@ -151,9 +151,9 @@ int main(
     if (verbose) std::cout << "generating liveness" <<std::endl;
     p.functions[0]->generate_liveness();
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
-    // give interference graph its own object here
+		auto ig = new L2::InterferenceGraph(p.functions[0]);
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
-    L2::generate_interference_output();
+    L2::generate_interference_output(ig);
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;

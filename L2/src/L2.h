@@ -320,7 +320,6 @@ namespace L2 {
     	std::vector<Instruction *> instructions;
 			// additions for liveness etc
 			bool isDirty;
-			std::vector<Variable*> items;
   };
 
   class Program{
