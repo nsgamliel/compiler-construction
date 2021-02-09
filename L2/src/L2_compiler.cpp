@@ -148,14 +148,12 @@ int main(
    * Interference graph test.
    */
   if (interference_only){
-    //L2::Function_l f_l;
-    //L2::Function_i f_i;
     if (verbose) std::cout << "generating liveness" <<std::endl;
-    //f_l = L2::generate_liveness(p);
+    p.functions[0]->generate_liveness();
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
-    //f_i = L2::interference_analysis(f_l);
+    // give interference graph its own object here
     if (verbose) std::cout << "generating output for " << argv[optind] <<std::endl;
-    //L2::generate_interference_output(f_i, f_l);
+    L2::generate_interference_output();
     if (verbose) std::cout << "done" <<std::endl;
 
     return 0;
