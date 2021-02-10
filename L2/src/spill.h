@@ -1,14 +1,14 @@
-#pragma once
-
 #include <string>
 
 #include <L2.h>
 
 namespace L2 {
 
-	class Spiller : public Visitor {
+	//void L2::Function::spill(Variable* svar, std::string prefix);
+
+	class Spiller : public L2::Visitor {
 		public:
-			Function* spill(Function* f, Variable* svar, std::string prefix);
+			Spiller(Variable* svar, std::string prefix);
 			Variable* spill_var;
 			std::string spill_prefix;
 			int num_replace=0;

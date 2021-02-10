@@ -161,6 +161,130 @@ namespace L2 {
 	}
 
 	/*
+	 * toString()
+	 */
+
+	std::string Instruction_return::toString() {
+		return "return";
+	}
+
+	std::string Instruction_mov::toString() {
+		return conv_item(dst) + " <- " + conv_item(src);
+	}
+
+	std::string Instruction_label::toString() {
+		return (dynamic_cast<Label*> (label))->name;
+	}
+
+	std::string Instruction_aop_pe::toString() {
+		return conv_item(dst) + " += " + conv_item(src);
+	}
+
+	std::string Instruction_aop_me::toString() {
+		return conv_item(dst) + " -= " + conv_item(src);
+	}
+
+	std::string Instruction_aop_te::toString() {
+		return conv_item(dst) + " *= " + conv_item(src);
+	}
+
+	std::string Instruction_aop_ae::toString() {
+		return conv_item(dst) + " &= " + conv_item(src);
+	}
+
+	std::string Instruction_aop_pp::toString() {
+		return conv_item(src) + "++";
+	}
+
+	std::string Instruction_aop_mm::toString() {
+		return conv_item(src) + "--";
+	}
+
+	std::string Instruction_sop_lsh::toString() {
+		return conv_item(dst) + " <<= " + conv_item(src);
+	}
+
+	std::string Instruction_sop_rsh::toString() {
+		return conv_item(dst) + " >>= " + conv_item(src);
+	}
+
+	std::string Instruction_dir_jmp::toString() {
+		return "goto " + (dynamic_cast<Label*>(label))->name;
+	}
+
+	std::string Instruction_cmp_less::toString() {
+		return conv_item(dst) + " <- " + conv_item(left) + " < " + conv_item(right);
+	}
+
+	std::string Instruction_cmp_le::toString() {
+		return conv_item(dst) + " <- " + conv_item(left) + " <= " + conv_item(right);
+	}
+
+	std::string Instruction_cmp_eq::toString() {
+		return conv_item(dst) + " <- " + conv_item(left) + " = " + conv_item(right);
+	}
+
+	std::string Instruction_cnd_jmp_less::toString() {
+		return "cjump " + conv_item(left) + " < " + conv_item(right) + " " + conv_item(dst);
+	}
+
+	std::string Instruction_cnd_jmp_le::toString() {
+		return "cjump " + conv_item(left) + " <= " + conv_item(right) + " " + conv_item(dst);
+	}
+
+	std::string Instruction_cnd_jmp_eq::toString() {
+		return "cjump " + conv_item(left) + " = " + conv_item(right) + " " + conv_item(dst);
+	}
+
+	std::string Instruction_at::toString() {
+		return conv_item(dst) + " @ " + conv_item(base) + " " + conv_item(index) + " " + conv_item(scale);
+	}
+
+	std::string Instruction_load::toString() {
+		return conv_item(dst) + " <- " + conv_item(src);
+	}
+
+	std::string Instruction_store::toString() {
+		return conv_item(dst) + " <- " + conv_item(src);
+	}
+
+	std::string Instruction_call::toString() {
+		return "call " + conv_item(dst) + " " + conv_item(args);
+	}
+
+	std::string Instruction_call_print::toString() {
+		return "call print 1";
+	}
+
+	std::string Instruction_call_input::toString() {
+		return "call input 0";
+	}
+
+	std::string Instruction_call_allocate::toString() {
+		return "call allocate 2";
+	}
+
+	std::string Instruction_call_tensor_error::toString() {
+		return "call tensor-error " + conv_item(args);
+	}
+
+	std::string Instruction_load_stack_arg::toString() {
+		return conv_item(dst) + " <- stack-arg " + conv_item(offset);
+	}
+
+	std::string conv_item(Item* item) {
+		auto item_c = dynamic_cast<Variable*> (item);
+		if (item_c) return item_c->name;
+		auto item2_c = dynamic_cast<Label*> (item);
+		if (item2_c) return item2_c->name;
+		auto item3_c = dynamic_cast<Number*> (item);
+		if (item3_c) return std::to_string(item3_c->value);
+		auto item4_c = dynamic_cast<Memory*> (item);
+		if (item4_c) return ("mem " + item4_c->var->name + " " + std::to_string(item4_c->offset->value));
+		return "###";
+	}
+
+	/*
 	 * accept overrides
 	 */
 

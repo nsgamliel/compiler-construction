@@ -70,6 +70,7 @@ namespace L2 {
 	class Instruction {
 		public:
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toString() = 0;
 			
 		//private:
 			std::vector<Variable*> gen;
@@ -83,6 +84,7 @@ namespace L2 {
 		public:
 			Instruction_op_one(Item* s);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toString() = 0;
 		
 		//private:
 			Item* src;
@@ -92,6 +94,7 @@ namespace L2 {
 		public:
 			Instruction_op_two(Item* s, Item* d);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toString() = 0;
 		
 		//private:
 			Item* src;
@@ -102,6 +105,7 @@ namespace L2 {
 		public:
 			Instruction_return(int64_t n);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 		
 		//private:
 			int64_t stack_alloc;
@@ -111,12 +115,14 @@ namespace L2 {
 		public:
 			Instruction_mov(Item* s, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_label : public Instruction {
 		public:
 			Instruction_label(Label* l);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 
 		//private:
 			Label* label;
@@ -126,60 +132,70 @@ namespace L2 {
 		public:
 			Instruction_aop_pe(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_aop_me : public Instruction_op_two {
 		public:
 			Instruction_aop_me(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_aop_te : public Instruction_op_two {
 		public:
 			Instruction_aop_te(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_aop_ae : public Instruction_op_two {
 		public:
 			Instruction_aop_ae(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_aop_pp : public Instruction_op_one {
 		public:
 			Instruction_aop_pp(Item* s);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_aop_mm : public Instruction_op_one {
 		public:
 			Instruction_aop_mm(Item* s);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_sop_lsh : public Instruction_op_two {
 		public:
 			Instruction_sop_lsh(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_sop_rsh : public Instruction_op_two {
 		public:
 			Instruction_sop_rsh(Item* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_dir_jmp : public Instruction_label {
 		public:
 			Instruction_dir_jmp(Label* l);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cmp : public Instruction {
 		public:
 			Instruction_cmp(Item* l, Item* r, Item* d);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toString() = 0;
 
 		//private:
 			Item* left;
@@ -191,24 +207,28 @@ namespace L2 {
 		public:
 			Instruction_cmp_less(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cmp_le : public Instruction_cmp {
 		public:
 			Instruction_cmp_le(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cmp_eq : public Instruction_cmp {
 		public:
 			Instruction_cmp_eq(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cnd_jmp : public Instruction {
 		public:
 			Instruction_cnd_jmp(Item* l, Item* r, Label* d);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toString() = 0;
 
 		//private:
 			Item* left;
@@ -220,24 +240,28 @@ namespace L2 {
 		public:
 			Instruction_cnd_jmp_less(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cnd_jmp_le : public Instruction_cnd_jmp {
 		public:
 			Instruction_cnd_jmp_le(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_cnd_jmp_eq : public Instruction_cnd_jmp {
 		public:
 			Instruction_cnd_jmp_eq(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_at : public Instruction {
 		public:
 			Instruction_at(Variable* b, Variable* i, Number* s, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 
 		//private:
 			// dst = base + index*scale
@@ -251,18 +275,21 @@ namespace L2 {
 		public:
 			Instruction_load(Memory* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_store : public Instruction_op_two {
 		public:
 			Instruction_store(Item* s, Memory* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_call : public Instruction {
 		public:
 			Instruction_call(Item* d, Number* a);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 
 		//private:
 			Item* dst;
@@ -273,30 +300,35 @@ namespace L2 {
 		public:
 			Instruction_call_print();
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_call_input : public Instruction_call {
 		public:
 			Instruction_call_input();
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_call_allocate : public Instruction_call {
 		public:
 			Instruction_call_allocate();
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_call_tensor_error : public Instruction_call {
 		public:
 			Instruction_call_tensor_error(Number* a);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 	};
 
 	class Instruction_load_stack_arg : public Instruction {
 		public:
 			Instruction_load_stack_arg(Number* s, Item* d);
 			void accept(Visitor* v) override;
+			std::string toString() override;
 
 		//private:
 			Number* offset;
@@ -313,7 +345,7 @@ namespace L2 {
 			void gen_kill();
 			void find_successors();
 			void in_out();
-			void spill(Variable* svar, Variable* prefix);
+			void spill(Variable* svar, std::string prefix);
 
 	    std::string name;
   	  int64_t arguments;
@@ -331,7 +363,6 @@ namespace L2 {
 	    std::string entryPointLabel;
   	  std::vector<Function *> functions;
 
-			L2::Spiller sp;
 			L2::Variable* spill_var;
 			std::string spill_prefix;
   };
@@ -366,5 +397,7 @@ namespace L2 {
 			virtual void visit(Instruction_call_tensor_error* i) = 0;
 			virtual void visit(Instruction_load_stack_arg* i)    = 0;
 	};
+
+	std::string conv_item(Item* item);
 
 }

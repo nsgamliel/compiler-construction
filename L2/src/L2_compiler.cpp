@@ -122,10 +122,14 @@ int main(
    * Special cases.
    */
   if (spill_only){
+    if (verbose) std::cout << "generating liveness" <<std::endl;
+    p.functions[0]->generate_liveness();
+    if (verbose) std::cout << "performing interference analysis" <<std::endl;
+		auto ig = new L2::InterferenceGraph(p.functions[0]);
     if (verbose) std::cout << "processing spill" <<std::endl;
-    Function* f = p.sp->spill(p.functions[0], p.spill_var, p.spill_prefix);
+    p.functions[0]->spill(p.spill_var, p.spill_prefix);
     if (verbose) std::cout << "generating output" <<std::endl;
-    L2::generate_spill_output(f);
+    L2::generate_spill_output(p.functions[0]);
     if (verbose) std::cout << "done" <<std::endl;
     return 0;
   }

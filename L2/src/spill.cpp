@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -5,52 +6,68 @@
 
 namespace L2 {
 
-	// give F a tostring and each I a tostring with a find_name helper for generating output
+	bool printS = false;
+	// if (printS) std::cout << "" << std::endl;
 
 	void generate_spill_output(Function* f) {
 		std::cout << "(" << f->name << "\n\t" << std::to_string(f->arguments) << " " << std::to_string(f->locals) << "\n";
 		for (auto i : f->instructions)
-			std::cout << i->toString() << std::endl;
+			std::cout << "\t" << i->toString() << std::endl;
 		std::cout << ")\n";
 	}
 
-	Function* Spiller::spill(Function* f, Variable* svar, std::string prefix) {
-		Function* fs;
-		this->spill_var = svar;
-		this->spill_prefix = prefix;
-		if (!(svar->is_in(f->items))) {
-			this->fs = f;
+	Spiller::Spiller(Variable* svar, std::string prefix) {
+		spill_var = svar;
+		spill_prefix = prefix;
+	}
+
+	void L2::Function::spill(Variable* svar, std::string prefix) {
+		auto sp = new Spiller(svar, prefix);
+		std::vector<Instruction*> instrs;
+
+		if (printS) std::cout << "num items: " << this->items.size() << std::endl;
+		if (!(svar->is_in(this->items))) {
+			if (printS) std::cout << "var isn't here, returning" << std::endl;
 			return;
 		}
-		f->reduce_v[svar] = svar->get_dup(f->items);
+		this->reduce_v[svar] = svar->get_dup(this->items);
 
-		for (auto instr : f->instructions) {
+		for (auto instr : this->instructions) {
+			if (printS) std::cout << "in new instr" << std::endl;
 			// check for load
 			bool replaced = false;
+			bool load_added = false;
 			for (auto var : instr->gen) {
-				if (f->reduce_v[var] == f->reduce_v[svar]) {
-					auto load = new Instruction_load(new Memory(new Variable("rsp"), new Number(0)), new Variable(prefix + std::to_string(this->num_replace)));
-					fs->instructions.push_back(load);
+				if (!load_added && this->reduce_v[var] == this->reduce_v[svar]) {
+					if (printS) std::cout << "adding new load" << std::endl;
+					auto load = new Instruction_load(new Memory(new Variable("rsp"), new Number(0)), new Variable(prefix + std::to_string(sp->num_replace)));
+					instrs.push_back(load);
+					load_added = true;
 					replaced = true;
 				}
 			}
 			// actual instruction
-			if (replaced) {
-				// copy the instruction, inserting the new var
-				instr->accept(this);
-				fs->instructions.push_back(instr);
-			} else fs->instructions.push_back(instr);
+			if (printS) std::cout << "adding root instruction" << std::endl;
+			instr->accept(sp);
+			instrs.push_back(instr);
 			// check for store
+			bool kill_added = false;
 			for (auto var : instr->kill) {
-				if (f->reduce_v[var] == f->reduce_v[svar]) {
-					auto store = new Instruction_store(new Variable(prefix + std::to_string(this->num_replace)), new Memory(new Variable("rsp"), new Number(0)));
-					fs->instructions.push_back(store);
+				if (!kill_added && this->reduce_v[var] == this->reduce_v[svar]) {
+					if (printS) std::cout << "adding store" << std::endl;
+					auto store = new Instruction_store(new Variable(prefix + std::to_string(sp->num_replace)), new Memory(new Variable("rsp"), new Number(0)));
+					instrs.push_back(store);
+					kill_added = true;
 					replaced = true;
 				}
 			}
-			if (replaced) this->num_replace++;
+			if (replaced) sp->num_replace++;
 		}
-		return fs;
+		if (sp->num_replace) {
+			this->locals++;
+			this->instructions = instrs;
+		}
+		return;
 	}
 
 	void Spiller::visit(Instruction_return* i) { return; }
@@ -70,6 +87,13 @@ namespace L2 {
 			i->src = new Variable(this->spill_prefix + std::to_string(this->num_replace));
 		if (dst_c && dst_c->name.compare(this->spill_var->name) == 0)
 			i->dst = new Variable(this->spill_prefix + std::to_string(this->num_replace));
+
+		auto src2_c = dynamic_cast<Memory*> (i->src);
+		auto dst2_c = dynamic_cast<Memory*> (i->dst);
+		if (src2_c && src2_c->var->name.compare(this->spill_var->name) == 0)
+			i->src = new Memory(new Variable(this->spill_prefix + std::to_string(this->num_replace)), src2_c->offset);
+		if (dst2_c && dst2_c->var->name.compare(this->spill_var->name) == 0)
+			i->dst = new Memory(new Variable(this->spill_prefix + std::to_string(this->num_replace)), dst2_c->offset);
 	}
 	void Spiller::visit(Instruction_aop_me* i) {
 		auto src_c = dynamic_cast<Variable*> (i->src);
@@ -156,6 +180,7 @@ namespace L2 {
 			i->dst = new Variable(this->spill_prefix + std::to_string(this->num_replace));
 	}
 	void Spiller::visit(Instruction_cnd_jmp_less* i) {
+		if (printS) std::cout << "--------cmpless-------" << std::endl;
 		auto src_l_c = dynamic_cast<Variable*> (i->left);
 		auto src_r_c = dynamic_cast<Variable*> (i->right);
 		if (src_l_c && src_l_c->name.compare(this->spill_var->name) == 0)

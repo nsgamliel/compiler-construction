@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
+//#include <iostream>
 #include <stdint.h>
 #include <assert.h>
 
@@ -1006,7 +1007,7 @@ namespace L2 {
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
 			if (dst) {
-				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+				auto instr = new Instruction_cnd_jmp_le(left, right, dst);
 				curr_f->instructions.push_back(instr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1026,7 +1027,7 @@ namespace L2 {
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
 			if (dst) {
-				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
+				auto instr = new Instruction_cnd_jmp_eq(left, right, dst);
 				curr_f->instructions.push_back(instr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
