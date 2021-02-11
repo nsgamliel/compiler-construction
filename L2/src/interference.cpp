@@ -62,6 +62,7 @@ namespace L2 {
 		if (printI) std::cout << "num indices: " << this->indices.size() << std::endl;
 		if (printI) std::cout << "num items: " << f->items.size() << std::endl;
 		// create the matrix
+		this->width = index;
 		for (int i=0; i<(index*index); i++)
 			this->adj_matrix.push_back(false);
 
