@@ -10,7 +10,6 @@ namespace L2 {
 	bool printV = false;
 
 	void L2::Function::generate_liveness() {
-		// todo
 		if (printV) std::cout << "entering gen_kill" << std::endl;
 		this->gen_kill();
 		if (printV) std::cout << "entering find_successors" << std::endl;

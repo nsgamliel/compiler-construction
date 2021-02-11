@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 #include <L2.h>
@@ -8,7 +10,8 @@ namespace L2 {
 
 	class Spiller : public L2::Visitor {
 		public:
-			Spiller(Variable* svar, std::string prefix);
+			//Spiller(Variable* svar, std::string prefix);
+			Function* spill(Function* f, Variable* svar, std::string prefix);
 			Variable* spill_var;
 			std::string spill_prefix;
 			int num_replace=0;

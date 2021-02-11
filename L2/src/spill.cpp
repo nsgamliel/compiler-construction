@@ -16,58 +16,63 @@ namespace L2 {
 		std::cout << ")\n";
 	}
 
-	Spiller::Spiller(Variable* svar, std::string prefix) {
+	/*Spiller::Spiller(Variable* svar, std::string prefix) {
 		spill_var = svar;
 		spill_prefix = prefix;
-	}
+	}*/
 
-	void L2::Function::spill(Variable* svar, std::string prefix) {
-		auto sp = new Spiller(svar, prefix);
+	Function* Spiller::spill(Function* f, Variable* svar, std::string prefix) {
+		this->spill_var = svar;
+		this->spill_prefix = prefix;
 		std::vector<Instruction*> instrs;
 
-		if (printS) std::cout << "num items: " << this->items.size() << std::endl;
-		if (!(svar->is_in(this->items))) {
+		if (printS) std::cout << "num items: " << f->items.size() << std::endl;
+		if (!(svar->is_in(f->items))) {
 			if (printS) std::cout << "var isn't here, returning" << std::endl;
-			return;
+			return f;
 		}
-		this->reduce_v[svar] = svar->get_dup(this->items);
+		f->reduce_v[svar] = svar->get_dup(f->items);
 
-		for (auto instr : this->instructions) {
+		bool replace_any = false;
+		for (auto instr : f->instructions) {
 			if (printS) std::cout << "in new instr" << std::endl;
 			// check for load
 			bool replaced = false;
 			bool load_added = false;
 			for (auto var : instr->gen) {
-				if (!load_added && this->reduce_v[var] == this->reduce_v[svar]) {
+				if (!load_added && f->reduce_v[var] == f->reduce_v[svar]) {
 					if (printS) std::cout << "adding new load" << std::endl;
-					auto load = new Instruction_load(new Memory(new Variable("rsp"), new Number(0)), new Variable(prefix + std::to_string(sp->num_replace)));
+					auto load = new Instruction_load(new Memory(new Variable("rsp"), new Number(0)), new Variable(prefix + std::to_string(this->num_replace)));
 					instrs.push_back(load);
 					load_added = true;
 					replaced = true;
+					replace_any = true;
 				}
 			}
 			// actual instruction
 			if (printS) std::cout << "adding root instruction" << std::endl;
-			instr->accept(sp);
+			instr->accept(this);
 			instrs.push_back(instr);
 			// check for store
 			bool kill_added = false;
 			for (auto var : instr->kill) {
-				if (!kill_added && this->reduce_v[var] == this->reduce_v[svar]) {
+				if (!kill_added && f->reduce_v[var] == f->reduce_v[svar]) {
 					if (printS) std::cout << "adding store" << std::endl;
-					auto store = new Instruction_store(new Variable(prefix + std::to_string(sp->num_replace)), new Memory(new Variable("rsp"), new Number(0)));
+					auto store = new Instruction_store(new Variable(prefix + std::to_string(this->num_replace)), new Memory(new Variable("rsp"), new Number(0)));
 					instrs.push_back(store);
 					kill_added = true;
 					replaced = true;
+					replace_any = true;
 				}
 			}
-			if (replaced) sp->num_replace++;
+			if (replaced) this->num_replace++;
 		}
-		if (sp->num_replace) {
-			this->locals++;
-			this->instructions = instrs;
+		if (replace_any) {
+			f->locals++;
+			f->instructions = instrs;
+			f->num_replace = this->num_replace;
 		}
-		return;
+		return f;
 	}
 
 	void Spiller::visit(Instruction_return* i) { return; }
@@ -180,7 +185,6 @@ namespace L2 {
 			i->dst = new Variable(this->spill_prefix + std::to_string(this->num_replace));
 	}
 	void Spiller::visit(Instruction_cnd_jmp_less* i) {
-		if (printS) std::cout << "--------cmpless-------" << std::endl;
 		auto src_l_c = dynamic_cast<Variable*> (i->left);
 		auto src_r_c = dynamic_cast<Variable*> (i->right);
 		if (src_l_c && src_l_c->name.compare(this->spill_var->name) == 0)

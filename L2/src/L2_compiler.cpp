@@ -17,6 +17,8 @@
 #include <liveness.h>
 #include <interference.h>
 #include <spill.h>
+#include <graph_coloring.h>
+#include <register_allocation.h>
 
 using namespace std;
 
@@ -123,13 +125,13 @@ int main(
    */
   if (spill_only){
     if (verbose) std::cout << "generating liveness" <<std::endl;
-    p.functions[0]->generate_liveness();
+    //p.functions[0]->generate_liveness();
     if (verbose) std::cout << "performing interference analysis" <<std::endl;
-		auto ig = new L2::InterferenceGraph(p.functions[0]);
+		//auto ig = new L2::InterferenceGraph(p.functions[0]);
     if (verbose) std::cout << "processing spill" <<std::endl;
-    p.functions[0]->spill(p.spill_var, p.spill_prefix);
+    //p.functions[0]->spill(p.spill_var, p.spill_prefix);
     if (verbose) std::cout << "generating output" <<std::endl;
-    L2::generate_spill_output(p.functions[0]);
+    //::generate_spill_output(p.functions[0]);
     if (verbose) std::cout << "done" <<std::endl;
     return 0;
   }
@@ -161,6 +163,16 @@ int main(
 
     return 0;
   }
+
+	// register allocation
+	for (auto f : p.functions) {
+		L2::RegisterAllocator* ra = new L2::RegisterAllocator(f);
+		f = ra->allocate_registers();
+	}
+	// stack-arg translation
+	for (auto f : p.functions) {
+		// todo
+	}
 
   /*
    * Generate the target code.

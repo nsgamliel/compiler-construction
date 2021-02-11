@@ -4,9 +4,44 @@
 
 namespace L2 {
 
+	// does not populate reduce or items
+	Function* Function::clone() {
+		Function* f_clone;
+		f_clone->name = this->name;
+		f_clone->arguments = this->arguments;
+		f_clone->locals = this->locals;
+		f_clone->num_replace = this->num_replace;
+
+		for (auto instr : this->instructions) {
+			f_clone->instructions.push_back(instr->clone());
+		}
+
+		return f_clone;
+	}
+
 	/*
 	 * items
 	 */
+
+	Item* Item::clone() {
+		if (dynamic_cast<Register*>(this)) {
+			return new Register(dynamic_cast<Register*>(this)->name, dynamic_cast<Register*>(this)->rid);
+		}
+		if (dynamic_cast<Variable*>(this)) {
+			return new Variable(dynamic_cast<Variable*>(this)->name);
+		}
+		if (dynamic_cast<Label*>(this)) {
+			return new Label(dynamic_cast<Label*>(this)->name);
+		}
+		if (dynamic_cast<Number*>(this)) {
+			return new Number(dynamic_cast<Number*>(this)->value);
+		}
+		if (dynamic_cast<Memory*>(this)) {
+			return new Memory(new Variable(dynamic_cast<Memory*>(this)->var->name), new Number(dynamic_cast<Memory*>(this)->offset->value));
+		}
+		std::cerr << "no successful item casting" << std::endl;
+		return new Item();
+	}
 
 	Label::Label(const std::string& str) {
 		name = str;
@@ -282,6 +317,118 @@ namespace L2 {
 		auto item4_c = dynamic_cast<Memory*> (item);
 		if (item4_c) return ("mem " + item4_c->var->name + " " + std::to_string(item4_c->offset->value));
 		return "###";
+	}
+
+	/*
+	 * clone()
+	 */
+
+	Instruction_return* Instruction_return::clone() {
+		return new Instruction_return(stack_alloc);
+	}
+
+	Instruction_mov* Instruction_mov::clone() {
+		return new Instruction_mov(src->clone(), dynamic_cast<Variable*>(dst->clone()));
+	}
+
+	Instruction_label* Instruction_label::clone() {
+		return new Instruction_label(new Label(label->name));
+	}
+
+	Instruction_aop_pe* Instruction_aop_pe::clone() {
+		return new Instruction_aop_pe(src->clone(), dst->clone());
+	}
+
+	Instruction_aop_me* Instruction_aop_me::clone() {
+		return new Instruction_aop_me(src->clone(), dst->clone());
+	}
+
+	Instruction_aop_te* Instruction_aop_te::clone() {
+		return new Instruction_aop_te(src->clone(), dst->clone());
+	}
+
+	Instruction_aop_ae* Instruction_aop_ae::clone() {
+		return new Instruction_aop_ae(src->clone(), dst->clone());
+	}
+
+	Instruction_aop_pp* Instruction_aop_pp::clone() {
+		return new Instruction_aop_pp(src->clone());
+	}
+
+	Instruction_aop_mm* Instruction_aop_mm::clone() {
+		return new Instruction_aop_mm(src->clone());
+	}
+
+	Instruction_sop_lsh* Instruction_sop_lsh::clone() {
+		return new Instruction_sop_lsh(src->clone(), dst->clone());
+	}
+
+	Instruction_sop_rsh* Instruction_sop_rsh::clone() {
+		return new Instruction_sop_rsh(src->clone(), dst->clone());
+	}
+
+	Instruction_dir_jmp* Instruction_dir_jmp::clone() {
+		return new Instruction_dir_jmp(new Label(label->name));
+	}
+
+	Instruction_cmp_less* Instruction_cmp_less::clone() {
+		return new Instruction_cmp_less(left->clone(), right->clone(), dst->clone());
+	}
+
+	Instruction_cmp_le* Instruction_cmp_le::clone() {
+		return new Instruction_cmp_le(left->clone(), right->clone(), dst->clone());
+	}
+
+	Instruction_cmp_eq* Instruction_cmp_eq::clone() {
+		return new Instruction_cmp_eq(left->clone(), right->clone(), dst->clone());
+	}
+
+	Instruction_cnd_jmp_less* Instruction_cnd_jmp_less::clone() {
+		return new Instruction_cnd_jmp_less(left->clone(), right->clone(), new Label(dst->name));
+	}
+
+	Instruction_cnd_jmp_le* Instruction_cnd_jmp_le::clone() {
+		return new Instruction_cnd_jmp_le(left->clone(), right->clone(), new Label(dst->name));
+	}
+
+	Instruction_cnd_jmp_eq* Instruction_cnd_jmp_eq::clone() {
+		return new Instruction_cnd_jmp_eq(left->clone(), right->clone(), new Label(dst->name));
+	}
+
+	Instruction_at* Instruction_at::clone() {
+		return new Instruction_at(new Variable(base->name), new Variable(index->name), new Number(scale->value), new Variable(dst->name));
+	}
+
+	Instruction_load* Instruction_load::clone() {
+		return new Instruction_load(dynamic_cast<Memory*>(src->clone()), dst->clone());
+	}
+
+	Instruction_store* Instruction_store::clone() {
+		return new Instruction_store(src->clone(), dynamic_cast<Memory*>(dst->clone()));
+	}
+
+	Instruction_call* Instruction_call::clone() {
+		return new Instruction_call(dst->clone(), new Number(args->value));
+	}
+
+	Instruction_call_print* Instruction_call_print::clone() {
+		return new Instruction_call_print();
+	}
+
+	Instruction_call_input* Instruction_call_input::clone() {
+		return new Instruction_call_input();
+	}
+
+	Instruction_call_allocate* Instruction_call_allocate::clone() {
+		return new Instruction_call_allocate();
+	}
+
+	Instruction_call_tensor_error* Instruction_call_tensor_error::clone() {
+		return new Instruction_call_tensor_error(new Number(args->value));
+	}
+
+	Instruction_load_stack_arg* Instruction_load_stack_arg::clone() {
+		return new Instruction_load_stack_arg(new Number(offset->value), dst->clone());
 	}
 
 	/*

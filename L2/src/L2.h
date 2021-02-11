@@ -15,6 +15,7 @@ namespace L2 {
 	class Item {
 		public:
 			virtual ~Item(){}; // allows types to be polymorphic for dynamic casting
+			Item* clone();
 	};
 
 	class Label : public Item {
@@ -30,7 +31,6 @@ namespace L2 {
 			Variable(const std::string& n);
 			Variable* get_dup(std::vector<Variable*> vec);
 			bool is_in(std::vector<Variable*> vec);
-
 
 		//private:
 			std::string name;
@@ -71,6 +71,7 @@ namespace L2 {
 		public:
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
+			virtual Instruction* clone() = 0;
 			
 		//private:
 			std::vector<Variable*> gen;
@@ -106,6 +107,7 @@ namespace L2 {
 			Instruction_return(int64_t n);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_return* clone() override;
 		
 		//private:
 			int64_t stack_alloc;
@@ -116,6 +118,7 @@ namespace L2 {
 			Instruction_mov(Item* s, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_mov* clone() override;
 	};
 
 	class Instruction_label : public Instruction {
@@ -123,6 +126,7 @@ namespace L2 {
 			Instruction_label(Label* l);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_label* clone() override;
 
 		//private:
 			Label* label;
@@ -133,6 +137,7 @@ namespace L2 {
 			Instruction_aop_pe(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_pe* clone() override;
 	};
 
 	class Instruction_aop_me : public Instruction_op_two {
@@ -140,6 +145,7 @@ namespace L2 {
 			Instruction_aop_me(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_me* clone() override;
 	};
 
 	class Instruction_aop_te : public Instruction_op_two {
@@ -147,6 +153,7 @@ namespace L2 {
 			Instruction_aop_te(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_te* clone() override;
 	};
 
 	class Instruction_aop_ae : public Instruction_op_two {
@@ -154,6 +161,7 @@ namespace L2 {
 			Instruction_aop_ae(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_ae* clone() override;
 	};
 
 	class Instruction_aop_pp : public Instruction_op_one {
@@ -161,6 +169,7 @@ namespace L2 {
 			Instruction_aop_pp(Item* s);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_pp* clone() override;
 	};
 
 	class Instruction_aop_mm : public Instruction_op_one {
@@ -168,6 +177,7 @@ namespace L2 {
 			Instruction_aop_mm(Item* s);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_aop_mm* clone() override;
 	};
 
 	class Instruction_sop_lsh : public Instruction_op_two {
@@ -175,6 +185,7 @@ namespace L2 {
 			Instruction_sop_lsh(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_sop_lsh* clone() override;
 	};
 
 	class Instruction_sop_rsh : public Instruction_op_two {
@@ -182,6 +193,7 @@ namespace L2 {
 			Instruction_sop_rsh(Item* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_sop_rsh* clone() override;
 	};
 
 	class Instruction_dir_jmp : public Instruction_label {
@@ -189,6 +201,7 @@ namespace L2 {
 			Instruction_dir_jmp(Label* l);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_dir_jmp* clone() override;
 	};
 
 	class Instruction_cmp : public Instruction {
@@ -208,6 +221,7 @@ namespace L2 {
 			Instruction_cmp_less(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cmp_less* clone() override;
 	};
 
 	class Instruction_cmp_le : public Instruction_cmp {
@@ -215,6 +229,7 @@ namespace L2 {
 			Instruction_cmp_le(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cmp_le* clone() override;
 	};
 
 	class Instruction_cmp_eq : public Instruction_cmp {
@@ -222,6 +237,7 @@ namespace L2 {
 			Instruction_cmp_eq(Item* l, Item* r, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cmp_eq* clone() override;
 	};
 
 	class Instruction_cnd_jmp : public Instruction {
@@ -241,6 +257,7 @@ namespace L2 {
 			Instruction_cnd_jmp_less(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cnd_jmp_less* clone() override;
 	};
 
 	class Instruction_cnd_jmp_le : public Instruction_cnd_jmp {
@@ -248,6 +265,7 @@ namespace L2 {
 			Instruction_cnd_jmp_le(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cnd_jmp_le* clone() override;
 	};
 
 	class Instruction_cnd_jmp_eq : public Instruction_cnd_jmp {
@@ -255,6 +273,7 @@ namespace L2 {
 			Instruction_cnd_jmp_eq(Item* l, Item* r, Label* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_cnd_jmp_eq* clone() override;
 	};
 
 	class Instruction_at : public Instruction {
@@ -262,6 +281,7 @@ namespace L2 {
 			Instruction_at(Variable* b, Variable* i, Number* s, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_at* clone() override;
 
 		//private:
 			// dst = base + index*scale
@@ -276,6 +296,7 @@ namespace L2 {
 			Instruction_load(Memory* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_load* clone() override;
 	};
 
 	class Instruction_store : public Instruction_op_two {
@@ -283,6 +304,7 @@ namespace L2 {
 			Instruction_store(Item* s, Memory* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_store* clone() override;
 	};
 
 	class Instruction_call : public Instruction {
@@ -290,6 +312,7 @@ namespace L2 {
 			Instruction_call(Item* d, Number* a);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_call* clone() override;
 
 		//private:
 			Item* dst;
@@ -301,6 +324,7 @@ namespace L2 {
 			Instruction_call_print();
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_call_print* clone() override;
 	};
 
 	class Instruction_call_input : public Instruction_call {
@@ -308,6 +332,7 @@ namespace L2 {
 			Instruction_call_input();
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_call_input* clone() override;
 	};
 
 	class Instruction_call_allocate : public Instruction_call {
@@ -315,6 +340,7 @@ namespace L2 {
 			Instruction_call_allocate();
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_call_allocate* clone() override;
 	};
 
 	class Instruction_call_tensor_error : public Instruction_call {
@@ -322,6 +348,7 @@ namespace L2 {
 			Instruction_call_tensor_error(Number* a);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_call_tensor_error* clone() override;
 	};
 
 	class Instruction_load_stack_arg : public Instruction {
@@ -329,6 +356,7 @@ namespace L2 {
 			Instruction_load_stack_arg(Number* s, Item* d);
 			void accept(Visitor* v) override;
 			std::string toString() override;
+			Instruction_load_stack_arg* clone() override;
 
 		//private:
 			Number* offset;
@@ -345,24 +373,24 @@ namespace L2 {
 			void gen_kill();
 			void find_successors();
 			void in_out();
-			void spill(Variable* svar, std::string prefix);
+			Function* clone();
 
 	    std::string name;
   	  int64_t arguments;
    		int64_t locals = 0;
+			int num_replace=0;
     	std::vector<Instruction *> instructions;
 			// additions for liveness etc
 			bool isDirty;
 			std::map<Variable*, Variable*> reduce_v;
 			std::vector<Variable*> items;
-			//int num_replace = 0;
   };
 
   class Program{
 		public:
 	    std::string entryPointLabel;
   	  std::vector<Function *> functions;
-
+			// included for testing purposes
 			L2::Variable* spill_var;
 			std::string spill_prefix;
   };
