@@ -1,34 +1,25 @@
 #include <iostream>
 
 #include <register_allocation.h>
-#include <graph_coloring.h>
 
 #define DEGREE_MAX 15
+#define END_CALLER_SAVE 8
 
 namespace L2 {
 
 	RegisterAllocator::RegisterAllocator(Function* f) {
 		f_working = f;
 		f_orig = f->clone();
+		sp = new Spiller();
+		spill_prefix = "SPILLED_VARIABLE_";
 	}
 
 	Function* RegisterAllocator::allocate_registers() {
 		this->code_analysis();
-		// setup
-		for (auto item : f_working->items) {
-			auto node = new Node();
-			node->var = item;
-			// check if gpr
-			if (item->is_in(ig->gprs)) {
-				node->color = dynamic_cast<Register*>(item);
-				if (!(node->color)) std::cout << "faulty cast: " << item->name << std::endl;
-				f_working->reduce_v[node->color] = item;
-				node->isColored = true;
-			}
-			nodes.push_back(node);
-		}
+		this->setup();
 
 		// graph coloring
+
 		while (!(ig->isColored)) {
 			// calculate expected number of nodes to color
 			int to_color = 0;
@@ -49,6 +40,8 @@ namespace L2 {
 						}
 					}
 				}
+				// if to_pop_ind is still -1, all nodes of degree < DEGREE_MAX have been removed
+				// proceed with removing nodes of degree > DEGREE_MAX
 				if (to_pop_ind == -1) {
 					for (int i=0; i<nodes.size(); i++) {
 						if (!(nodes[i]->isColored) && nodes[i]->inGraph) {
@@ -63,6 +56,72 @@ namespace L2 {
 				color_stack.push_back(nodes[to_pop_ind]);
 				to_color--;
 			}
+			// assign colors
+			while (color_stack.size() > 0) {
+				auto node = color_stack.back();
+				node->inGraph = true;
+				// iterate through possible registers, checking if any edges lead to the given color
+				int base = ig->indices[f_working->reduce_v[node->var]]*ig->width;
+				for (int reg=0; reg<ig->gprs.size(); reg++) {
+					bool color_candidate = true;
+					// examine all edges connected to the given node that are currently present in the graph
+					for (int i=base; i<base+ig->width; i++) {
+						// if an edge is present and it is both currently in the graph and colored
+						if (ig->adj_matrix[i] && nodes[i - base]->inGraph && nodes[i - base]->isColored) {
+							// if connected node's color matches the current one, move on
+							if (f_working->reduce_v[nodes[i - base]->color] == f_working->reduce_v[ig->gprs[reg]]) {
+								color_candidate = false;
+								break;
+							}
+						}
+					}
+					if (color_candidate) {
+						node->color = f_working->reduce_v[ig->gprs[reg]];
+						node->isColored = true;
+						if (reg > END_CALLER_SAVE) {
+							callees_to_save.push_back(ig->gprs[reg]);
+						}
+						break;
+					}
+				}
+				// if the node was not successfully colored and it is not a previously spilled var, 
+				// add it to vector of nodes to be spilled and add node back to graph
+				if (!(node->isColored) && node->var->name.substr(0,spill_prefix.length()).compare(spill_prefix) != 0) {
+					nodes_to_spill.push_back(node);
+				}
+				color_stack.pop_back();
+			}
+			// check for any vars to be spilled, spilling all
+			if (nodes_to_spill.size() > 0) {
+				for (auto node : nodes_to_spill) {
+					sp->spill(f_working, node->var, spill_prefix);
+				}
+				// clear everything, reanalyze, start over
+				nodes.clear();
+				color_stack.clear();
+				nodes_to_spill.clear();
+				callees_to_save.clear();
+				this->code_analysis();
+				this->setup();
+				continue;
+			}
+			// double-check that everything has been colored
+			// if not, coloring is impossible, spill all vars and start over
+			for (auto node : nodes) {
+				if (!(node->isColored)) {
+					// spill all vars
+					for (auto x : nodes) {
+						if (!(x->var->is_in(ig->gprs))) {
+							sp->num_replace = 0;
+							sp->spill(f_orig, x->var, spill_prefix);
+						}
+						return f_orig;
+					}
+				}
+			}
+			
+			ig->isColored = true;
+
 		}
 
 		return f_working;
@@ -73,9 +132,10 @@ namespace L2 {
 		for (auto node : nodes) {
 			if (node->inGraph) {
 				// find node's row in interference graph
-				for (int i=ig->indices[node->var]*ig->width; i<ig->indices[node->var]*ig->width+ig->width; i++) {
+				int base = ig->indices[f_working->reduce_v[node->var]]*ig->width;
+				for (int i=base; i<base+ig->width; i++) {
 					// increment degree if there is an edge and the connected var is also in the graph
-					if (nodes[i - (ig->indices[node->var]*ig->width)]->inGraph && ig->adj_matrix[i]) {
+					if (ig->adj_matrix[i] && nodes[i - base]->inGraph) {
 						node->degree++;
 					}
 				}
@@ -89,6 +149,20 @@ namespace L2 {
 	void RegisterAllocator::code_analysis() {
 		f_working->generate_liveness();
 		ig = new InterferenceGraph(f_working);
+		return;
+	}
+
+	void RegisterAllocator::setup() {
+		for (auto item : f_working->items) {
+			auto node = new Node();
+			node->var = item;
+			// check if gpr
+			if (item->is_in(ig->gprs)) {
+				node->color = item;
+				node->isColored = true;
+			}
+			nodes.push_back(node);
+		}
 		return;
 	}
 

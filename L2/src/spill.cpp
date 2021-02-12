@@ -21,7 +21,7 @@ namespace L2 {
 		spill_prefix = prefix;
 	}*/
 
-	Function* Spiller::spill(Function* f, Variable* svar, std::string prefix) {
+	void Spiller::spill(Function* f, Variable* svar, std::string prefix) {
 		this->spill_var = svar;
 		this->spill_prefix = prefix;
 		std::vector<Instruction*> instrs;
@@ -29,7 +29,7 @@ namespace L2 {
 		if (printS) std::cout << "num items: " << f->items.size() << std::endl;
 		if (!(svar->is_in(f->items))) {
 			if (printS) std::cout << "var isn't here, returning" << std::endl;
-			return f;
+			return;
 		}
 		f->reduce_v[svar] = svar->get_dup(f->items);
 
@@ -72,7 +72,8 @@ namespace L2 {
 			f->instructions = instrs;
 			f->num_replace = this->num_replace;
 		}
-		return f;
+		//return f;
+		return;
 	}
 
 	void Spiller::visit(Instruction_return* i) { return; }
