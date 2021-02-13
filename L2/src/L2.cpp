@@ -1,19 +1,30 @@
 #include <iostream>
+#include <string>
 
 #include <L2.h>
 
 namespace L2 {
 
+	bool printL = false;
+	// if (printL) std::cout << "" << std::endl;
+
 	// does not populate reduce or items
 	Function* Function::clone() {
-		Function* f_clone;
+		if (printL) std::cout << "in function clone: " << this->name << std::endl;
+		auto f_clone = new Function();
+		if (printL) std::cout << "pointer set up" << std::endl;
 		f_clone->name = this->name;
+		if (printL) std::cout << "name assigned" << std::endl;
 		f_clone->arguments = this->arguments;
 		f_clone->locals = this->locals;
 		f_clone->num_replace = this->num_replace;
+		if (printL) std::cout << "function members assigned" << std::endl;
 
+		if (printL) std::cout << "entering instructions" << std::endl;
 		for (auto instr : this->instructions) {
+			if (printL) std::cout << "cloning instruction" << std::endl;
 			f_clone->instructions.push_back(instr->clone());
+			if (printL) std::cout << "done instruction clone" << std::endl;
 		}
 
 		return f_clone;
@@ -193,6 +204,12 @@ namespace L2 {
 	Instruction_load_stack_arg::Instruction_load_stack_arg(Number* s, Item* d) {
 		offset = s;
 		dst = d;
+	}
+
+	int Instruction_store::get_rsp_offset() {
+		if (dynamic_cast<Memory*>(dst)->var->name.compare("rsp") == 0) {
+			return dynamic_cast<Memory*>(dst)->offset->value;
+		} else return -1;
 	}
 
 	/*
@@ -429,6 +446,248 @@ namespace L2 {
 
 	Instruction_load_stack_arg* Instruction_load_stack_arg::clone() {
 		return new Instruction_load_stack_arg(new Number(offset->value), dst->clone());
+	}
+
+	/*
+	 * replace vars
+	 */
+
+	void Instruction_return::replace_var(Variable* oldV, Variable* newV) { return; }
+
+	void Instruction_mov::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_label::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_aop_pe::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		if (dynamic_cast<Memory*>(src) && dynamic_cast<Memory*>(src)->var->name.compare(oldV->name) == 0) {
+			src = new Memory(newV, dynamic_cast<Memory*>(src)->offset);;
+		}
+		if (dynamic_cast<Memory*>(dst) && dynamic_cast<Memory*>(dst)->var->name.compare(oldV->name) == 0) {
+			dst = new Memory(newV, dynamic_cast<Memory*>(dst)->offset);;
+		}
+		return;
+	}
+
+	void Instruction_aop_me::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		if (dynamic_cast<Memory*>(src) && dynamic_cast<Memory*>(src)->var->name.compare(oldV->name) == 0) {
+			src = new Memory(newV, dynamic_cast<Memory*>(src)->offset);;
+		}
+		if (dynamic_cast<Memory*>(dst) && dynamic_cast<Memory*>(dst)->var->name.compare(oldV->name) == 0) {
+			dst = new Memory(newV, dynamic_cast<Memory*>(dst)->offset);;
+		}
+		return;
+	}
+
+	void Instruction_aop_te::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_aop_ae::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_aop_pp::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		return;
+	}
+
+	void Instruction_aop_mm::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		return;
+	}
+
+	void Instruction_sop_lsh::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_sop_rsh::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_dir_jmp::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_cmp_less::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_cmp_le::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_cmp_eq::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_cnd_jmp_less::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		return;
+	}
+
+	void Instruction_cnd_jmp_le::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		return;
+	}
+
+	void Instruction_cnd_jmp_eq::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(left) && dynamic_cast<Variable*>(left)->name.compare(oldV->name) == 0) {
+			left = newV;
+		}
+		if (dynamic_cast<Variable*>(right) && dynamic_cast<Variable*>(right)->name.compare(oldV->name) == 0) {
+			right = newV;
+		}
+		return;
+	}
+
+	void Instruction_at::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(base) && dynamic_cast<Variable*>(base)->name.compare(oldV->name) == 0) {
+			base = newV;
+		}
+		if (dynamic_cast<Variable*>(index) && dynamic_cast<Variable*>(index)->name.compare(oldV->name) == 0) {
+			index = newV;
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_load::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(dynamic_cast<Memory*>(src)->var)->name.compare(oldV->name) == 0) {
+			src = new Memory(newV, dynamic_cast<Memory*>(src)->offset);
+		}
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_store::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(dynamic_cast<Memory*>(dst)->var)->name.compare(oldV->name) == 0) {
+			dst = new Memory(newV, dynamic_cast<Memory*>(dst)->offset);
+		}
+		if (dynamic_cast<Variable*>(src) && dynamic_cast<Variable*>(src)->name.compare(oldV->name) == 0) {
+			src = newV;
+		}
+		return;
+	}
+
+	void Instruction_call::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
+	}
+
+	void Instruction_call_print::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_call_input::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_call_allocate::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_call_tensor_error::replace_var(Variable* oldV, Variable* newV) {
+		return;
+	}
+
+	void Instruction_load_stack_arg::replace_var(Variable* oldV, Variable* newV) {
+		if (dynamic_cast<Variable*>(dst) && dynamic_cast<Variable*>(dst)->name.compare(oldV->name) == 0) {
+			dst = newV;
+		}
+		return;
 	}
 
 	/*

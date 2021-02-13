@@ -23,6 +23,11 @@ namespace L2 {
 	void L2::Function::gen_kill() {
 		auto gkg = new GenKill_Generator();
 		for (auto i : this->instructions) {
+			i->gen.clear();
+			i->kill.clear();
+			i->in.clear();
+			i->out.clear();
+			i->successors.clear();
 			i->accept(gkg);
 		}
 

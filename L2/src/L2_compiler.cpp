@@ -4,21 +4,21 @@
 #include <algorithm>
 #include <set>
 #include <iterator>
-#include <iostream>
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
 #include <stdint.h>
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
 
 #include <L2.h>
 #include <parser.h>
 #include <liveness.h>
 #include <interference.h>
 #include <spill.h>
-#include <graph_coloring.h>
 #include <register_allocation.h>
+#include <stack_management.h>
 
 using namespace std;
 
@@ -165,22 +165,45 @@ int main(
     return 0;
   }
 
-	// register allocation
+	// register allocation and stack-arg translation
+	if (verbose) std::cout << "beginning reg alloc and stack arg translation" << std::endl;
 	for (auto f : p.functions) {
+		if (verbose) std::cout << "allocating" << std::endl;
 		L2::RegisterAllocator* ra = new L2::RegisterAllocator(f);
+		if (verbose) std::cout << "allocator setup complete" << std::endl;
 		f = ra->allocate_registers();
-	}
-	// stack-arg translation
-	for (auto f : p.functions) {
-		// todo
+		if (verbose) std::cout << "translating" << std::endl;
+		L2::convert_stack_args(f);
 	}
 
   /*
    * Generate the target code.
    */
+	if (verbose) std::cout << "beginning code gen" << std::endl;
   if (enable_code_generator){
-    // TODO
+    std::ofstream output_file;
+		output_file.open("prog.L1");
+		if (verbose) std::cout << "file open" << std::endl;
+
+		// file setup
+		output_file << "(" << p.entryPointLabel << "\n";
+
+		// function output
+		for (auto f : p.functions) {
+			output_file << "\t(" << f->name << "\n";
+			output_file << "\t\t" << std::to_string(f->arguments) << " " << std::to_string(f->locals) << "\n";
+			for (auto i : f->instructions) {
+				output_file << "\t\t" << i->toString() << "\n";
+			}
+			output_file << "\t)\n";
+		}
+
+		// end of file
+		output_file << ")\n";
+		output_file.close();
+		if (verbose) std::cout << "end code gen" << std::endl;
   }
 
   return 0;
 }
+ 

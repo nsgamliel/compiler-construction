@@ -72,6 +72,7 @@ namespace L2 {
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
 			virtual Instruction* clone() = 0;
+			virtual void replace_var(Variable* oldV, Variable* newV) = 0;
 			
 		//private:
 			std::vector<Variable*> gen;
@@ -86,6 +87,7 @@ namespace L2 {
 			Instruction_op_one(Item* s);
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
+			virtual void replace_var(Variable* oldV, Variable* newV) = 0;
 		
 		//private:
 			Item* src;
@@ -96,6 +98,7 @@ namespace L2 {
 			Instruction_op_two(Item* s, Item* d);
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
+			virtual void replace_var(Variable* oldV, Variable* newV) = 0;
 		
 		//private:
 			Item* src;
@@ -108,6 +111,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_return* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 		
 		//private:
 			int64_t stack_alloc;
@@ -119,6 +123,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_mov* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_label : public Instruction {
@@ -127,6 +132,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_label* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 
 		//private:
 			Label* label;
@@ -138,6 +144,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_pe* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_aop_me : public Instruction_op_two {
@@ -146,6 +153,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_me* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_aop_te : public Instruction_op_two {
@@ -154,6 +162,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_te* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_aop_ae : public Instruction_op_two {
@@ -162,6 +171,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_ae* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_aop_pp : public Instruction_op_one {
@@ -170,6 +180,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_pp* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_aop_mm : public Instruction_op_one {
@@ -178,6 +189,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_aop_mm* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_sop_lsh : public Instruction_op_two {
@@ -186,6 +198,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_sop_lsh* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_sop_rsh : public Instruction_op_two {
@@ -194,6 +207,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_sop_rsh* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_dir_jmp : public Instruction_label {
@@ -202,6 +216,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_dir_jmp* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cmp : public Instruction {
@@ -209,6 +224,7 @@ namespace L2 {
 			Instruction_cmp(Item* l, Item* r, Item* d);
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
+			virtual void replace_var(Variable* oldV, Variable* newV) = 0;
 
 		//private:
 			Item* left;
@@ -222,6 +238,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cmp_less* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cmp_le : public Instruction_cmp {
@@ -230,6 +247,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cmp_le* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cmp_eq : public Instruction_cmp {
@@ -238,6 +256,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cmp_eq* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cnd_jmp : public Instruction {
@@ -245,6 +264,7 @@ namespace L2 {
 			Instruction_cnd_jmp(Item* l, Item* r, Label* d);
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toString() = 0;
+			virtual void replace_var(Variable* oldV, Variable* newV) = 0;
 
 		//private:
 			Item* left;
@@ -258,6 +278,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cnd_jmp_less* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cnd_jmp_le : public Instruction_cnd_jmp {
@@ -266,6 +287,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cnd_jmp_le* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_cnd_jmp_eq : public Instruction_cnd_jmp {
@@ -274,6 +296,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_cnd_jmp_eq* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_at : public Instruction {
@@ -282,6 +305,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_at* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 
 		//private:
 			// dst = base + index*scale
@@ -297,6 +321,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_load* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_store : public Instruction_op_two {
@@ -305,6 +330,8 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_store* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
+			int get_rsp_offset();
 	};
 
 	class Instruction_call : public Instruction {
@@ -313,6 +340,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_call* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 
 		//private:
 			Item* dst;
@@ -325,6 +353,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_call_print* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_call_input : public Instruction_call {
@@ -333,6 +362,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_call_input* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_call_allocate : public Instruction_call {
@@ -341,6 +371,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_call_allocate* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_call_tensor_error : public Instruction_call {
@@ -349,6 +380,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_call_tensor_error* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 	};
 
 	class Instruction_load_stack_arg : public Instruction {
@@ -357,6 +389,7 @@ namespace L2 {
 			void accept(Visitor* v) override;
 			std::string toString() override;
 			Instruction_load_stack_arg* clone() override;
+			void replace_var(Variable* oldV, Variable* newV) override;
 
 		//private:
 			Number* offset;

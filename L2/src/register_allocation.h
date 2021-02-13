@@ -23,6 +23,9 @@ namespace L2 {
 			void code_analysis();
 			void setup();
 			void calculate_node_degrees();
+			void node_removal();
+			void color_assignment();
+			void replace_colored_nodes();
 		//private:
 			Function* f_working;
 			Function* f_orig;

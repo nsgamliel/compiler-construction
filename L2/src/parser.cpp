@@ -658,10 +658,6 @@ namespace L2 {
       seps,
       argument_number,
       seps,
-			pegtl::opt<
-      	local_number
-			>,
-      seps,
       Instructions_rule,
       seps,
       pegtl::one< ')' >
@@ -986,7 +982,14 @@ namespace L2 {
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			if (dst) {
+			if (dst && dynamic_cast<Number*>(left) && dynamic_cast<Number*>(right)) {
+				auto left_n = dynamic_cast<Number*>(left);
+				auto right_n = dynamic_cast<Number*>(right);
+				if (left_n->value < right_n->value) {
+					auto instr = new Instruction_dir_jmp(dst);
+					curr_f->instructions.push_back(instr);
+				}
+			} else if (dst) {
 				auto instr = new Instruction_cnd_jmp_less(left, right, dst);
 				curr_f->instructions.push_back(instr);
 			} else {
@@ -1006,7 +1009,14 @@ namespace L2 {
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			if (dst) {
+			if (dst && dynamic_cast<Number*>(left) && dynamic_cast<Number*>(right)) {
+				auto left_n = dynamic_cast<Number*>(left);
+				auto right_n = dynamic_cast<Number*>(right);
+				if (left_n->value <= right_n->value) {
+					auto instr = new Instruction_dir_jmp(dst);
+					curr_f->instructions.push_back(instr);
+				}
+			} else if (dst) {
 				auto instr = new Instruction_cnd_jmp_le(left, right, dst);
 				curr_f->instructions.push_back(instr);
 			} else {
@@ -1026,7 +1036,14 @@ namespace L2 {
 			parsed_items.pop_back();
 			auto left = parsed_items.back();
 			parsed_items.pop_back();
-			if (dst) {
+			if (dst && dynamic_cast<Number*>(left) && dynamic_cast<Number*>(right)) {
+				auto left_n = dynamic_cast<Number*>(left);
+				auto right_n = dynamic_cast<Number*>(right);
+				if (left_n->value == right_n->value) {
+					auto instr = new Instruction_dir_jmp(dst);
+					curr_f->instructions.push_back(instr);
+				}
+			} else if (dst) {
 				auto instr = new Instruction_cnd_jmp_eq(left, right, dst);
 				curr_f->instructions.push_back(instr);
 			} else {
@@ -1042,11 +1059,11 @@ namespace L2 {
 			auto curr_f = p.functions.back();
 			auto scale = dynamic_cast<Number*> (parsed_items.back());
 			parsed_items.pop_back();
-			auto index = dynamic_cast<Register*> (parsed_items.back());
+			auto index = dynamic_cast<Variable*> (parsed_items.back());
 			parsed_items.pop_back();
-			auto base = dynamic_cast<Register*> (parsed_items.back());
+			auto base = dynamic_cast<Variable*> (parsed_items.back());
 			parsed_items.pop_back();
-			auto dst = dynamic_cast<Register*> (parsed_items.back());
+			auto dst = dynamic_cast<Variable*> (parsed_items.back());
 			parsed_items.pop_back();
 			if (scale && index && base && dst) {
 				auto instr = new Instruction_at(base, index, scale, dst);
