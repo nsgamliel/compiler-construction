@@ -425,11 +425,11 @@ namespace L3 {
 		pegtl::seq<
 			str_call,
 			seps,
-			var_lbl, //add call strings
+			str_print,
 			seps,
 			pegtl::one<'('>,
 			seps,
-			args_list,
+			var_num,
 			seps,
 			pegtl::one<')'>
 		> {};
