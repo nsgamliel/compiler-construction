@@ -83,16 +83,15 @@ namespace L3 {
 	Instruction_greater::Instruction_greater(Item* l, Item* r, Variable* d)
 	: Instruction_cmp(l, r, d) {}
 
-	Instruction_mem::Instruction_mem(Variable* s, Variable* d) {
+	Instruction_load::Instruction_load(Variable* s, Variable* d) {
 		src = s;
 		dst = d;
 	}
 
-	Instruction_load::Instruction_load(Variable* s, Variable* d)
-	: Instruction_mem(s, d) {}
-
-	Instruction_store::Instruction_store(Variable* s, Variable* d)
-	: Instruction_mem(s, d) {}
+	Instruction_store::Instruction_store(Item* s, Variable* d) {
+		src = s;
+		dst = d;
+	}
 
 	Instruction_label::Instruction_label(Label* l) {
 		label = l;
@@ -140,6 +139,34 @@ namespace L3 {
 	Instruction_call_input_assign::Instruction_call_input_assign(Variable* d) {
 		dst = d;
 	}
+
+	void Instruction_return::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_return_val::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_mov::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_plus::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_minus::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_times::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_and::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_lsh::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_rsh::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_eq::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_le::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_ge::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_less::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_greater::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_load::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_store::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_label::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_branch::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_cond_branch::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_print::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_allocate::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_input::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_tensor_error::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_assign::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_allocate_assign::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_input_assign::accept(Visitor* v) { v->visit(this); return; }
 
 	/*
 	 * program

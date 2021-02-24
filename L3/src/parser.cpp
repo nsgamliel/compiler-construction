@@ -557,8 +557,8 @@ namespace L3 {
 
   struct Instruction_rule:
     pegtl::sor<
-      pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >,
       pegtl::seq< pegtl::at<Instruction_return_val_rule  >, Instruction_return_val_rule   >,
+      pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >,
       pegtl::seq< pegtl::at<Instruction_mov_rule         >, Instruction_mov_rule          >,
       pegtl::seq< pegtl::at<Instruction_op_rule          >, Instruction_op_rule           >,
       pegtl::seq< pegtl::at<Instruction_cmp_rule         >, Instruction_cmp_rule          >,
@@ -595,7 +595,9 @@ namespace L3 {
 			seps,
       pegtl::one< '(' >,
       seps,
-			vars_list,
+			pegtl::opt<
+				vars_list
+			>,
       seps,
       pegtl::one< ')' >,
 			seps,
@@ -721,6 +723,11 @@ namespace L3 {
 			auto currF = p.functions.back();
 			auto newInstr = new Instruction_return();
 			currF->instructions.push_back(newInstr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = newInstr;
+			newTree->isLeaf = false;
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -733,7 +740,14 @@ namespace L3 {
 			parsedItems.pop_back();
 			auto newInstr = new Instruction_return_val(rv);
 			currF->instructions.push_back(newInstr);
-
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			auto newLeaf = new InstructionNode();
+			newLeaf->head = rv; // since ret reads this we want it as a leaf (can be merged with other trees this way)
+			newTree->leaves.push_back(newLeaf);
+			newTree->instr = newInstr;
+			newTree->isLeaf = false;
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -749,6 +763,15 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_mov(src, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf = new InstructionNode();
+				newLeaf->head = src;
+				newTree->leaves.push_back(newLeaf);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -769,6 +792,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_plus(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -789,6 +824,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_minus(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -809,6 +856,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_times(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -829,6 +888,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_and(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -849,6 +920,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_lsh(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -869,6 +952,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_rsh(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -889,6 +984,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_eq(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -909,6 +1016,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_le(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -929,6 +1048,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_ge(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -949,6 +1080,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_less(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -969,6 +1112,18 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_greater(left, right, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = left;
+				newTree->leaves.push_back(newLeaf1);
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = right;
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -987,6 +1142,15 @@ namespace L3 {
 			if (src && dst) {
 				auto instr = new Instruction_load(src->getDup(currF->vars), dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf = new InstructionNode();
+				newLeaf->head = src->getDup(currF->vars);
+				newTree->leaves.push_back(newLeaf);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -998,13 +1162,22 @@ namespace L3 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "store rule" << std::endl;
 			auto currF = p.functions.back();
-			auto src = dynamic_cast<Variable*> (parsedItems.back());
+			auto src = parsedItems.back();
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*> (parsedItems.back());
 			parsedItems.pop_back();
-			if (src && dst) {
-				auto instr = new Instruction_store(src->getDup(currF->vars), dst->getDup(currF->vars));
+			if (dst) {
+				auto instr = new Instruction_store(src, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf = new InstructionNode();
+				newLeaf->head = src;
+				newTree->leaves.push_back(newLeaf);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1021,6 +1194,7 @@ namespace L3 {
 			if (lbl) {
 				auto instr = new Instruction_label(lbl);
 				currF->instructions.push_back(instr);
+				currF->contexts.push_back(new Context());
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1037,6 +1211,12 @@ namespace L3 {
 			if (lbl) {
 				auto instr = new Instruction_branch(lbl);
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr; // no head necessary
+				newTree->isLeaf = false;
+				currF->contexts.back()->trees.push_back(newTree);
+				currF->contexts.push_back(new Context());
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1055,6 +1235,15 @@ namespace L3 {
 			if (cond && lbl) {
 				auto instr = new Instruction_cond_branch(cond->getDup(currF->vars), lbl);
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				auto newLeaf = new InstructionNode();
+				newLeaf->head = cond;
+				newTree->leaves.push_back(newLeaf);
+				currF->contexts.back()->trees.push_back(newTree);
+				currF->contexts.push_back(new Context());
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1075,6 +1264,19 @@ namespace L3 {
 			paramList.clear();
 			auto instr = new Instruction_call(dst, args);
 			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->isLeaf = false;
+			auto newLeaf = new InstructionNode();
+			newLeaf->head = dst; // dst gets a leaf since it could also be merged
+			newTree->leaves.push_back(newLeaf);
+			for (auto i : args) {
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = i;
+				newTree->leaves.push_back(newLeaf1);
+			}
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1087,6 +1289,14 @@ namespace L3 {
 			parsedItems.pop_back();
 			auto instr = new Instruction_call_print(arg);
 			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->isLeaf = false;
+			auto newLeaf = new InstructionNode();
+			newLeaf->head = arg;
+			newTree->leaves.push_back(newLeaf);
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1101,6 +1311,17 @@ namespace L3 {
 			parsedItems.pop_back();
 			auto instr = new Instruction_call_allocate(num, val);
 			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->isLeaf = false;
+			auto newLeaf1 = new InstructionNode();
+			newLeaf1->head = val;
+			auto newLeaf2 = new InstructionNode();
+			newLeaf2->head = num;
+			newTree->leaves.push_back(newLeaf1);
+			newTree->leaves.push_back(newLeaf2);
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1111,6 +1332,11 @@ namespace L3 {
 			auto currF = p.functions.back();
 			auto instr = new Instruction_call_input();
 			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->isLeaf = false;
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1124,6 +1350,14 @@ namespace L3 {
 			if (args) {
 				auto instr = new Instruction_call_tensor_error(args);
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = args;
+				newTree->leaves.push_back(newLeaf1);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1147,6 +1381,20 @@ namespace L3 {
 				paramList.clear();
 				auto instr = new Instruction_call_assign(src, args, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf = new InstructionNode();
+				newLeaf->head = src;
+				newTree->leaves.push_back(newLeaf);
+				for (auto i : args) {
+					auto newLeaf1 = new InstructionNode();
+					newLeaf1->head = i;
+					newTree->leaves.push_back(newLeaf1);
+				}
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1165,8 +1413,20 @@ namespace L3 {
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			if (dst) {
-				auto instr = new Instruction_call_allocate_assign(num, val, dst);
+				auto instr = new Instruction_call_allocate_assign(num, val, dst->getDup(currF->vars));
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = val;
+				auto newLeaf2 = new InstructionNode();
+				newLeaf2->head = num;
+				newTree->leaves.push_back(newLeaf1);
+				newTree->leaves.push_back(newLeaf2);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1183,6 +1443,12 @@ namespace L3 {
 			if (dst) {
 				auto instr = new Instruction_call_input_assign(dst);
 				currF->instructions.push_back(instr);
+				// tree and context handling
+				auto newTree = new InstructionNode();
+				newTree->instr = instr;
+				newTree->isLeaf = false;
+				newTree->head = dst->getDup(currF->vars);
+				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}

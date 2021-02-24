@@ -155,24 +155,20 @@ namespace L3 {
 			void accept(Visitor* v) override;
 	};
 
-	class Instruction_mem : public Instruction {
+	class Instruction_load : public Instruction {
 		public:
-			Instruction_mem(Variable* s, Variable* d);
-			virtual void accept(Visitor* v) = 0;
+			Instruction_load(Variable* s, Variable* d);
+			void accept(Visitor* v) override;
 			Variable* src;
 			Variable* dst;
 	};
 
-	class Instruction_load : public Instruction_mem {
+	class Instruction_store : public Instruction {
 		public:
-			Instruction_load(Variable* s, Variable* d);
+			Instruction_store(Item* s, Variable* d);
 			void accept(Visitor* v) override;
-	};
-
-	class Instruction_store : public Instruction_mem {
-		public:
-			Instruction_store(Variable* s, Variable* d);
-			void accept(Visitor* v) override;
+			Item* src;
+			Variable* dst;
 	};
 
 	class Instruction_label : public Instruction {
@@ -278,6 +274,9 @@ namespace L3 {
 		Item* head;
 		Instruction* instr;
 		std::vector<InstructionNode*> leaves;
+		bool isLeaf = true; // if so, does not get instr ptr
+		bool isMerged = false; // ie disregard this tree if this is true at the top level; it belongs to a bigger tree elsewhere
+		int matchLeaf(InstructionNode* t1);
 	};
 
 	// stores each tree's top-level node
@@ -292,6 +291,7 @@ namespace L3 {
 	class Function {
 		public:
 			void generateLiveness(); // L3 re-implementation
+			void selectTargetInstructions();
 			
 			std::string name;
 			std::vector<Variable*> params;
@@ -306,6 +306,7 @@ namespace L3 {
 			void _genKill();
 			void _findSuccessors();
 			void _inOut();
+			void _treeMerge();
 	};
 
 	/*
