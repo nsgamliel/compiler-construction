@@ -1,9 +1,43 @@
+#include <iostream>
+#include <vector>
+
 #include <instruction_selection.h>
+#include <tiler.h>
 
 namespace L3 {
 
+	bool printIS = false;
+	// if (printIS) std::cout << "" << std::endl;
+
 	void L3::Function::selectTargetInstructions() {
 		this->_treeMerge();
+		if (printIS) {
+			for (auto c : this->contexts) {
+				for (auto t : c->trees) {
+					std::cout << "ismerged: " << t->isMerged << std::endl;
+				}
+			}
+		}
+		// maximal munch
+		auto it = new InstructionTiler();
+		Tile* candidateTile;
+		for (auto c : this->contexts) {
+			for (auto t : c->trees) {
+				if (!(t->isTiled)) {
+					candidateTile = nullptr;
+					// if no special tile found, find the appropriate atomic tile (maximal munch doesn't really matter)
+					for (auto tile : it->atomicTiles) {
+						if (tile->match(t)) {
+							candidateTile = tile;
+							break;
+						}
+					}
+					t->tile = candidateTile;
+					t->isTiled = true;
+				}
+			}
+		}
+
 		return;
 	}
 

@@ -559,11 +559,11 @@ namespace L3 {
     pegtl::sor<
       pegtl::seq< pegtl::at<Instruction_return_val_rule  >, Instruction_return_val_rule   >,
       pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >,
-      pegtl::seq< pegtl::at<Instruction_mov_rule         >, Instruction_mov_rule          >,
       pegtl::seq< pegtl::at<Instruction_op_rule          >, Instruction_op_rule           >,
       pegtl::seq< pegtl::at<Instruction_cmp_rule         >, Instruction_cmp_rule          >,
       pegtl::seq< pegtl::at<Instruction_load_rule        >, Instruction_load_rule         >,
       pegtl::seq< pegtl::at<Instruction_store_rule       >, Instruction_store_rule        >,
+      pegtl::seq< pegtl::at<Instruction_mov_rule         >, Instruction_mov_rule          >,
       pegtl::seq< pegtl::at<Instruction_label_rule       >, Instruction_label_rule        >,
       pegtl::seq< pegtl::at<Instruction_branch_rule      >, Instruction_branch_rule       >,
       pegtl::seq< pegtl::at<Instruction_cond_branch_rule >, Instruction_cond_branch_rule  >,

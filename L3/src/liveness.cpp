@@ -8,34 +8,57 @@
 namespace L3 {
 
 	bool printL = false;
+	bool printLTOP = false;
+	// if (printL) std::cout << "" << std::endl;
 
 	void L3::Function::generateLiveness() {
+		if (printLTOP) std::cout << "in liveness" << std::endl;
+		if (printLTOP) std::cout << "clearing instruction vectors" << std::endl;
 		for (auto i : this->instructions) {
 			i->gen.clear();
 			i->kill.clear();
 			i->in.clear();
 			i->out.clear();
 		}
+		if (printLTOP) std::cout << "entering genKill" << std::endl;
 		this->_genKill();
+		if (printLTOP) std::cout << "entering findSuccessors" << std::endl;
 		this->_findSuccessors();
+		if (printLTOP) std::cout << "entering inOut" << std::endl;
 		this->_inOut();
+		if (printLTOP) std::cout << "leaving liveness" << std::endl;
+
+		if (printLTOP) {
+			for (auto i : this->instructions) {
+				std::cout << "instruction: " << i << "\nin: " << i->in.size() << "\nout: " << i->out.size() << std::endl;
+			}
+		}
+
 		return;
 	}
 
 	void L3::Function::_genKill() {
 		auto gkg = new GenKillGenerator();
+		if (printL) std::cout << "employing genkillgenerator" << std::endl;
 		for (auto i : this->instructions) {
 			i->accept(gkg);
 		}
 
 		// replace gen and kill vars with unique var pointers (in case dynamic casts generate a new pointer)
+		if (printL) std::cout << "maintaining uniqueness of var pointers" << std::endl;
 		for (auto i : this->instructions) {
-			for (int v=0; v<i->gen.size(); i++) {
+			if (printL) std::cout << "at instruction gen sets" << std::endl;
+			for (int v=0; v<i->gen.size(); v++) {
+				if (printL) std::cout << "at index: " << v << std::endl;
+				if (printL) std::cout << "size: " << i->gen.size() << std::endl;
 				if (i->gen[v]->getDup(this->vars)) {
+					if (printL) std::cout << "replacing pointer " << i->gen[v] << " with " << i->gen[v]->getDup(this->vars) << std::endl;
 					i->gen[v] = i->gen[v]->getDup(this->vars);
 				}
+				if (printL) std::cout << "leaving index: " << v << std::endl;
 			}
-			for (int v=0; v<i->kill.size(); i++) {
+			if (printL) std::cout << "at instruction kill sets" << std::endl;
+			for (int v=0; v<i->kill.size(); v++) {
 				if (i->kill[v]->getDup(this->vars)) {
 					i->kill[v] = i->kill[v]->getDup(this->vars);
 				}

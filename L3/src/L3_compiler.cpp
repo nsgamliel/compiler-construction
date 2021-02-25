@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
 		if (printM) std::cout << "====performing instruction selection" << std::endl;
 		f->selectTargetInstructions();
 	}
+	if (printM) std::cout << "====done" << std::endl;
 
 	return 0;
 }

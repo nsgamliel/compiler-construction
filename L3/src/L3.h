@@ -269,13 +269,16 @@ namespace L3 {
 		std::vector<InstructionTree*> trees;
 	};*/
 
+	class Tile;
 	// usage: only instruction destinations get instr and leaves fields populated, other nodes have those fields left blank
 	struct InstructionNode {
 		Item* head;
 		Instruction* instr;
+		Tile* tile;
 		std::vector<InstructionNode*> leaves;
-		bool isLeaf = true; // if so, does not get instr ptr
+		bool isLeaf = true; // if so, does not get instr ptr or tile ptr
 		bool isMerged = false; // ie disregard this tree if this is true at the top level; it belongs to a bigger tree elsewhere
+		bool isTiled = false;
 		int matchLeaf(InstructionNode* t1);
 	};
 
