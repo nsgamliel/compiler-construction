@@ -4,10 +4,11 @@
 #include <parser.h>
 #include <liveness.h>
 #include <instruction_selection.h>
+#include <code_generation.h>
 
 int main(int argc, char** argv) {
 
-	bool printM = true;
+	bool printM = false;
 	// if (printM) std::cout << "" << std::endl;
 
 	if (argc != 2) {
@@ -26,7 +27,10 @@ int main(int argc, char** argv) {
 		f->generateLiveness();
 		if (printM) std::cout << "====performing instruction selection" << std::endl;
 		f->selectTargetInstructions();
+		if (printM) std::cout << "====leaving function" << std::endl;
 	}
+	generateTargetCode(&p);
+
 	if (printM) std::cout << "====done" << std::endl;
 
 	return 0;

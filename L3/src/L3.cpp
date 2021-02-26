@@ -25,6 +25,18 @@ namespace L3 {
 		value = num;
 	}
 
+	std::string Label::toString() {
+		return this->name;
+	}
+
+	std::string Variable::toString() {
+		return this->name;
+	}
+
+	std::string Number::toString() {
+		return std::to_string(this->value);
+	}
+
 	/*
 	 * instructions
 	 */
@@ -178,13 +190,13 @@ namespace L3 {
 			for (int i=0; i<f->instructions.size(); i++) {
 				if (dynamic_cast<Instruction_label*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_label*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + std::to_string(num) + newI->label->name);
+					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
 				} else if (dynamic_cast<Instruction_branch*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_branch*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + std::to_string(num) + newI->label->name);
+					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
 				} else if (dynamic_cast<Instruction_cond_branch*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_cond_branch*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + std::to_string(num) + newI->label->name);
+					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
 				} else if (dynamic_cast<Instruction_call*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_call*>(f->instructions[i]);
 					if (dynamic_cast<Label*>(newI->dst)) {

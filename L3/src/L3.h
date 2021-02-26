@@ -15,11 +15,13 @@ namespace L3 {
 	class Item {
 		public:
 			virtual ~Item(){};
+			virtual std::string toString() = 0;
 	};
 
 	class Label : public Item {
 		public:
 			Label(const std::string& str);
+			std::string toString() override;
 			std::string name;
 	};
 
@@ -27,12 +29,14 @@ namespace L3 {
 		public:
 			Variable(const std::string& str);
 			Variable* getDup(std::vector<Variable*> vec);
+			std::string toString() override;
 			std::string name;
 	};
 
 	class Number : public Item {
 		public:
 			Number(int64_t num);
+			std::string toString() override;
 			int64_t value;
 	};
 
@@ -285,6 +289,7 @@ namespace L3 {
 	// stores each tree's top-level node
 	struct Context {
 		std::vector<InstructionNode*> trees;
+		bool isLabel = false;
 	};
 
 	/*
@@ -300,12 +305,13 @@ namespace L3 {
 			std::vector<Variable*> params;
 			std::vector<Instruction*> instructions;
 			std::vector<Context*> contexts;
+			std::vector<Tile*> tiles; // ordered tiles vector
 			// used for maintaining unique variable pointers
 			std::vector<Variable*> vars;
 			bool isDirty;
 
 		private:
-			// liveness helpers
+			// helpers
 			void _genKill();
 			void _findSuccessors();
 			void _inOut();

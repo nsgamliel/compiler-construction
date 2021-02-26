@@ -401,7 +401,9 @@ namespace L3 {
 		> {};
 
 	struct Instruction_label_rule:
-		label_operand_rule {};
+		pegtl::seq<
+			label_operand_rule
+		> {};
 
 	struct Instruction_branch_rule:
 		pegtl::seq<
@@ -1192,9 +1194,21 @@ namespace L3 {
 			auto lbl = dynamic_cast<Label*> (parsedItems.back());
 			parsedItems.pop_back();
 			if (lbl) {
+				if (printActions) std::cout << "label found" << std::endl;
 				auto instr = new Instruction_label(lbl);
 				currF->instructions.push_back(instr);
+				if (printActions) std::cout << "instruction added" << std::endl;
 				currF->contexts.push_back(new Context());
+				if (printActions) std::cout << "new context created" << std::endl;
+				auto newLabel = new InstructionNode();
+				if (printActions) std::cout << "label initialized" << std::endl;
+				newLabel->instr = instr;
+				if (printActions) std::cout << "label instr set" << std::endl;
+				currF->contexts.back()->isLabel = true;
+				currF->contexts.back()->trees.push_back(newLabel);
+				if (printActions) std::cout << "label added to context" << std::endl;
+				currF->contexts.push_back(new Context());
+				if (printActions) std::cout << "extra context created" << std::endl;
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
