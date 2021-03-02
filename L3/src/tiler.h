@@ -24,17 +24,18 @@ namespace L3 {
 	 *
 	 */
 
-	class TileVisitor;
+	//class TileVisitor;
 
 	class Tile {
 		public:
 			int cost;
 			int nodesCovered;
-			Instruction* instr;
+			InstructionNode* iNode;
 			virtual bool match(InstructionNode* i) = 0;
 			//virtual void accept(TileVisitor* tv) = 0;
 			virtual std::string generateTargetInstructions() = 0;
-			virtual Tile* clone() = 0;
+			virtual void clone(InstructionNode* i) = 0;
+			//virtual void specialClone(InstructionNode* i) = 0;
 	};
 
 	/*
@@ -48,7 +49,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_return* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_return_val : public Tile {
@@ -58,7 +59,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_return_val* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_mov : public Tile {
@@ -68,7 +69,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_mov* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_plus : public Tile {
@@ -78,7 +79,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_plus* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_minus : public Tile {
@@ -88,7 +89,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_minus* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_times: public Tile {
@@ -98,7 +99,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_times* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_and : public Tile {
@@ -108,7 +109,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_and* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_lsh : public Tile {
@@ -118,7 +119,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_lsh* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_rsh : public Tile {
@@ -128,7 +129,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_rsh* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_eq : public Tile {
@@ -138,7 +139,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_eq* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_le : public Tile {
@@ -148,7 +149,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_le* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_ge : public Tile {
@@ -158,7 +159,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_ge* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_less : public Tile {
@@ -168,7 +169,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_less* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_greater : public Tile {
@@ -178,7 +179,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_greater* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_load : public Tile {
@@ -188,7 +189,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_load* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_store : public Tile {
@@ -198,7 +199,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_store* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_label : public Tile {
@@ -208,7 +209,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_label* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_branch : public Tile {
@@ -218,7 +219,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_branch* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_cond_branch : public Tile {
@@ -228,7 +229,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_cond_branch* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call : public Tile {
@@ -238,7 +239,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_print : public Tile {
@@ -248,7 +249,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_print* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_allocate : public Tile {
@@ -258,7 +259,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_allocate* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_input : public Tile {
@@ -268,7 +269,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_input* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_tensor_error : public Tile {
@@ -278,7 +279,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_tensor_error* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_assign : public Tile {
@@ -288,7 +289,17 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_assign* clone() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_call_print_assign : public Tile {
+		public:
+			int cost = 0;
+			int nodesCovered = 0;
+			bool match(InstructionNode* i) override;
+			//void accept(TileVisitor* tv) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_allocate_assign : public Tile {
@@ -298,7 +309,7 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_allocate_assign* clone() override;
+			void clone(InstructionNode* i) override;
 	};
 
 	class Tile_call_input_assign : public Tile {
@@ -308,12 +319,117 @@ namespace L3 {
 			bool match(InstructionNode* i) override;
 			//void accept(TileVisitor* tv) override;
 			std::string generateTargetInstructions() override;
-			Tile_call_input_assign* clone() override;
+			void clone(InstructionNode* i) override;
 	};
+
+	class Tile_call_tensor_error_assign : public Tile {
+		public:
+			int cost = 0;
+			int nodesCovered = 0;
+			bool match(InstructionNode* i) override;
+			//void accept(TileVisitor* tv) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	/*
+	 * special tiles
+	 */
+
+	class Tile_mov_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_at_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 4;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_pe_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_me_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_te_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_ae_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_lsh_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	class Tile_rsh_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};
+
+	/*class Tile_rsh_special : public Tile {
+		public:
+			int cost = 1;
+			int nodesCovered = 3;
+			bool match(InstructionNode* i) override;
+			std::string generateTargetInstructions() override;
+			void clone(InstructionNode* i) override;
+	};*/
 
 	class InstructionTiler {
 		public:
-			// vector of tiles, special tiles ordered by number of nodes covered
+			std::vector<Tile*> specialTiles = {
+				new Tile_mov_special(),
+				new Tile_at_special(),
+				new Tile_pe_special(),
+				new Tile_me_special(),
+				new Tile_te_special(),
+				new Tile_ae_special(),
+				new Tile_lsh_special(),
+				new Tile_rsh_special()
+			};
+
 			std::vector<Tile*> atomicTiles = {
 				new Tile_return(),
 				new Tile_return_val(),
@@ -340,8 +456,10 @@ namespace L3 {
 				new Tile_call_input(),
 				new Tile_call_tensor_error(),
 				new Tile_call_assign(),
+				new Tile_call_print_assign(),
 				new Tile_call_allocate_assign(),
-				new Tile_call_input_assign()
+				new Tile_call_input_assign(),
+				new Tile_call_tensor_error_assign()
 			};
 	};
 

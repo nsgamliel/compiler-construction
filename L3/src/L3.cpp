@@ -132,13 +132,18 @@ namespace L3 {
 		val = v;
 	}
 
-	Instruction_call_tensor_error::Instruction_call_tensor_error(Number* a) {
-		arg = a;
+	Instruction_call_tensor_error::Instruction_call_tensor_error(std::vector<Item*> a) {
+		args = a;
 	}
 
 	Instruction_call_assign::Instruction_call_assign(Item* s, std::vector<Item*> a, Variable* d) {
 		src = s;
 		args = a;
+		dst = d;
+	}
+
+	Instruction_call_print_assign::Instruction_call_print_assign(Item* a, Variable* d) {
+		arg = a;
 		dst = d;
 	}
 
@@ -149,6 +154,11 @@ namespace L3 {
 	}
 
 	Instruction_call_input_assign::Instruction_call_input_assign(Variable* d) {
+		dst = d;
+	}
+
+	Instruction_call_tensor_error_assign::Instruction_call_tensor_error_assign(std::vector<Item*> a, Variable* d) {
+		args = a;
 		dst = d;
 	}
 
@@ -177,8 +187,10 @@ namespace L3 {
 	void Instruction_call_input::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_call_tensor_error::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_call_assign::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_print_assign::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_call_allocate_assign::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_call_input_assign::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_tensor_error_assign::accept(Visitor* v) { v->visit(this); return; }
 
 	/*
 	 * program
@@ -190,19 +202,19 @@ namespace L3 {
 			for (int i=0; i<f->instructions.size(); i++) {
 				if (dynamic_cast<Instruction_label*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_label*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
+					newI->label = new Label(this->longestLabel + "_global_" + std::to_string(num) + "_" + newI->label->name.substr(1));
 				} else if (dynamic_cast<Instruction_branch*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_branch*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
+					newI->label = new Label(this->longestLabel + "_global_" + std::to_string(num) + "_" + newI->label->name.substr(1));
 				} else if (dynamic_cast<Instruction_cond_branch*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_cond_branch*>(f->instructions[i]);
-					newI->label = new Label(this->longestLabel + "_" + std::to_string(num) + "_" + newI->label->name.substr(1));
-				} else if (dynamic_cast<Instruction_call*>(f->instructions[i])) {
+					newI->label = new Label(this->longestLabel + "_global_" + std::to_string(num) + "_" + newI->label->name.substr(1));
+				} /*else if (dynamic_cast<Instruction_call*>(f->instructions[i])) {
 					auto newI = dynamic_cast<Instruction_call*>(f->instructions[i]);
 					if (dynamic_cast<Label*>(newI->dst)) {
 						newI->dst = new Label(this->longestLabel + std::to_string(num) + dynamic_cast<Label*>(newI->dst)->name);
 					}
-				}
+				}*/
 			}
 			num++;
 		}

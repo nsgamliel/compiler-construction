@@ -11,6 +11,7 @@ define :main(){
  call :r()
  call :l()
  call :d()
+ return
 }
 
 define :h(){

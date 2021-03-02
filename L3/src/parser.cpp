@@ -429,7 +429,9 @@ namespace L3 {
 			seps,
 			pegtl::one<'('>,
 			seps,
-			args_list,
+			pegtl::opt<
+				args_list
+			>,
 			seps,
 			pegtl::one<')'>
 		> {};
@@ -483,7 +485,7 @@ namespace L3 {
 			seps,
 			pegtl::one<'('>,
 			seps,
-			number_operand_rule,
+			args_list,
 			seps,
 			pegtl::one<')'>
 		> {};
@@ -509,7 +511,26 @@ namespace L3 {
 			seps,
 			pegtl::one<'('>,
 			seps,
-			args_list,
+			pegtl::opt<
+				args_list
+			>,
+			seps,
+			pegtl::one<')'>
+		> {};
+	
+	struct Instruction_call_print_assign_rule:
+		pegtl::seq<
+			variable_operand_rule,
+			seps,
+			str_arrow,
+			seps,
+			str_call,
+			seps,
+			str_print,
+			seps,
+			pegtl::one<'('>,
+			seps,
+			var_num,
 			seps,
 			pegtl::one<')'>
 		> {};
@@ -549,12 +570,31 @@ namespace L3 {
 			seps,
 			pegtl::one<')'>
 		> {};
+	
+	struct Instruction_call_tensor_error_assign_rule:
+		pegtl::seq<
+			variable_operand_rule,
+			seps,
+			str_arrow,
+			seps,
+			str_call,
+			seps,
+			str_tensor,
+			seps,
+			pegtl::one<'('>,
+			seps,
+			args_list,
+			seps,
+			pegtl::one<')'>
+		> {};
 
 	struct Instruction_calls_assign_rule:
 		pegtl::sor<
 	 		pegtl::seq< pegtl::at<Instruction_call_assign_rule             >, Instruction_call_assign_rule              >,
       pegtl::seq< pegtl::at<Instruction_call_allocate_assign_rule    >, Instruction_call_allocate_assign_rule     >,
-      pegtl::seq< pegtl::at<Instruction_call_input_assign_rule       >, Instruction_call_input_assign_rule        >
+      pegtl::seq< pegtl::at<Instruction_call_input_assign_rule       >, Instruction_call_input_assign_rule        >,
+      pegtl::seq< pegtl::at<Instruction_call_print_assign_rule       >, Instruction_call_print_assign_rule        >,
+      pegtl::seq< pegtl::at<Instruction_call_tensor_error_assign_rule>, Instruction_call_tensor_error_assign_rule >
 		> {};
 
   struct Instruction_rule:
@@ -1282,6 +1322,7 @@ namespace L3 {
 			auto newTree = new InstructionNode();
 			newTree->instr = instr;
 			newTree->isLeaf = false;
+			newTree->isMergeable = false;
 			auto newLeaf = new InstructionNode();
 			newLeaf->head = dst; // dst gets a leaf since it could also be merged
 			newTree->leaves.push_back(newLeaf);
@@ -1307,6 +1348,7 @@ namespace L3 {
 			auto newTree = new InstructionNode();
 			newTree->instr = instr;
 			newTree->isLeaf = false;
+			newTree->isMergeable = false;
 			auto newLeaf = new InstructionNode();
 			newLeaf->head = arg;
 			newTree->leaves.push_back(newLeaf);
@@ -1329,6 +1371,7 @@ namespace L3 {
 			auto newTree = new InstructionNode();
 			newTree->instr = instr;
 			newTree->isLeaf = false;
+			newTree->isMergeable = false;
 			auto newLeaf1 = new InstructionNode();
 			newLeaf1->head = val;
 			auto newLeaf2 = new InstructionNode();
@@ -1350,6 +1393,7 @@ namespace L3 {
 			auto newTree = new InstructionNode();
 			newTree->instr = instr;
 			newTree->isLeaf = false;
+			newTree->isMergeable = false;
 			currF->contexts.back()->trees.push_back(newTree);
     }
   };
@@ -1359,22 +1403,24 @@ namespace L3 {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_tensor_error rule" << std::endl;
 			auto currF = p.functions.back();
-			auto args = dynamic_cast<Number*> (parsedItems.back());
-			parsedItems.pop_back();
-			if (args) {
-				auto instr = new Instruction_call_tensor_error(args);
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr;
-				newTree->isLeaf = false;
-				auto newLeaf1 = new InstructionNode();
-				newLeaf1->head = args;
-				newTree->leaves.push_back(newLeaf1);
-				currF->contexts.back()->trees.push_back(newTree);
-			} else {
-				std::cerr << "improper operands" << std::endl;
+			std::vector<Item*> args;
+			for (auto i : paramList) {
+				args.push_back(i);
 			}
+			paramList.clear();
+			auto instr = new Instruction_call_tensor_error(args);
+			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->isLeaf = false;
+			newTree->isMergeable = false;
+			for (auto i : args) {
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = i;
+				newTree->leaves.push_back(newLeaf1);
+			}
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1399,6 +1445,7 @@ namespace L3 {
 				auto newTree = new InstructionNode();
 				newTree->instr = instr;
 				newTree->isLeaf = false;
+				newTree->isMergeable = false;
 				newTree->head = dst->getDup(currF->vars);
 				auto newLeaf = new InstructionNode();
 				newLeaf->head = src;
@@ -1412,6 +1459,30 @@ namespace L3 {
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
+    }
+  };
+
+  template<> struct action < Instruction_call_print_assign_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_print assign rule" << std::endl;
+			auto currF = p.functions.back();
+			auto arg = parsedItems.back();
+			parsedItems.pop_back();
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
+			parsedItems.pop_back();
+			auto instr = new Instruction_call_print_assign(arg, dst);
+			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->head = dst;
+			newTree->isLeaf = false;
+			newTree->isMergeable = false;
+			auto newLeaf = new InstructionNode();
+			newLeaf->head = arg;
+			newTree->leaves.push_back(newLeaf);
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 
@@ -1433,6 +1504,7 @@ namespace L3 {
 				auto newTree = new InstructionNode();
 				newTree->instr = instr;
 				newTree->isLeaf = false;
+				newTree->isMergeable = false;
 				newTree->head = dst->getDup(currF->vars);
 				auto newLeaf1 = new InstructionNode();
 				newLeaf1->head = val;
@@ -1461,11 +1533,41 @@ namespace L3 {
 				auto newTree = new InstructionNode();
 				newTree->instr = instr;
 				newTree->isLeaf = false;
+				newTree->isMergeable = false;
 				newTree->head = dst->getDup(currF->vars);
 				currF->contexts.back()->trees.push_back(newTree);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
+    }
+  };
+
+  template<> struct action < Instruction_call_tensor_error_assign_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "call_tensor_error assign rule" << std::endl;
+			auto currF = p.functions.back();
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
+			parsedItems.pop_back();
+			std::vector<Item*> args;
+			for (auto i : paramList) {
+				args.push_back(i);
+			}
+			paramList.clear();
+			auto instr = new Instruction_call_tensor_error_assign(args, dst);
+			currF->instructions.push_back(instr);
+			// tree and context handling
+			auto newTree = new InstructionNode();
+			newTree->instr = instr;
+			newTree->head = dst;
+			newTree->isLeaf = false;
+			newTree->isMergeable = false;
+			for (auto i : args) {
+				auto newLeaf1 = new InstructionNode();
+				newLeaf1->head = i;
+				newTree->leaves.push_back(newLeaf1);
+			}
+			currF->contexts.back()->trees.push_back(newTree);
     }
   };
 

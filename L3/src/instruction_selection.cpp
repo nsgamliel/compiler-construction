@@ -25,35 +25,38 @@ namespace L3 {
 		auto it = new InstructionTiler();
 		Tile* candidateTile;
 		for (auto c : this->contexts) {
-			if (printIS) std::cout << "in context" << std::endl;
+			if (printIS) std::cout << "\nin context" << std::endl;
 			for (auto t : c->trees) {
-				if (printIS) std::cout << "in tree" << std::endl;
+				if (printIS) std::cout << "\nin tree" << std::endl;
 				if (!(t->isTiled)) {
 					if (printIS) std::cout << "not tiled" << std::endl;
 					candidateTile = nullptr;
-					// if no special tile found, find the appropriate atomic tile (maximal munch doesn't really matter)
-					for (auto tile : it->atomicTiles) {
-						if (printIS) std::cout << "checking tile candidate" << std::endl;
-						if (tile->match(t)) {
-							if (printIS) std::cout << "match!" << std::endl;
+					// begin by checking for candidate special tiles
+					for (auto tile : it->specialTiles) {
+						if (printIS) std::cout << "checking special tile candidate" << std::endl;
+						if (tile->match(t) && (!candidateTile || (candidateTile->nodesCovered < tile->nodesCovered) || (candidateTile->nodesCovered == tile->nodesCovered && candidateTile->cost > tile->cost))) {
+							if (printIS) std::cout << "special match!" << std::endl;
 							candidateTile = tile;
-							break;
 						}
 					}
-					if (printIS) std::cout << "assigning tile" << std::endl;
-					// duplicate the candidate tile, give it the current instruction, and reassign
-					auto newTile = candidateTile->clone();
-					if (printIS) std::cout << "candidate cloned" << std::endl;
-					newTile->instr = t->instr;
-					if (printIS) std::cout << "instruction ptr assigned" << std::endl;
-					t->tile = newTile;
-					if (printIS) std::cout << "tile ptr assigned" << std::endl;
-					t->isTiled = true;
+					if (candidateTile) { candidateTile->clone(t); }
+					// if no special tile found, find the appropriate atomic tile (maximal munch doesn't really matter)
+					if (!candidateTile) {
+						for (auto tile : it->atomicTiles) {
+							if (printIS) std::cout << "checking tile candidate" << std::endl;
+							if (tile->match(t)) {
+								if (printIS) std::cout << "match!" << std::endl;
+								tile->clone(t);
+								break;
+							}
+						}
+					}					
 					if (printIS) std::cout << "done assigning tile" << std::endl;
 				}
 			}
 		}
 		// now that all tiles are assigned, create a vector of ordered tiles
+		if (printIS) std::cout << "\nbuilding tile vector" << std::endl;
 		std::vector<Tile*> tiles;
 		for (auto c : this->contexts) {
 			if (printIS) std::cout << "in context" << std::endl;
@@ -64,8 +67,19 @@ namespace L3 {
 					if (printIS) std::cout << "not merged" << std::endl;
 					auto treeTiles = extractTiles(t);
 					for (int i=treeTiles.size()-1; i>=0; i--) {
-						if (printIS) std::cout << "\n" << treeTiles[i]->generateTargetInstructions() << "\n\n";
-						tiles.push_back(treeTiles[i]);
+						if (treeTiles[i]) {
+							if (printIS) std::cout << "treeTile exists at current index" << std::endl;
+							if (treeTiles[i]->iNode) {
+								if (printIS) std::cout << "treeTile has valid iNode" << std::endl;
+								if (!(treeTiles[i]->iNode->isSpecialChild)) {
+									// print debug statement here
+									if (printIS) std::cout << "printing tree tile" << std::endl;
+									//if (dynamic_cast<Tile_at_special*>(treeTiles[i])) std::cout << "special at instr" << std::endl;
+									if (printIS) std::cout << "\n" << treeTiles[i]->generateTargetInstructions() << "\n";
+									tiles.push_back(treeTiles[i]);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -80,13 +94,16 @@ namespace L3 {
 			tiles.push_back(i->tile);
 		}
 		if (!i->isLeaf) {
-			std::vector<Tile*> tileVec;
+			//std::vector<Tile*> tileVec;
 			for (auto leaf : i->leaves) {
-				tileVec = extractTiles(leaf);
+				std::vector<Tile*> subTileVec = extractTiles(leaf);
+				for (auto tile : subTileVec) {
+					tiles.push_back(tile);
+				}
 			}
-			for (auto tile : tileVec) {
-				tiles.push_back(tile);
-			}
+			//for (auto tile : tileVec) {
+				//tiles.push_back(tile);
+			//}
 		}
 		return tiles;
 	}
@@ -98,12 +115,13 @@ namespace L3 {
 					if (!(c->isLabel)) {
 						for (int j=i+1; j<c->trees.size(); j++) { // although the conditions would likely take care of this, limit T1 to instructions after T2
 							int mergeIndex = c->trees[i]->matchLeaf(c->trees[j]);
-							if (mergeIndex != -1 && !(dynamic_cast<Variable*>(c->trees[i]->head)->getDup(c->trees[j]->instr->out))) { // ie if match && not in out set (dead), I and IIA
+							if (c->trees[j]->isMergeable && mergeIndex != -1 && !(dynamic_cast<Variable*>(c->trees[i]->head)->getDup(c->trees[j]->instr->out))) { // ie if match && not in out set (dead), I and IIA
 								bool mergeable = true;
 								if (j-i > 1) {
 									for (auto k=i+1; k<j; k++) {
 										// check no other uses of matched var between T2 and T1
-										if (dynamic_cast<Variable*>(c->trees[k]->head) && dynamic_cast<Variable*>(c->trees[k]->head)->name.compare(dynamic_cast<Variable*>(c->trees[i]->head)->name) == 0) {
+										auto head = dynamic_cast<Variable*>(c->trees[i]->head);
+										if (head && (head->getDup(c->trees[k]->instr->gen))) {
 											mergeable = false;
 											break;
 										}

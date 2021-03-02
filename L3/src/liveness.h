@@ -31,8 +31,10 @@ namespace L3 {
 			void visit(Instruction_call_input* i) override;
 			void visit(Instruction_call_tensor_error* i) override;
 			void visit(Instruction_call_assign* i) override;
+			void visit(Instruction_call_print_assign* i) override;
 			void visit(Instruction_call_allocate_assign* i) override;
 			void visit(Instruction_call_input_assign* i) override;
+			void visit(Instruction_call_tensor_error_assign* i) override;
 	};
 
 }

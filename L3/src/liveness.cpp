@@ -305,13 +305,13 @@ namespace L3 {
 	}
 
 	void GenKillGenerator::visit(Instruction_load* i) {
-		i->kill.push_back(i->dst);
+		i->gen.push_back(i->dst);
 		i->gen.push_back(i->src);
 		return;
 	}
 
 	void GenKillGenerator::visit(Instruction_store* i) {
-		i->kill.push_back(i->dst);
+		i->gen.push_back(i->dst);
 		if (dynamic_cast<Variable*>(i->src)) {
 			i->gen.push_back(dynamic_cast<Variable*>(i->src));
 		} return;
@@ -360,7 +360,7 @@ namespace L3 {
 	void GenKillGenerator::visit(Instruction_call_tensor_error* i) {return; }
 
 	void GenKillGenerator::visit(Instruction_call_assign* i) {
-		i->gen.push_back(i->dst);
+		i->kill.push_back(i->dst);
 		if (dynamic_cast<Variable*>(i->src)) {
 			i->gen.push_back(dynamic_cast<Variable*>(i->src));
 		}
@@ -372,8 +372,16 @@ namespace L3 {
 		return;
 	}
 
+	void GenKillGenerator::visit(Instruction_call_print_assign* i) {
+		i->kill.push_back(i->dst);
+		if (dynamic_cast<Variable*>(i->arg)) {
+			i->gen.push_back(dynamic_cast<Variable*>(i->arg));
+		}
+		return;
+	}
+
 	void GenKillGenerator::visit(Instruction_call_allocate_assign* i) {
-		i->gen.push_back(i->dst);
+		i->kill.push_back(i->dst);
 		if (dynamic_cast<Variable*>(i->num)) {
 			i->gen.push_back(dynamic_cast<Variable*>(i->num));
 		}
@@ -384,8 +392,13 @@ namespace L3 {
 	}
 
 	void GenKillGenerator::visit(Instruction_call_input_assign* i) {
-		i->gen.push_back(i->dst);
+		i->kill.push_back(i->dst);
 		return;
+	}
+
+	void GenKillGenerator::visit(Instruction_call_tensor_error_assign* i) {
+		i->kill.push_back(i->dst);
+		return; 
 	}
 
 }

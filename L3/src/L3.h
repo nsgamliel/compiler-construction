@@ -227,9 +227,9 @@ namespace L3 {
 
 	class Instruction_call_tensor_error : public Instruction {
 		public:
-			Instruction_call_tensor_error(Number* a);
+			Instruction_call_tensor_error(std::vector<Item*> a);
 			void accept(Visitor* v) override;
-			Number* arg;
+			std::vector<Item*> args;
 	};
 
 	class Instruction_call_assign : public Instruction {
@@ -238,6 +238,14 @@ namespace L3 {
 			void accept(Visitor* v) override;
 			Item* src;
 			std::vector<Item*> args;
+			Variable* dst;
+	};
+
+	class Instruction_call_print_assign : public Instruction {
+		public:
+			Instruction_call_print_assign(Item* a, Variable* d);
+			void accept(Visitor* v) override;
+			Item* arg;
 			Variable* dst;
 	};
 
@@ -254,6 +262,14 @@ namespace L3 {
 		public:
 			Instruction_call_input_assign(Variable* d);
 			void accept(Visitor* v) override;
+			Variable* dst;
+	};
+
+	class Instruction_call_tensor_error_assign : public Instruction {
+		public:
+			Instruction_call_tensor_error_assign(std::vector<Item*> a, Variable* d);
+			void accept(Visitor* v) override;
+			std::vector<Item*> args;
 			Variable* dst;
 	};
 
@@ -283,6 +299,8 @@ namespace L3 {
 		bool isLeaf = true; // if so, does not get instr ptr or tile ptr
 		bool isMerged = false; // ie disregard this tree if this is true at the top level; it belongs to a bigger tree elsewhere
 		bool isTiled = false;
+		bool isMergeable = true;
+		bool isSpecialChild = false;
 		int matchLeaf(InstructionNode* t1);
 	};
 
@@ -361,8 +379,10 @@ namespace L3 {
 			virtual void visit(Instruction_call_input* i) = 0;
 			virtual void visit(Instruction_call_tensor_error* i) = 0;
 			virtual void visit(Instruction_call_assign* i) = 0;
+			virtual void visit(Instruction_call_print_assign* i) = 0;
 			virtual void visit(Instruction_call_allocate_assign* i) = 0;
 			virtual void visit(Instruction_call_input_assign* i) = 0;
+			virtual void visit(Instruction_call_tensor_error_assign* i) = 0;
 	};
 
 }
