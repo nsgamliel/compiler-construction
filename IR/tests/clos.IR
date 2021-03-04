@@ -46,7 +46,9 @@ define void :main()
   code %f
   %i <- 0
   br :L1
+
 :L1
+  int64 %ans
   %f <- %ops[%i]
   %ans <- call %f(%ops, %X, %Y)
   %num <- %ans*2
@@ -78,7 +80,6 @@ define void :main()
 :L3b
   code %g
   code %h
-  int64 %ans
   %i <- 0
   br :L3
 :L3

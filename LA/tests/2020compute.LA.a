@@ -135,7 +135,7 @@ int64 static_arr(int64 N) {
   done <- i >= N
   br done :end :add_elem
 :end
-  return
+  return 0
 
 :add_elem
   int64 b

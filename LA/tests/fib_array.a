@@ -1,7 +1,7 @@
 void main() {
     :entry
     int64 arrSize
-    int64 arr
+    int64[] arr
     int64 arr0
     int64 arr1
     int64 back0

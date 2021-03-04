@@ -53,6 +53,7 @@
 	rax -= rdi
 	rdx += 1
 	cjump 1 = 1 :modWhile
+  return
 )
 
 )

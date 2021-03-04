@@ -34,6 +34,7 @@
 	mem rsp -8 <- :call_label10
 	call :d 0
 	:call_label10
+  return 
 )
 
 (:h

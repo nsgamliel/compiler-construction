@@ -1,5 +1,5 @@
  void main() {
-	int64[] arr
+	int64[][] arr
 	int64 arrsize, arrval,i,c,t
 
 	

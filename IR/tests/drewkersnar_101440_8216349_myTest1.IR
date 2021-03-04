@@ -33,6 +33,7 @@ define void :myF2(int64 %arg1) {
 }
 define int64 :myF3() {
     :entry
+    int64 %ret
     %ret <- 4 <= 4
     return %ret
 }

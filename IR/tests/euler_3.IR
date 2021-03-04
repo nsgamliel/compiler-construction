@@ -95,6 +95,7 @@ define int64 :gpf(int64 %arg) {
 
 define void :main() {
     :entry
+    int64 %result
     %result <- call :gpf(33030)
     %result <- %result << 1
     %result <- %result + 1

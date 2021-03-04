@@ -19,6 +19,7 @@ goto :check_dbt
     rdi <<= 1
     rdi += 1
     call print 1
+    return
   )
   (:divisible_by_four
     1 0

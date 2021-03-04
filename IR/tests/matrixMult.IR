@@ -52,6 +52,7 @@ define int64[][] :multiply(int64 %n, int64[][] %m1, int64[][] %m2){
     int64 %m2entry
     int64 %continue
     int64 %n_encoded
+    int64 %n_enc
     %n_enc <- call :encode(%n)
     %out <- new Array(%n_enc, %n_enc)
     %i<- 0
@@ -60,6 +61,7 @@ define int64[][] :multiply(int64 %n, int64[][] %m1, int64[][] %m2){
     %j<- 0
     br :column_loop
     :column_loop
+    int64 %accum
     %accum <- 0
     %k <- %n
     br :dot_loop

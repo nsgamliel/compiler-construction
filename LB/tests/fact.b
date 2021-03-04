@@ -12,8 +12,8 @@ void main(){
   if(var1>1) :loop :cont2
   :cont2
   print(var2)
-  return 0
+  return
   :else
   print(3)
-  return 0 
+  return 
  }

@@ -5,6 +5,7 @@ define void :main(){
 	int64 %n
 	int64 %l
 	int64 %check
+  int64 %p
 	%f <- 1
 	%s <- 1
 	%n <- 10
@@ -13,10 +14,12 @@ define void :main(){
 	:loop
 	%check <- %l = %n
 	br %check :return :false
+
 	:false
 	%p <- %s << 1
 	%p <- %p + 1
 	call print (%p)
+  int64 %t
 	%t <- %s
 	%s <- %s + %f
 	%f <- %t

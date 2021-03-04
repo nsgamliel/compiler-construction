@@ -34,7 +34,7 @@ int64 rand(int64[] array, int64 ret) {
 	:cantreach
 	ans <- 1
 	test <- 0
-	return
+	return 0
 	:good
 	ans <- array[0]
 	test <- array[1]

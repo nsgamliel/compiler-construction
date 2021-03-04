@@ -1,7 +1,7 @@
 // fibonacci
 // iterative approach
 
-int64 main() {
+void main() {
     int64 res
     res <- fibonacci(20)
     print(res) // 6765

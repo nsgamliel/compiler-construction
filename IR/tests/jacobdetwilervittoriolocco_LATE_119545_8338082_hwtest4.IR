@@ -16,8 +16,6 @@ define int64 :max(int64[] %array) {
     int64 %index
 
    %sizeOfArray <- length %array 0
-   %first <- %array + 8
-   %max2 <- %first
     %index <- 1
     br :loop
 
@@ -27,8 +25,8 @@ define int64 :max(int64[] %array) {
    int64 %temp
     int64 %newMax
     int64 %continue
+    int64 %max
     %currMultFactor <- %index * 8
-    %curr <- %array + %currMultFactor
     %temp <- %array[%currMultFactor]
     %newMax <- %temp - %max
     br %newMax :setNewMax :cont
@@ -44,7 +42,6 @@ define int64 :max(int64[] %array) {
   br :return_here
 
   :return_here
-  int64 %max
   %max <- 1 
   return %max
 }

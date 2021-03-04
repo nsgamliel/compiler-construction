@@ -63,6 +63,7 @@ int64 %len_track2
 %len_track2 <- %len2 - 1
 int64 %s
 %s <- %arr[0][%len_track2]
+int64 %sum
 %sum <- %s + %sum
 return %sum
 }

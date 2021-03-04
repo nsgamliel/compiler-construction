@@ -58,5 +58,6 @@
             rax -= %bi // res = res - b * i
             %i += 1 // i += 1
             cjump 1 = 1 :modWhile
+            return 
     )
 )

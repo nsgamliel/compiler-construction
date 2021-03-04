@@ -13,4 +13,4 @@
 {s:2, 42, 2}
 2
 2
-ERROR: instruction 0 attempted to access an array, a tuple, or a tensor that has not been allocated
+ERROR: instruction at line 0 attempted to access an array, a tuple, or a tensor that has not been allocated

@@ -12,7 +12,7 @@
   v10 <- 41
   v11 <-  max(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10)
   print(v11)
-  return 0
+  return
  }
  int64 max(int64 var0,int64 var1,int64 var2,int64 var3,int64 var4,int64 var5,int64 var6,int64 var7,int64 var8,int64 var9) {
   int64 v0

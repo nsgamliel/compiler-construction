@@ -26,8 +26,8 @@ define void :main(){
   %var2print <- %var2 << 1
   %var2print <- %var2print + 1
   call print(%var2print)
-  return 0
+  return
   :else
   call print(3)
-  return 0 
+  return 
  }

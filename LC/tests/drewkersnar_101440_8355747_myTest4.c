@@ -44,6 +44,5 @@ int recurse(int v1, int num) {
         ret <- recurse(v1, num)
         return ret
     }
-    return
-    
+    return 0
 }

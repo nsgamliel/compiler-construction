@@ -16,6 +16,7 @@ define void :main () {
   int64 %val0
   int64 %val1
   int64 %val2
+  int64 %arrayLen
   br :check_input
 
   :check_input

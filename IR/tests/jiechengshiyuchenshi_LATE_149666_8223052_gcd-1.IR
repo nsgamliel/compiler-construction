@@ -39,6 +39,7 @@ define int64 :mod(int64 %a, int64 %b) {
     :while
 
         int64 %if
+        int64 %bi
         %bi <- %b * %i
         %if <- %bi <= %a
         br %if :whileInto :whileBreak

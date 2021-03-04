@@ -24,6 +24,7 @@ define int64 :collatz(int64 %n, int64 %acc) {
  br %nIsOne :terminal :recurse
 
  :recurse
+ int64 %ret
  %ret <- call :collatz (%n, %acc)
  return %ret
 

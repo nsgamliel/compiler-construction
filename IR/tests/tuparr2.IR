@@ -12,6 +12,7 @@ define tuple :vec_ctor() {
 
 define void :memcp32(int64[][][] %ptr, int64 %idx, int64[][] %buf) {
 :entry
+    int64 %n
     %n <- %ptr[%idx][0][0]
     %buf[0][0] <- %n
     %n <- %ptr[%idx][0][1]
@@ -25,6 +26,7 @@ define void :memcp32(int64[][][] %ptr, int64 %idx, int64[][] %buf) {
 
 define void :memcp23(int64[][] %buf, int64[][][] %qtr, int64 %idx) {
 :entry
+    int64 %n
     %n <- %buf[0][0]
     %qtr[%idx][0][0] <- %n
     %n <- %buf[0][1]
@@ -159,6 +161,7 @@ define void :main() {
     call print(%printing_buf)
     br :B2
 :B5
+    int64 %enci
     %enci <- %i * 2
     %enci <- %enci + 1
     call print(%enci)

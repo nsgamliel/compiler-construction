@@ -161,6 +161,7 @@ define void :main() {
     call print(%printing_buf)
     br :B2
 :B5
+    int64 %enci
     %enci <- %i * 2
     %enci <- %enci + 1
     call print(%enci)

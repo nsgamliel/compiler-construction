@@ -132,7 +132,7 @@ int64 static_arr(int64 N) {
 :comp
     if (i >= N) :end :add_elem {
 :end
-      return
+      return 0
       code unused
       break
     }

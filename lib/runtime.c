@@ -419,7 +419,7 @@ int array_tensor_error_null (int64_t instructionID){
    */
   instructionID >>= 1;
 
-  printf("ERROR: instruction %" PRId64, instructionID);
+  printf("ERROR: instruction at line %" PRId64, instructionID);
   printf(" attempted to access an array, a tuple, or a tensor that has not been allocated\n");
 
   exit(0);
@@ -459,9 +459,9 @@ int array_error (int64_t instructionID, int64_t length, int64_t index) {
     abort();
   }
 
-  printf("ERROR: instruction %" PRId64, instructionID);
+  printf("ERROR: instruction at line %" PRId64, instructionID);
   printf(" attempted to use position %" PRId64, index);
-  printf(" in an array that only has %" PRId64 " position", length);
+  printf(" in an array that only has %" PRId64 " element", length);
   if (length != 1) printf("s");
   printf("\n");
 
@@ -507,10 +507,10 @@ int tensor_error (int64_t instructionID, int64_t dimension, int64_t length, int6
     abort();
   }
 
-  printf("ERROR: instruction %" PRId64, instructionID);
+  printf("ERROR: instruction at line %" PRId64, instructionID);
   printf(" attempted to use position %" PRId64, index);
   printf(" in the dimension %" PRId64, dimension);
-  printf(" of a tensor that only has %" PRId64 " position", length);
+  printf(" of a tensor that only has %" PRId64 " element", length);
   if (length != 1) printf("s");
   printf(" in that dimension\n");
 

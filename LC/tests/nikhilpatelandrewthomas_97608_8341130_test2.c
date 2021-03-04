@@ -11,7 +11,7 @@ void main() {
 }
 
 
-void fib(int v) {
+int fib(int v) {
 	if (v = 1) {
         return 1
     }

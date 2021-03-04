@@ -41,6 +41,7 @@ define void :main() {
   int64 %tmp_rdi
   int64 %tmp_rdx
   int64 %rsp_16
+  int64 %sft
   %i <- 0
   %sft <- 1
   br :for_go

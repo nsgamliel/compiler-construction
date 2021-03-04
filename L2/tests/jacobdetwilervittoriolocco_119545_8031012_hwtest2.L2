@@ -5,6 +5,7 @@
       %newVariable13 <- 2 // 10 = 1 A
       %newVariable14 <- 2 // 10 = 1 This is a counter
       %print_val <- 1 // print value
+      rdi <- %print_val
       call print 1
       rdi <- 3
 
@@ -17,6 +18,7 @@
       %print_val <- %newV
 
       :fibonacci
+      rdi <- %print_val
       call print 1
 
       %print_val <- %newVariable12

@@ -1,6 +1,6 @@
 define void :main() {
 	:entry
-	int64[] %arr
+	int64[][] %arr
 	int64 %arrsize
 	int64 %arrval
 	int64 %i
