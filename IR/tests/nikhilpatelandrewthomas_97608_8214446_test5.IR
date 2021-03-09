@@ -30,19 +30,23 @@ define int64 :rand(int64[] %array, int64 %ret) {
 	int64 %test
 	int64 %len
 	br :startCalcs
+
 	:startCalcs
 	%ans <- 0 
 	%len <- 0
 	%test <- 0
 	br :keepGoing
+
 	:keepGoing
 	%len <- length %array 0
 	%test <- %len = %ret
 	br :good
+
 	:cantreach
 	%ans <- 1
 	%test <- 0
 	return 1
+
 	:good
 	%ans <- %array[0]
 	%test <- %array[1]
@@ -50,7 +54,10 @@ define int64 :rand(int64[] %array, int64 %ret) {
 	%ans <- %ans + %test
 	%ans <- %ans + %len
 	return %ans
+
+  :newLabel
 	br :end
+
 	:end
 	return 0
 }

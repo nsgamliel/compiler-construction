@@ -12,28 +12,21 @@ define void :main() {
 	%arrval <- 3
 	
 	%arr <- new Array(%arrsize,%arrval)
-	%arr[0] <- 43
-	%arr[1] <- 73
-	%arr[2] <- 29
-	%arr[3] <- 33
-	%arr[4] <- 47
-	%arr[5] <- 43
-	%arr[6] <- 81
-	%arr[7] <- 33
-	%arr[8] <- 63
-	%arr[9] <- 13
-	%arr[10] <- 63
-	%arr[11] <- 413
-	%arr[12] <- 93
-	%arr[13] <- 123
-	%arr[14] <- 14353
+	%arr[0][0] <- 43
+	%arr[1][0] <- 73
+	%arr[2][0] <- 29
+	%arr[3][0] <- 33
+	%arr[4][0] <- 47
+	%arr[5][0] <- 43
+	%arr[6][0] <- 81
+	%arr[7][0] <- 33
 	
 	%i <- 0
 	%arrsize <- %arrsize >> 1
 	br :loop
 	
 	:loop
-	%t <- %arr[%i]
+	%t <- %arr[%i][0]
 	%t <- %t << 1
 	%t <- %t + 1
 	call print(%t)
