@@ -126,7 +126,7 @@ namespace IR {
 		label = l;
 	}
 
-	Instruction_cond_branch::Instruction_cond_branch(Variable* c, Label* t, Label* f) {
+	Instruction_cond_branch::Instruction_cond_branch(Item* c, Label* t, Label* f) {
 		cond = c;
 		labelTrue = t;
 		labelFalse = f;

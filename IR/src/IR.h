@@ -168,7 +168,7 @@ namespace IR {
 			Variable* src;
 			std::vector<Item*> indices;
 			Variable* dst;
-	}
+	};
 	
 	class Instruction_to_array : public Instruction {
 		public:
@@ -177,7 +177,7 @@ namespace IR {
 			Variable* src;
 			std::vector<Item*> indices;
 			Variable* dst;
-	}
+	};
 
 	class Instruction_length : public Instruction {
 		public:
@@ -186,7 +186,7 @@ namespace IR {
 			Variable* src;
 			Item* dim;
 			Variable* dst;
-	}
+	};
 
 	class Instruction_label : public Instruction {
 		public:
@@ -204,9 +204,9 @@ namespace IR {
 
 	class Instruction_cond_branch : public Instruction {
 		public:
-			Instruction_cond_branch(Variable* c, Label* t, Label* f);
+			Instruction_cond_branch(Item* c, Label* t, Label* f);
 			void accept(Visitor* v) override;
-			Variable* cond;
+			Item* cond;
 			Label* labelTrue;
 			Label* labelFalse;
 	};
@@ -276,7 +276,7 @@ namespace IR {
 			void accept(Visitor* v) override;
 			std::vector<Item*> args;
 			Variable* dst;
-	}
+	};
 
 	class Instruction_tuple_init : public Instruction {
 		public:
@@ -284,7 +284,7 @@ namespace IR {
 			void accept(Visitor* v) override;
 			Item* args;
 			Variable* dst;
-	}
+	};
 
 	/*
 	 * basic blocks
@@ -295,7 +295,10 @@ namespace IR {
 			Label* entryLabel = nullptr;
 			Label* trueSucc = nullptr;
 			Label* falseSucc = nullptr;
+			bool isMarked = false;
 			std::vector<Instruction*> instrs;
+			std::vector<BasicBlock*> succs;
+
 	};
 
 	/*

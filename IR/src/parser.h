@@ -1,9 +1,9 @@
 #pragma once
 
-#include <L3.h>
+#include <IR.h>
 
-namespace L3 {
+namespace IR {
 
-	L3::Program parseFile (char* fileName);
+	IR::Program parseFile (char* fileName);
 
 }

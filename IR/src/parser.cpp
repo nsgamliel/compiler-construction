@@ -24,7 +24,7 @@ using namespace pegtl;
 
 namespace IR {
 
-  bool printActions = false;
+  bool printActions = true;
 
   /* 
    * data obtained while parsing
@@ -108,11 +108,11 @@ namespace IR {
 	
 	struct data_type:
 		pegtl::sor<
-			int_array,
-			str_int,
-			str_tuple,
-			str_code,
-			str_void
+			pegtl::seq< pegtl::at<int_array>, int_array >,
+			pegtl::seq< pegtl::at<str_int  >, str_int   >,
+			pegtl::seq< pegtl::at<str_tuple>, str_tuple >,
+			pegtl::seq< pegtl::at<str_code >, str_code  >,
+			pegtl::seq< pegtl::at<str_void >, str_void  >
 		> {};
 
   struct label:
@@ -665,6 +665,7 @@ namespace IR {
     pegtl::sor<
       pegtl::seq< pegtl::at<Instruction_return_val_rule  >, Instruction_return_val_rule   >,
       pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >,
+      pegtl::seq< pegtl::at<Instruction_define_var_rule  >, Instruction_define_var_rule   >,
       pegtl::seq< pegtl::at<Instruction_op_rule          >, Instruction_op_rule           >,
       pegtl::seq< pegtl::at<Instruction_cmp_rule         >, Instruction_cmp_rule          >,
       pegtl::seq< pegtl::at<Instruction_from_array_rule  >, Instruction_from_array_rule   >,
@@ -747,7 +748,6 @@ namespace IR {
     	if (printActions) std::cout << "function name: " << in.string() << std::endl;
       auto newF = new Function();
       newF->name = in.string();
-			newF->bbs.push_back(new BasicBlock());
       p.functions.push_back(newF);
 			declaredVars.clear();
     }
@@ -756,7 +756,7 @@ namespace IR {
 	template<> struct action < data_type > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "data type found" << std::endl;
+      if (printActions) std::cout << "data type found: " << in.string() << std::endl;
 			dType = in.string();
     }
   };
@@ -764,6 +764,7 @@ namespace IR {
   template<> struct action < vars_list > {
     template< typename Input >
   	static void apply( const Input & in, Program & p){
+			auto currF = p.functions.back();
     	if (printActions) std::cout << "vars list" << std::endl;
 			for (auto i : paramList) {
 				currF->params.push_back(dynamic_cast<Variable*>(i));
@@ -809,7 +810,7 @@ namespace IR {
 	template<> struct action < list_variable_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << " list variable operand" << std::endl;
+      if (printActions) std::cout << "list variable operand" << std::endl;
 			auto new_item = new Variable(in.string());
 			paramList.push_back(new_item);
     }
@@ -818,7 +819,7 @@ namespace IR {
 	template<> struct action < list_number_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << " list num operand" << std::endl;
+      if (printActions) std::cout << "list num operand" << std::endl;
 			auto new_item = new Number(std::stoll(in.string()));
 			paramList.push_back(new_item);
     }
@@ -829,7 +830,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "ret rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto newInstr = new Instruction_return();
 			currBB->instrs.push_back(newInstr);
 			currF->bbs.push_back(new BasicBlock());
@@ -841,7 +846,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "ret val rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto rv = parsedItems.back();
 			parsedItems.pop_back();
 			auto newInstr = new Instruction_return_val(rv);
@@ -855,7 +864,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "defn var rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto var = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			if (var) {
@@ -872,7 +885,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "mov rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto src = parsedItems.back();
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*> (parsedItems.back());
@@ -891,7 +908,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "plus rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -912,7 +933,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "minus rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -933,7 +958,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "times rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -954,7 +983,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "and rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -975,7 +1008,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "lsh rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -996,7 +1033,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "rsh rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1017,7 +1058,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "eq rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1038,7 +1083,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "le rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1059,7 +1108,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "ge rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1080,7 +1133,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "less rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1101,7 +1158,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "greater rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto right = parsedItems.back();
 			parsedItems.pop_back();
 			auto left = parsedItems.back();
@@ -1120,9 +1181,13 @@ namespace IR {
   template<> struct action < Instruction_from_array_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "load rule" << std::endl;
+      if (printActions) std::cout << "from array rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
 			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto src = dynamic_cast<Variable*> (parsedItems.back());
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*> (parsedItems.back());
@@ -1133,7 +1198,60 @@ namespace IR {
 			}
 			paramList.clear();
 			if (src && dst) {
-				auto newInstr = new Instruction_load(src, args, dst);
+				auto newInstr = new Instruction_from_array(src, args, dst);
+				currBB->instrs.push_back(newInstr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_to_array_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "to array rule" << std::endl;
+			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto src = dynamic_cast<Variable*> (parsedItems.back());
+			parsedItems.pop_back();
+			auto dst = dynamic_cast<Variable*> (parsedItems.back());
+			parsedItems.pop_back();
+			std::vector<Item*> args;
+			for (auto i : paramList) {
+				args.push_back(i);
+			}
+			paramList.clear();
+			if (src && dst) {
+				auto newInstr = new Instruction_to_array(src, args, dst);
+				currBB->instrs.push_back(newInstr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+    }
+  };
+
+  template<> struct action < Instruction_length_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "length rule" << std::endl;
+			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (currBB->trueSucc || !(currBB->entryLabel)) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto dim = parsedItems.back();
+			parsedItems.pop_back();
+			auto src = dynamic_cast<Variable*> (parsedItems.back());
+			parsedItems.pop_back();
+			auto dst = dynamic_cast<Variable*> (parsedItems.back());
+			parsedItems.pop_back();
+			if (src && dst) {
+				auto newInstr = new Instruction_length(src, dim, dst);
 				currBB->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1146,24 +1264,17 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "label rule" << std::endl;
 			auto currF = p.functions.back();
+			if ((currF->bbs.size() > 0) && !(currF->bbs.back()->trueSucc)) {
+				std::cerr << "error: previous bb has no exit" << std::endl;
+			}
+			auto currBB = new BasicBlock();
 			auto lbl = dynamic_cast<Label*> (parsedItems.back());
 			parsedItems.pop_back();
 			if (lbl) {
-				if (printActions) std::cout << "label found" << std::endl;
-				auto instr = new Instruction_label(lbl);
-				currF->instructions.push_back(instr);
-				if (printActions) std::cout << "instruction added" << std::endl;
-				currF->contexts.push_back(new Context());
-				if (printActions) std::cout << "new context created" << std::endl;
-				auto newLabel = new InstructionNode();
-				if (printActions) std::cout << "label initialized" << std::endl;
-				newLabel->instr = instr;
-				if (printActions) std::cout << "label instr set" << std::endl;
-				currF->contexts.back()->isLabel = true;
-				currF->contexts.back()->trees.push_back(newLabel);
-				if (printActions) std::cout << "label added to context" << std::endl;
-				currF->contexts.push_back(new Context());
-				if (printActions) std::cout << "extra context created" << std::endl;
+				currBB->entryLabel = lbl->getDup(currF->labels);
+				auto newInstr = new Instruction_label(lbl->getDup(currF->labels));
+				currBB->instrs.push_back(newInstr);
+				currF->bbs.push_back(currBB);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1175,17 +1286,17 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "branch rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto lbl = dynamic_cast<Label*> (parsedItems.back());
 			parsedItems.pop_back();
 			if (lbl) {
-				auto instr = new Instruction_branch(lbl);
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr; // no head necessary
-				newTree->isLeaf = false;
-				currF->contexts.back()->trees.push_back(newTree);
-				currF->contexts.push_back(new Context());
+				auto newInstr = new Instruction_branch(lbl->getDup(currF->labels));
+				currBB->instrs.push_back(newInstr);
+				currBB->trueSucc = lbl->getDup(currF->labels);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1197,22 +1308,22 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "cond branch rule" << std::endl;
 			auto currF = p.functions.back();
-			auto lbl = dynamic_cast<Label*> (parsedItems.back());
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto lblF = dynamic_cast<Label*> (parsedItems.back());
 			parsedItems.pop_back();
-			auto cond = dynamic_cast<Variable*> (parsedItems.back());
+			auto lblT = dynamic_cast<Label*> (parsedItems.back());
 			parsedItems.pop_back();
-			if (cond && lbl) {
-				auto instr = new Instruction_cond_branch(cond->getDup(currF->vars), lbl);
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr;
-				newTree->isLeaf = false;
-				auto newLeaf = new InstructionNode();
-				newLeaf->head = cond;
-				newTree->leaves.push_back(newLeaf);
-				currF->contexts.back()->trees.push_back(newTree);
-				currF->contexts.push_back(new Context());
+			auto cond = parsedItems.back();
+			parsedItems.pop_back();
+			if (lblT && lblF) {
+				auto newInstr = new Instruction_cond_branch(cond, lblT->getDup(currF->labels), lblF->getDup(currF->labels));
+				currBB->instrs.push_back(newInstr);
+				currBB->trueSucc = lblT->getDup(currF->labels);
+				currBB->falseSucc = lblF->getDup(currF->labels);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1224,6 +1335,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto dst = parsedItems.back();
 			parsedItems.pop_back();
 			std::vector<Item*> args;
@@ -1231,22 +1347,8 @@ namespace IR {
 				args.push_back(i);
 			}
 			paramList.clear();
-			auto instr = new Instruction_call(dst, args);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			auto newLeaf = new InstructionNode();
-			newLeaf->head = dst; // dst gets a leaf since it could also be merged
-			newTree->leaves.push_back(newLeaf);
-			for (auto i : args) {
-				auto newLeaf1 = new InstructionNode();
-				newLeaf1->head = i;
-				newTree->leaves.push_back(newLeaf1);
-			}
-			currF->contexts.back()->trees.push_back(newTree);
+			auto newInstr = new Instruction_call(dst, args);
+			currBB->instrs.push_back(newInstr);
     }
   };
 
@@ -1255,45 +1357,15 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_print rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto arg = parsedItems.back();
 			parsedItems.pop_back();
-			auto instr = new Instruction_call_print(arg);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			auto newLeaf = new InstructionNode();
-			newLeaf->head = arg;
-			newTree->leaves.push_back(newLeaf);
-			currF->contexts.back()->trees.push_back(newTree);
-    }
-  };
-
-  template<> struct action < Instruction_call_allocate_rule > {
-    template< typename Input >
-    static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "call_allocate rule" << std::endl;
-			auto currF = p.functions.back();
-			auto val = parsedItems.back();
-			parsedItems.pop_back();
-			auto num = parsedItems.back();
-			parsedItems.pop_back();
-			auto instr = new Instruction_call_allocate(num, val);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			auto newLeaf1 = new InstructionNode();
-			newLeaf1->head = val;
-			auto newLeaf2 = new InstructionNode();
-			newLeaf2->head = num;
-			newTree->leaves.push_back(newLeaf1);
-			newTree->leaves.push_back(newLeaf2);
-			currF->contexts.back()->trees.push_back(newTree);
+			auto newInstr = new Instruction_call_print(arg);
+			currBB->instrs.push_back(newInstr);
     }
   };
 
@@ -1302,14 +1374,13 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_input rule" << std::endl;
 			auto currF = p.functions.back();
-			auto instr = new Instruction_call_input();
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			currF->contexts.back()->trees.push_back(newTree);
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto newInstr = new Instruction_call_input();
+			currBB->instrs.push_back(newInstr);
     }
   };
 
@@ -1318,24 +1389,18 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_tensor_error rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			std::vector<Item*> args;
 			for (auto i : paramList) {
 				args.push_back(i);
 			}
 			paramList.clear();
-			auto instr = new Instruction_call_tensor_error(args);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			for (auto i : args) {
-				auto newLeaf1 = new InstructionNode();
-				newLeaf1->head = i;
-				newTree->leaves.push_back(newLeaf1);
-			}
-			currF->contexts.back()->trees.push_back(newTree);
+			auto newInstr = new Instruction_call_tensor_error(args);
+			currBB->instrs.push_back(newInstr);
     }
   };
 
@@ -1344,6 +1409,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call assign rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto src = parsedItems.back();
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
@@ -1354,23 +1424,8 @@ namespace IR {
 					args.push_back(i);
 				}
 				paramList.clear();
-				auto instr = new Instruction_call_assign(src, args, dst->getDup(currF->vars));
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr;
-				newTree->isLeaf = false;
-				newTree->isMergeable = false;
-				newTree->head = dst->getDup(currF->vars);
-				auto newLeaf = new InstructionNode();
-				newLeaf->head = src;
-				newTree->leaves.push_back(newLeaf);
-				for (auto i : args) {
-					auto newLeaf1 = new InstructionNode();
-					newLeaf1->head = i;
-					newTree->leaves.push_back(newLeaf1);
-				}
-				currF->contexts.back()->trees.push_back(newTree);
+				auto newInstr = new Instruction_call_assign(src, args, dst);
+				currBB->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1382,55 +1437,17 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_print assign rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto arg = parsedItems.back();
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
-			auto instr = new Instruction_call_print_assign(arg, dst);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->head = dst;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			auto newLeaf = new InstructionNode();
-			newLeaf->head = arg;
-			newTree->leaves.push_back(newLeaf);
-			currF->contexts.back()->trees.push_back(newTree);
-    }
-  };
-
-  template<> struct action < Instruction_call_allocate_assign_rule > {
-    template< typename Input >
-    static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "call_allocate assign rule" << std::endl;
-			auto currF = p.functions.back();
-			auto val = parsedItems.back();
-			parsedItems.pop_back();
-			auto num = parsedItems.back();
-			parsedItems.pop_back();
-			auto dst = dynamic_cast<Variable*>(parsedItems.back());
-			parsedItems.pop_back();
-			if (dst) {
-				auto instr = new Instruction_call_allocate_assign(num, val, dst->getDup(currF->vars));
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr;
-				newTree->isLeaf = false;
-				newTree->isMergeable = false;
-				newTree->head = dst->getDup(currF->vars);
-				auto newLeaf1 = new InstructionNode();
-				newLeaf1->head = val;
-				auto newLeaf2 = new InstructionNode();
-				newLeaf2->head = num;
-				newTree->leaves.push_back(newLeaf1);
-				newTree->leaves.push_back(newLeaf2);
-				currF->contexts.back()->trees.push_back(newTree);
-			} else {
-				std::cerr << "improper operands" << std::endl;
-			}
+			auto newInstr = new Instruction_call_print_assign(arg, dst);
+			currBB->instrs.push_back(newInstr);
     }
   };
 
@@ -1439,18 +1456,16 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_input assign rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			if (dst) {
-				auto instr = new Instruction_call_input_assign(dst);
-				currF->instructions.push_back(instr);
-				// tree and context handling
-				auto newTree = new InstructionNode();
-				newTree->instr = instr;
-				newTree->isLeaf = false;
-				newTree->isMergeable = false;
-				newTree->head = dst->getDup(currF->vars);
-				currF->contexts.back()->trees.push_back(newTree);
+				auto newInstr = new Instruction_call_input_assign(dst);
+				currBB->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1462,6 +1477,11 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call_tensor_error assign rule" << std::endl;
 			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			std::vector<Item*> args;
@@ -1469,27 +1489,56 @@ namespace IR {
 				args.push_back(i);
 			}
 			paramList.clear();
-			auto instr = new Instruction_call_tensor_error_assign(args, dst);
-			currF->instructions.push_back(instr);
-			// tree and context handling
-			auto newTree = new InstructionNode();
-			newTree->instr = instr;
-			newTree->head = dst;
-			newTree->isLeaf = false;
-			newTree->isMergeable = false;
-			for (auto i : args) {
-				auto newLeaf1 = new InstructionNode();
-				newLeaf1->head = i;
-				newTree->leaves.push_back(newLeaf1);
-			}
-			currF->contexts.back()->trees.push_back(newTree);
+			auto newInstr = new Instruction_call_tensor_error_assign(args, dst);
+			currBB->instrs.push_back(newInstr);
     }
   };
 
-  L3::Program parseFile (char *fileName){
+	template<> struct action < Instruction_array_init_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "array init rule" << std::endl;
+			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
+			parsedItems.pop_back();
+			std::vector<Item*> args;
+			for (auto i : paramList) {
+				args.push_back(i);
+			}
+			paramList.clear();
+			auto newInstr = new Instruction_array_init(args, dst);
+			currBB->instrs.push_back(newInstr);
+    }
+  };
+
+	template<> struct action < Instruction_tuple_init_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "tuple init rule" << std::endl;
+			auto currF = p.functions.back();
+			if (currF->bbs.size() == 0) { std::cerr << "error: no bb" << std::endl; return; }
+			auto currBB = currF->bbs.back();
+			if (!(currBB->entryLabel) || currBB->trueSucc) {
+				std::cerr << "error: not in valid bb" << std::endl;
+			}
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
+			parsedItems.pop_back();
+			auto arg = parsedItems.back();
+			parsedItems.pop_back();
+			auto newInstr = new Instruction_tuple_init(arg, dst);
+			currBB->instrs.push_back(newInstr);
+    }
+  };
+
+  IR::Program parseFile (char *fileName){
     pegtl::analyze< grammar >(); 
     file_input< > fileInput(fileName);
-    L3::Program p;
+    IR::Program p;
     parse< grammar, action >(fileInput, p);
 
     return p;
