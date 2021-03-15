@@ -804,6 +804,10 @@ namespace IR {
       if (printActions) std::cout << "variable operand (push)" << std::endl;
 			auto new_item = new Variable(in.string());
 			parsedItems.push_back(new_item);
+			auto currF = p.functions.back();
+			if (in.string().length() > currF->longestVar.length()) {
+				currF->longestVar = in.string();
+			}
     }
   };
 
@@ -813,6 +817,10 @@ namespace IR {
       if (printActions) std::cout << "list variable operand" << std::endl;
 			auto new_item = new Variable(in.string());
 			paramList.push_back(new_item);
+			auto currF = p.functions.back();
+			if (in.string().length() > currF->longestVar.length()) {
+				currF->longestVar = in.string();
+			}
     }
   };
 

@@ -2,6 +2,8 @@
 
 #include <IR.h>
 #include <parser.h>
+#include <tracing.h>
+#include <translations.h>
 
 int main(int argc, char** argv) {
 
@@ -18,7 +20,16 @@ int main(int argc, char** argv) {
 	if (printM) std::cout << "==== parsing file ====" << std::endl;
 	p = IR::parseFile(argv[1]);
 	if (printM) std::cout << "==== done parsing ====" << std::endl;
-
+	if (printM) std::cout << "==== tracing functions ====" << std::endl;
+	for (auto f : p.functions) {
+		traceFunction(f);
+	}
+	if (printM) std::cout << "==== done tracing ====" << std::endl;
+	if (printM) std::cout << "==== translating IR instructions ====" << std::endl;
+	for (auto f : p.functions) {
+		translate(f);
+	}
+	if (printM) std::cout << "==== done translating ====" << std::endl;
 	return 0;
 
 }

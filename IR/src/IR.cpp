@@ -175,6 +175,25 @@ namespace IR {
 		dst = d;
 	}
 
+
+	
+
+	Instruction_load::Instruction_load(Variable* s, Variable* d) {
+		src = s;
+		dst = d;
+	}
+
+	Instruction_store::Instruction_store(Item* s, Variable* d) {
+		src = s;
+		dst = d;
+	}
+
+	Instruction_call_allocate_assign::Instruction_call_allocate_assign(Item* n, Item* v, Variable* d) {
+		num = n;
+		val = v;
+		dst = d;
+	}
+
 	void Instruction_return::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_return_val::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_define_var::accept(Visitor* v) { v->visit(this); return; }
@@ -206,6 +225,10 @@ namespace IR {
 	void Instruction_call_tensor_error_assign::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_array_init::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_tuple_init::accept(Visitor* v) { v->visit(this); return; }
+	
+	void Instruction_load::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_store::accept(Visitor* v) { v->visit(this); return; }
+	void Instruction_call_allocate_assign::accept(Visitor* v) { v->visit(this); return; }
 
 	/*
 	 * program

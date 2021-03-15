@@ -286,6 +286,36 @@ namespace IR {
 			Variable* dst;
 	};
 
+
+	
+
+	class Instruction_load : public Instruction {
+		public:
+			Instruction_load(Variable* s, Variable* d);
+			void accept(Visitor* v) override;
+			Variable* src;
+			Variable* dst;
+	};
+
+	class Instruction_store : public Instruction {
+		public:
+			Instruction_store(Item* s, Variable* d);
+			void accept(Visitor* v) override;
+			Item* src;
+			Variable* dst;
+	};
+
+	class Instruction_call_allocate_assign : public Instruction {
+		public:
+			Instruction_call_allocate_assign(Item* n, Item* v, Variable* d);
+			void accept(Visitor* v) override;
+			Item* num;
+			Item* val;
+			Variable* dst;
+	};
+
+	
+
 	/*
 	 * basic blocks
 	 */
@@ -298,7 +328,6 @@ namespace IR {
 			bool isMarked = false;
 			std::vector<Instruction*> instrs;
 			std::vector<BasicBlock*> succs;
-
 	};
 
 	/*
@@ -308,8 +337,11 @@ namespace IR {
 	class Function {
 		public:			
 			std::string name;
+			std::string longestVar;
+			int numVarsAdded = 0;
 			std::vector<Variable*> params;
 			std::vector<BasicBlock*> bbs;
+			std::vector<BasicBlock*> bbsTraced;
 			std::vector<Label*> labels;
 	};
 
@@ -359,6 +391,10 @@ namespace IR {
 			virtual void visit(Instruction_call_tensor_error_assign* i) = 0;
 			virtual void visit(Instruction_array_init* i) = 0;
 			virtual void visit(Instruction_tuple_init* i) = 0;
+
+			virtual void visit(Instruction_load* i) = 0;
+			virtual void visit(Instruction_store* i) = 0;
+			virtual void visit(Instruction_call_allocate_assign* i) = 0;
 	};
 
 }
