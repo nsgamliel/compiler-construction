@@ -1,16 +1,21 @@
+#include <iostream>
+
 #include <tracing.h>
 
 namespace IR {
 
+	bool printT = true;
+	// if (printT) std::cout << "" << std::endl;
+
 	void traceFunction(Function* f) {
+		if (printT) std::cout << "current num bbs: " << f->bbs.size() << std::endl;
 		findBasicBlockSuccessors(f);
 		std::vector<BasicBlock*> bbsList = f->bbs;
-		int bbsListSize = bbsList.size();
 		std::vector<BasicBlock*> traced;
 
-		while (bbsListSize > 0) {
-			auto fetched = findAndRemove(bbsList);
-			bbsListSize--;
+		while (bbsList.size() > 0) {
+			if (printT) std::cout << "bbslist size: " << bbsList.size() << std::endl;
+			auto fetched = findAndRemove(&bbsList);
 			while (!(fetched->isMarked)) {
 				fetched->isMarked = true;
 				traced.push_back(fetched);
@@ -23,6 +28,7 @@ namespace IR {
 			}
 		}
 		f->bbsTraced = traced;
+		if (printT) std::cout << "num traced bbs: " << traced.size() << std::endl;
 		return;
 	}
 
@@ -46,23 +52,25 @@ namespace IR {
 		return;
 	}
 
-	BasicBlock* findAndRemove(std::vector<BasicBlock*> bbs) {
+	BasicBlock* findAndRemove(std::vector<BasicBlock*>* bbs) {
 		BasicBlock* selection = nullptr;
 		int selectionIndex = -1;
 		// return first basicblock immediately if not marked
-		if (bbs[0] && !(bbs[0]->isMarked)) {
-			selection = bbs[0];
-			bbs[0] = nullptr;
+		if (bbs->at(0) && !(bbs->at(0)->isMarked)) {
+			selection = bbs->at(0);
+			bbs->at(0) = nullptr;
+			bbs->erase(bbs->begin());
 			return selection;
 		}
 		// otherwise, find the next basicblock with fewest successors
-		for (int i=0; i<bbs.size(); i++) {
-			if (!selection || (bbs[i] && (selection->succs.size() > bbs[i]->succs.size()))) {
-				selection = bbs[i];
+		for (int i=0; i<bbs->size(); i++) {
+			if (!selection || (bbs->at(i) && (selection->succs.size() > bbs->at(i)->succs.size()))) {
+				selection = bbs->at(i);
 				selectionIndex = i;
 			}
 		}
-		bbs[selectionIndex] = nullptr;
+		bbs->erase(bbs->begin()+selectionIndex);
+		std::cout << "vector size: " << bbs->size() << std::endl;
 		return selection;
 	}
 

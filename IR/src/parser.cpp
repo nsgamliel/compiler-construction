@@ -33,6 +33,7 @@ namespace IR {
 	std::vector<Item*> paramList;
 	std::vector<Variable*> declaredVars;
 	std::string dType;
+	std::vector<Variable*> tups;
 
   /* 
    * Grammar rules from now on.
@@ -446,7 +447,7 @@ namespace IR {
 			seps,
 			str_arrow,
 			seps,
-			variable_operand_rule
+			var_num_lbl
 		> {};
 
 	struct Instruction_length_rule:
@@ -750,6 +751,7 @@ namespace IR {
       newF->name = in.string();
       p.functions.push_back(newF);
 			declaredVars.clear();
+			tups.clear();
     }
   };
 
@@ -776,7 +778,7 @@ namespace IR {
 	template<> struct action < label_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "label operand (push)" << std::endl;
+      if (printActions) std::cout << "label operand (push): " << in.string() << std::endl;
 			auto currF = p.functions.back();
 			auto new_item = new Label(in.string());
 			auto check = new_item->getDup(currF->labels);
@@ -792,7 +794,7 @@ namespace IR {
 	template<> struct action < number_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "number operand (push)" << std::endl;
+      if (printActions) std::cout << "number operand (push): " << in.string() << std::endl;
 			auto new_item = new Number(std::stoll(in.string()));
 			parsedItems.push_back(new_item);
     }
@@ -801,7 +803,7 @@ namespace IR {
 	template<> struct action < variable_operand_rule > {
     template< typename Input >
     static void apply(const Input & in, Program & p) {
-      if (printActions) std::cout << "variable operand (push)" << std::endl;
+      if (printActions) std::cout << "variable operand (push): " << in.string() << std::endl;
 			auto new_item = new Variable(in.string());
 			parsedItems.push_back(new_item);
 			auto currF = p.functions.back();
@@ -816,7 +818,9 @@ namespace IR {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "list variable operand" << std::endl;
 			auto new_item = new Variable(in.string());
+			new_item->type = dType;
 			paramList.push_back(new_item);
+			if (dType.compare("tuple") == 0) tups.push_back(new_item);
 			auto currF = p.functions.back();
 			if (in.string().length() > currF->longestVar.length()) {
 				currF->longestVar = in.string();
@@ -882,6 +886,9 @@ namespace IR {
 			if (var) {
 				auto newInstr = new Instruction_define_var(dType, var);
 				currBB->instrs.push_back(newInstr);
+				if (dType.compare("tuple") == 0) {
+					tups.push_back(var);
+				}
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}			
@@ -1206,7 +1213,11 @@ namespace IR {
 			}
 			paramList.clear();
 			if (src && dst) {
-				auto newInstr = new Instruction_from_array(src, args, dst);
+				bool isTup = false;
+				if (src->getDup(tups)) {
+					isTup = true;
+				}
+				auto newInstr = new Instruction_from_array(isTup, src, args, dst);
 				currBB->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1224,7 +1235,7 @@ namespace IR {
 			if (currBB->trueSucc || !(currBB->entryLabel)) {
 				std::cerr << "error: not in valid bb" << std::endl;
 			}
-			auto src = dynamic_cast<Variable*> (parsedItems.back());
+			auto src = parsedItems.back();
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*> (parsedItems.back());
 			parsedItems.pop_back();
@@ -1233,8 +1244,12 @@ namespace IR {
 				args.push_back(i);
 			}
 			paramList.clear();
-			if (src && dst) {
-				auto newInstr = new Instruction_to_array(src, args, dst);
+			if (dst) {
+				bool isTup = false;
+				if (dst->getDup(tups)) {
+					isTup = true;
+				}
+				auto newInstr = new Instruction_to_array(isTup, src, args, dst);
 				currBB->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1519,8 +1534,13 @@ namespace IR {
 				args.push_back(i);
 			}
 			paramList.clear();
-			auto newInstr = new Instruction_array_init(args, dst);
-			currBB->instrs.push_back(newInstr);
+			if (dst) {
+				auto newInstr = new Instruction_array_init(args, dst);
+				currBB->instrs.push_back(newInstr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
+			
     }
   };
 
@@ -1534,12 +1554,16 @@ namespace IR {
 			if (!(currBB->entryLabel) || currBB->trueSucc) {
 				std::cerr << "error: not in valid bb" << std::endl;
 			}
-			auto dst = dynamic_cast<Variable*>(parsedItems.back());
-			parsedItems.pop_back();
 			auto arg = parsedItems.back();
 			parsedItems.pop_back();
-			auto newInstr = new Instruction_tuple_init(arg, dst);
-			currBB->instrs.push_back(newInstr);
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
+			parsedItems.pop_back();
+			if (dst) {
+				auto newInstr = new Instruction_tuple_init(arg, dst);
+				currBB->instrs.push_back(newInstr);
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 

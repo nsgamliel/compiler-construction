@@ -9,5 +9,7 @@ namespace IR {
 	void translateLengthInstructions(Function* f);
 	void translateArrayInitInstructions(Function* f);
 	void translateArrayAccessInstructions(Function* f);
+	void translateTupleInitInstructions(Function* f);
+	void translateTupleAccessInstructions(Function* f);
 
 }

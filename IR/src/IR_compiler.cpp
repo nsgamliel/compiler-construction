@@ -4,6 +4,7 @@
 #include <parser.h>
 #include <tracing.h>
 #include <translations.h>
+#include <code_gen.h>
 
 int main(int argc, char** argv) {
 
@@ -30,6 +31,9 @@ int main(int argc, char** argv) {
 		translate(f);
 	}
 	if (printM) std::cout << "==== done translating ====" << std::endl;
+	if (printM) std::cout << "==== generating L3 code ====" << std::endl;
+	generateTargetCode(&p);
+	if (printM) std::cout << "==== done generating ====" << std::endl;
 	return 0;
 
 }

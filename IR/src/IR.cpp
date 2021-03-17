@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <IR.h>
 
 namespace IR {
@@ -19,6 +21,13 @@ namespace IR {
 
 	Variable::Variable(const std::string& str) {
 		name = str;
+	}
+
+	Variable* Variable::getDup(std::vector<Variable*> vec) {
+		for(auto var : vec) {
+			if (this->name.compare(var->name) == 0) return var;
+		}
+		return nullptr;
 	}
 
 	Number::Number(int64_t num) {
@@ -100,13 +109,15 @@ namespace IR {
 	Instruction_greater::Instruction_greater(Item* l, Item* r, Variable* d)
 	: Instruction_cmp(l, r, d) {}
 
-	Instruction_from_array::Instruction_from_array(Variable* s, std::vector<Item*> i, Variable* d) {
+	Instruction_from_array::Instruction_from_array(bool iT, Variable* s, std::vector<Item*> i, Variable* d) {
+		isTup = iT;
 		src = s;
 		indices = i;
 		dst = d;
 	}
 
-	Instruction_to_array::Instruction_to_array(Variable* s, std::vector<Item*> i, Variable* d) {
+	Instruction_to_array::Instruction_to_array(bool iT, Item* s, std::vector<Item*> i, Variable* d) {
+		isTup = iT;
 		src = s;
 		indices = i;
 		dst = d;
@@ -229,6 +240,186 @@ namespace IR {
 	void Instruction_load::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_store::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_call_allocate_assign::accept(Visitor* v) { v->visit(this); return; }
+
+
+
+
+
+	std::string Instruction_return::toL3String() {
+		return "return";
+	}
+
+	std::string Instruction_return_val::toL3String() {
+		return "return " + retValue->toString();
+	}
+
+	std::string Instruction_define_var::toL3String() {
+			return "";
+	}
+
+	std::string Instruction_mov::toL3String() {
+		return dst->name + " <- " + src->toString();
+	}
+
+	std::string Instruction_plus::toL3String() {
+		return dst->name + " <- " + left->toString() + " + " + right->toString();
+	}
+
+	std::string Instruction_minus::toL3String() {
+		return dst->name + " <- " + left->toString() + " - " + right->toString();
+	}
+
+	std::string Instruction_times::toL3String() {
+		return dst->name + " <- " + left->toString() + " * " + right->toString();
+	}
+
+	std::string Instruction_and::toL3String() {
+		return dst->name + " <- " + left->toString() + " & " + right->toString();
+	}
+
+	std::string Instruction_lsh::toL3String() {
+		return dst->name + " <- " + left->toString() + " << " + right->toString();
+	}
+
+	std::string Instruction_rsh::toL3String() {
+		return dst->name + " <- " + left->toString() + " >> " + right->toString();
+	}
+
+	std::string Instruction_eq::toL3String() {
+		return dst->name + " <- " + left->toString() + " = " + right->toString();
+	}
+
+	std::string Instruction_le::toL3String() {
+		return dst->name + " <- " + left->toString() + " <= " + right->toString();
+	}
+
+	std::string Instruction_ge::toL3String() {
+		return dst->name + " <- " + left->toString() + " >= " + right->toString();
+	}
+
+	std::string Instruction_less::toL3String() {
+		return dst->name + " <- " + left->toString() + " < " + right->toString();
+	}
+
+	std::string Instruction_greater::toL3String() {
+		return dst->name + " <- " + left->toString() + " > " + right->toString();
+	}
+
+	std::string Instruction_from_array::toL3String() {
+		/*std::string str = dst->name + " <- " + src->name;
+		for (auto ind : indices) {
+			str += "[" + ind->toString() + "]";
+		}
+		return str;*/
+		return "// ARRAY ACCESSES SHOULD NO LONGER BE PRESENT";
+	}
+
+	std::string Instruction_to_array::toL3String() {
+		/*std::string str = dst->name;
+		for (auto ind : indices) {
+			str += "[" + ind->toString() + "]";
+		}
+		str += " <- " + src->name;
+		return str;*/
+		return "// ARRAY ACCESSES SHOULD NO LONGER BE PRESENT";
+	}
+
+	std::string Instruction_length::toL3String() {
+		return "// LENGTH INSTRUCTIONS SHOULD NO LONGER BE PRESENT";
+	}
+
+	std::string Instruction_label::toL3String() {
+		return label->name;
+	}
+
+	std::string Instruction_branch::toL3String() {
+		return "br " + label->name;
+	}
+
+	std::string Instruction_cond_branch::toL3String() {
+		return "br " + cond->toString() + " " + labelTrue->name + "\n\tbr " + labelFalse->name;
+	}
+
+	std::string Instruction_call::toL3String() {
+		std::string str = "call " + dst->toString() + "(";
+		for (int i=0; i<args.size(); i++) {
+			str += args[i]->toString();
+			if (i != args.size()-1) { str += ", "; }
+		} 
+		str += ")";
+		return str;
+	}
+
+	std::string Instruction_call_print::toL3String() {
+		return "call print (" + arg->toString() + ")";
+	}
+
+	std::string Instruction_call_input::toL3String() {
+		return "call input ()";
+	}
+
+	std::string Instruction_call_tensor_error::toL3String() {
+		std::string str = "call tensor-error (";
+		for (int i=0; i<args.size(); i++) {
+			str += args[i]->toString();
+			if (i != args.size()-1) { str += ", "; }
+		} 
+		str += ")";
+		return str;
+	}
+
+	std::string Instruction_call_assign::toL3String() {
+		std::string str = dst->name + " <- call " + src->toString() + "(";
+		for (int i=0; i<args.size(); i++) {
+			str += args[i]->toString();
+			if (i != args.size()-1) { str += ", "; }
+		} 
+		str += ")";
+		return str;
+	}
+
+	std::string Instruction_call_print_assign::toL3String() {
+		return dst->name + " <- call print (" + arg->toString() + ")";
+	}
+
+	std::string Instruction_call_input_assign::toL3String() {
+		return dst->name + " <- call input ()";
+	}
+
+	std::string Instruction_call_tensor_error_assign::toL3String() {
+		std::string str = dst->name + " <- call tensor-error (";
+		for (int i=0; i<args.size(); i++) {
+			str += args[i]->toString();
+			if (i != args.size()-1) { str += ", "; }
+		} 
+		str += ")";
+		return str;
+	}
+
+	std::string Instruction_array_init::toL3String() {
+		return "// ARRAY INITS SHOULD NO LONGER BE PRESENT";
+	}
+
+	std::string Instruction_tuple_init::toL3String() {
+		return "// TUPLE INITS SHOULD NO LONGER BE PRESENT";
+	}
+
+	
+	std::string Instruction_load::toL3String() {
+		return dst->name + " <- load " + src->name;
+	}
+
+	std::string Instruction_store::toL3String() {
+		return "store " + dst->name + " <- " + src->toString();
+	}
+
+	std::string Instruction_call_allocate_assign::toL3String() {
+		return dst->toString() + " <- call allocate (" + num->toString() + ", " + val->toString() + ")";
+	}
+
+
+
+
 
 	/*
 	 * program

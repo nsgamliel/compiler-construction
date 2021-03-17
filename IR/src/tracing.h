@@ -8,7 +8,7 @@ namespace IR {
 
 	// helpers
 	void findBasicBlockSuccessors(Function* f);
-	BasicBlock* findAndRemove(std::vector<BasicBlock*> bbs);
+	BasicBlock* findAndRemove(std::vector<BasicBlock*>* bbs);
 	bool isProfitable(BasicBlock* bb, BasicBlock* bbSuc);
 
 }

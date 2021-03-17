@@ -29,8 +29,10 @@ namespace IR {
 	class Variable : public Item {
 		public:
 			Variable(const std::string& str);
+			Variable* getDup(std::vector<Variable*> vec);
 			std::string toString() override;
 			std::string name;
+			std::string type;
 	};
 
 	class Number : public Item {
@@ -47,12 +49,14 @@ namespace IR {
 	class Instruction {
 		public:
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toL3String() = 0;
 	};
 
 	class Instruction_define_var : public Instruction {
 		public:
 			Instruction_define_var(std::string t, Variable* v);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			std::string type;
 			Variable* var;
 	};
@@ -60,12 +64,14 @@ namespace IR {
 	class Instruction_return : public Instruction {
 		public:
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_return_val : public Instruction {
 		public:
 			Instruction_return_val(Item* rv);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* retValue;
 	};
 
@@ -73,6 +79,7 @@ namespace IR {
 		public:
 			Instruction_mov(Item* s, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* src;
 			Variable* dst;
 	};
@@ -81,6 +88,7 @@ namespace IR {
 		public:
 			Instruction_op(Item* l, Item* r, Variable* d);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toL3String() = 0;
 			Item* left;
 			Item* right;
 			Variable* dst;
@@ -90,42 +98,49 @@ namespace IR {
 		public:
 			Instruction_plus(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_minus : public Instruction_op {
 		public:
 			Instruction_minus(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_times : public Instruction_op {
 		public:
 			Instruction_times(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_and : public Instruction_op {
 		public:
 			Instruction_and(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_lsh : public Instruction_op {
 		public:
 			Instruction_lsh(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_rsh : public Instruction_op {
 		public:
 			Instruction_rsh(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_cmp : public Instruction {
 		public:
 			Instruction_cmp(Item* l, Item* r, Variable* d);
 			virtual void accept(Visitor* v) = 0;
+			virtual std::string toL3String() = 0;
 			Item* left;
 			Item* right;
 			Variable* dst;
@@ -135,36 +150,43 @@ namespace IR {
 		public:
 			Instruction_eq(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_le : public Instruction_cmp {
 		public:
 			Instruction_le(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_ge : public Instruction_cmp {
 		public:
 			Instruction_ge(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_less : public Instruction_cmp {
 		public:
 			Instruction_less(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_greater : public Instruction_cmp {
 		public:
 			Instruction_greater(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 	
 	class Instruction_from_array : public Instruction {
 		public:
-			Instruction_from_array(Variable* s, std::vector<Item*> i, Variable* d);
+			Instruction_from_array(bool iT, Variable* s, std::vector<Item*> i, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
+			bool isTup;
 			Variable* src;
 			std::vector<Item*> indices;
 			Variable* dst;
@@ -172,9 +194,11 @@ namespace IR {
 	
 	class Instruction_to_array : public Instruction {
 		public:
-			Instruction_to_array(Variable* s, std::vector<Item*> i, Variable* d);
+			Instruction_to_array(bool iT, Item* s, std::vector<Item*> i, Variable* d);
 			void accept(Visitor* v) override;
-			Variable* src;
+			std::string toL3String() override;
+			bool isTup;
+			Item* src;
 			std::vector<Item*> indices;
 			Variable* dst;
 	};
@@ -183,6 +207,7 @@ namespace IR {
 		public:
 			Instruction_length(Variable* s, Item* di, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Variable* src;
 			Item* dim;
 			Variable* dst;
@@ -192,6 +217,7 @@ namespace IR {
 		public:
 			Instruction_label(Label* l);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Label* label;
 	};
 
@@ -199,6 +225,7 @@ namespace IR {
 		public:
 			Instruction_branch(Label* l);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Label* label;
 	};
 
@@ -206,6 +233,7 @@ namespace IR {
 		public:
 			Instruction_cond_branch(Item* c, Label* t, Label* f);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* cond;
 			Label* labelTrue;
 			Label* labelFalse;
@@ -215,6 +243,7 @@ namespace IR {
 		public:
 			Instruction_call(Item* d, std::vector<Item*> a);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* dst;
 			std::vector<Item*> args;
 	};
@@ -223,18 +252,21 @@ namespace IR {
 		public:
 			Instruction_call_print(Item* a);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* arg;
 	};
 
 	class Instruction_call_input : public Instruction {
 		public:
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 	};
 
 	class Instruction_call_tensor_error : public Instruction {
 		public:
 			Instruction_call_tensor_error(std::vector<Item*> a);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			std::vector<Item*> args;
 	};
 
@@ -242,6 +274,7 @@ namespace IR {
 		public:
 			Instruction_call_assign(Item* s, std::vector<Item*> a, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* src;
 			std::vector<Item*> args;
 			Variable* dst;
@@ -251,6 +284,7 @@ namespace IR {
 		public:
 			Instruction_call_print_assign(Item* a, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* arg;
 			Variable* dst;
 	};
@@ -259,6 +293,7 @@ namespace IR {
 		public:
 			Instruction_call_input_assign(Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Variable* dst;
 	};
 
@@ -266,6 +301,7 @@ namespace IR {
 		public:
 			Instruction_call_tensor_error_assign(std::vector<Item*> a, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			std::vector<Item*> args;
 			Variable* dst;
 	};
@@ -274,6 +310,7 @@ namespace IR {
 		public:
 			Instruction_array_init(std::vector<Item*> a, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			std::vector<Item*> args;
 			Variable* dst;
 	};
@@ -282,6 +319,7 @@ namespace IR {
 		public:
 			Instruction_tuple_init(Item* a, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* args;
 			Variable* dst;
 	};
@@ -293,6 +331,7 @@ namespace IR {
 		public:
 			Instruction_load(Variable* s, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Variable* src;
 			Variable* dst;
 	};
@@ -301,6 +340,7 @@ namespace IR {
 		public:
 			Instruction_store(Item* s, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* src;
 			Variable* dst;
 	};
@@ -309,6 +349,7 @@ namespace IR {
 		public:
 			Instruction_call_allocate_assign(Item* n, Item* v, Variable* d);
 			void accept(Visitor* v) override;
+			std::string toL3String() override;
 			Item* num;
 			Item* val;
 			Variable* dst;
