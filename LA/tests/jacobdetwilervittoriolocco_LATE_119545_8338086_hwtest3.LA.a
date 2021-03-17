@@ -38,10 +38,10 @@ int64[] make_array() {
     :entrance
     int64 arg1
     int64 arg2
-    int64[] rax
-    rax <- new Array(arg1)
     arg1 <- 201
     arg2 <- 17
+    int64[] rax
+    rax <- new Array(arg1)
     return rax
 }
 

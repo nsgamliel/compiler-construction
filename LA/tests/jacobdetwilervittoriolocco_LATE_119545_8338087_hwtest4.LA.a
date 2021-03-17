@@ -15,7 +15,7 @@ int64 max(int64[] array) {
     int64 index
 
    sizeOfArray <- length array 0
-   first <- array + 8
+   first <- array[0]
    max2 <- first
    index <- 1
    br :loop
@@ -27,7 +27,7 @@ int64 max(int64[] array) {
    int64 newMax
    int64 continue
    currMultFactor <- index * 8
-   curr <- array + currMultFactor
+   curr <- array[currMultFactor]
    temp <- array[currMultFactor]
    newMax <- temp - max2
    br newMax :setNewMax :cont
