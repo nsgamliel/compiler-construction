@@ -33,6 +33,7 @@ namespace LA {
 			std::string toString() override;
 			std::string name;
 			std::string type;
+			std::string alias; // for code ptrs
 	};
 
 	class Number : public Item {
@@ -89,6 +90,7 @@ namespace LA {
 			Instruction_op(Item* l, Item* r, Variable* d);
 			virtual void accept(Visitor* v) = 0;
 			virtual std::string toIRString() = 0;
+			virtual int getOpcode() = 0;
 			Item* left;
 			Item* right;
 			Variable* dst;
@@ -100,6 +102,7 @@ namespace LA {
 			Instruction_plus(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 0;
 	};
 
@@ -108,6 +111,7 @@ namespace LA {
 			Instruction_minus(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 1;
 	};
 
@@ -116,6 +120,7 @@ namespace LA {
 			Instruction_times(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 2;
 	};
 
@@ -124,6 +129,7 @@ namespace LA {
 			Instruction_and(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 3;
 	};
 
@@ -132,6 +138,7 @@ namespace LA {
 			Instruction_lsh(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 4;
 	};
 
@@ -140,6 +147,7 @@ namespace LA {
 			Instruction_rsh(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 5;
 	};
 
@@ -158,6 +166,7 @@ namespace LA {
 			Instruction_eq(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 6;
 	};
 
@@ -166,6 +175,7 @@ namespace LA {
 			Instruction_le(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 7;
 	};
 
@@ -174,6 +184,7 @@ namespace LA {
 			Instruction_ge(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 8;
 	};
 
@@ -182,6 +193,7 @@ namespace LA {
 			Instruction_less(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 9;
 	};
 
@@ -190,15 +202,17 @@ namespace LA {
 			Instruction_greater(Item* l, Item* r, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
+			int getOpcode() override;
 			int opcode = 10;
 	};
 	
 	class Instruction_from_array : public Instruction {
 		public:
-			Instruction_from_array(bool iT, Variable* s, std::vector<Item*> i, Variable* d);
+			Instruction_from_array(int lN, bool iT, Variable* s, std::vector<Item*> i, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
 			bool isTup;
+			int lineNumber;
 			Variable* src;
 			std::vector<Item*> indices;
 			Variable* dst;
@@ -206,10 +220,11 @@ namespace LA {
 	
 	class Instruction_to_array : public Instruction {
 		public:
-			Instruction_to_array(bool iT, Item* s, std::vector<Item*> i, Variable* d);
+			Instruction_to_array(int lN, bool iT, Item* s, std::vector<Item*> i, Variable* d);
 			void accept(Visitor* v) override;
 			std::string toIRString() override;
 			bool isTup;
+			int lineNumber;
 			Item* src;
 			std::vector<Item*> indices;
 			Variable* dst;
@@ -334,7 +349,9 @@ namespace LA {
 	class Function {
 		public:			
 			std::string name;
+			std::string retType;
 			std::string longestVar;
+			std::string longestLabel;
 			int numSub = 0;
 			std::vector<Variable*> params;
 			std::vector<Instruction*> instrs;

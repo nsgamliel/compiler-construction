@@ -24,7 +24,7 @@ using namespace pegtl;
 
 namespace LA {
 
-  bool printActions = true;
+  bool printActions = false;
 
   /* 
    * data obtained while parsing
@@ -34,6 +34,9 @@ namespace LA {
 	std::vector<Variable*> declaredVars;
 	std::string dType;
 	std::vector<Variable*> tups;
+	std::vector<Variable*> codeVars;
+	std::vector<Variable*> ints;
+	std::map<Variable*, Label*> codePtrs;
 
   /* 
    * Grammar rules from now on.
@@ -179,6 +182,9 @@ namespace LA {
 	struct list_variable_operand_rule:
 		variable {};
 
+	struct func_list_variable_operand_rule:
+		variable {};
+
 	struct list_number_operand_rule:
 		number {};
 
@@ -193,14 +199,14 @@ namespace LA {
 			seps,
 			data_type,
 			seps,
-			list_variable_operand_rule,
+			func_list_variable_operand_rule,
 			seps,
 			pegtl::star<
 				pegtl::one<','>,
 				seps,
 				data_type,
 				seps,
-				list_variable_operand_rule,
+				func_list_variable_operand_rule,
 				seps
 			>
 		> {};
@@ -234,6 +240,7 @@ namespace LA {
 	struct Instruction_return_val_rule:
 		pegtl::seq<
 			str_return,
+			pegtl::one<' '>,
 			seps,
 			var_num
 		> {};
@@ -516,9 +523,9 @@ namespace LA {
 
 	struct Instruction_calls_rule:
 		pegtl::sor<
-	 		pegtl::seq< pegtl::at<Instruction_call_rule             >, Instruction_call_rule              >,
       pegtl::seq< pegtl::at<Instruction_call_print_rule       >, Instruction_call_print_rule        >,
-      pegtl::seq< pegtl::at<Instruction_call_input_rule       >, Instruction_call_input_rule        >
+      pegtl::seq< pegtl::at<Instruction_call_input_rule       >, Instruction_call_input_rule        >,
+	 		pegtl::seq< pegtl::at<Instruction_call_rule             >, Instruction_call_rule              >
 		> {};
 
 	struct Instruction_call_assign_rule:
@@ -568,9 +575,9 @@ namespace LA {
 
 	struct Instruction_calls_assign_rule:
 		pegtl::sor<
-	 		pegtl::seq< pegtl::at<Instruction_call_assign_rule             >, Instruction_call_assign_rule              >,
       pegtl::seq< pegtl::at<Instruction_call_input_assign_rule       >, Instruction_call_input_assign_rule        >,
-      pegtl::seq< pegtl::at<Instruction_call_print_assign_rule       >, Instruction_call_print_assign_rule        >
+      pegtl::seq< pegtl::at<Instruction_call_print_assign_rule       >, Instruction_call_print_assign_rule        >,
+	 		pegtl::seq< pegtl::at<Instruction_call_assign_rule             >, Instruction_call_assign_rule              >
 		> {};
 
 	struct Instruction_array_init_rule:
@@ -615,9 +622,8 @@ namespace LA {
 
   struct Instruction_rule:
     pegtl::sor<
-      pegtl::seq< pegtl::at<Instruction_return_val_rule  >, Instruction_return_val_rule   >,
-      pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >,
       pegtl::seq< pegtl::at<Instruction_define_var_rule  >, Instruction_define_var_rule   >,
+      pegtl::seq< pegtl::at<Instruction_inits_rule       >, Instruction_inits_rule        >,
       pegtl::seq< pegtl::at<Instruction_calls_rule       >, Instruction_calls_rule        >,
       pegtl::seq< pegtl::at<Instruction_calls_assign_rule>, Instruction_calls_assign_rule >,
       pegtl::seq< pegtl::at<Instruction_op_rule          >, Instruction_op_rule           >,
@@ -629,7 +635,8 @@ namespace LA {
       pegtl::seq< pegtl::at<Instruction_label_rule       >, Instruction_label_rule        >,
       pegtl::seq< pegtl::at<Instruction_branch_rule      >, Instruction_branch_rule       >,
       pegtl::seq< pegtl::at<Instruction_cond_branch_rule >, Instruction_cond_branch_rule  >,
-      pegtl::seq< pegtl::at<Instruction_inits_rule       >, Instruction_inits_rule        >
+      pegtl::seq< pegtl::at<Instruction_return_val_rule  >, Instruction_return_val_rule   >,
+      pegtl::seq< pegtl::at<Instruction_return_rule      >, Instruction_return_rule       >
     > {};
 
   struct Instructions_rule:
@@ -698,9 +705,12 @@ namespace LA {
     	if (printActions) std::cout << "function name: " << in.string() << std::endl;
       auto newF = new Function();
       newF->name = in.string();
+			newF->retType = dType;
       p.functions.push_back(newF);
 			declaredVars.clear();
 			tups.clear();
+			//codeVars.clear();
+			ints.clear();
     }
   };
 
@@ -731,6 +741,9 @@ namespace LA {
 			auto currF = p.functions.back();
 			auto new_item = new Label(in.string());
 			parsedItems.push_back(new_item);
+			if (currF->longestLabel.size() < in.string().size() - 1) {
+				currF->longestLabel = in.string().substr(1);
+			}
     }
   };
 
@@ -750,6 +763,9 @@ namespace LA {
 			auto new_item = new Variable(in.string());
 			parsedItems.push_back(new_item);
 			auto currF = p.functions.back();
+			if (new_item->getDup(ints)) {
+				new_item->type = "int64";
+			}
 			if (currF->longestVar.size() < in.string().size()) {
 				currF->longestVar = in.string();
 			}
@@ -768,6 +784,23 @@ namespace LA {
 				currF->longestVar = in.string();
 			}
 			//if (dType.compare("tuple") == 0) tups.push_back(new_item);
+    }
+  };
+
+	template<> struct action < func_list_variable_operand_rule > {
+    template< typename Input >
+    static void apply(const Input & in, Program & p) {
+      if (printActions) std::cout << "func list variable operand" << std::endl;
+			auto new_item = new Variable(in.string());
+			new_item->type = dType;
+			paramList.push_back(new_item);
+			declaredVars.push_back(new_item);
+			auto currF = p.functions.back();
+			if (currF->longestVar.size() < in.string().size()) {
+				currF->longestVar = in.string();
+			}
+			if (dType.compare("tuple") == 0) tups.push_back(new_item);
+			if (dType.compare("code") == 0) codeVars.push_back(new_item);
     }
   };
 
@@ -796,8 +829,13 @@ namespace LA {
 			auto currF = p.functions.back();
 			auto rv = parsedItems.back();
 			parsedItems.pop_back();
-			auto newInstr = new Instruction_return_val(rv);
-			currF->instrs.push_back(newInstr);
+			if (dynamic_cast<Number*>(rv)) {
+				auto newInstr = new Instruction_return_val(new Number(2*dynamic_cast<Number*>(rv)->value + 1));
+				currF->instrs.push_back(newInstr);
+			} else {
+				auto newInstr = new Instruction_return_val(rv);
+				currF->instrs.push_back(newInstr);
+			}
     }
   };
 
@@ -809,10 +847,15 @@ namespace LA {
 			auto var = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			if (var) {
+				declaredVars.push_back(var);
 				auto newInstr = new Instruction_define_var(dType, var);
 				currF->instrs.push_back(newInstr);
 				if (dType.compare("tuple") == 0) {
 					tups.push_back(var);
+				} else if (dType.compare("int64") == 0) {
+					ints.push_back(var);
+				} else if (dType.compare("code") == 0) {
+					codeVars.push_back(var);
 				}
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
@@ -830,8 +873,19 @@ namespace LA {
 			auto dst = dynamic_cast<Variable*> (parsedItems.back());
 			parsedItems.pop_back();
 			if (dst) {
-				auto newInstr = new Instruction_mov(src, dst);
-				currF->instrs.push_back(newInstr);
+				if (dst->getDup(codeVars)) {
+					auto newS = dynamic_cast<Variable*>(src);
+					if (newS) {
+						auto newInstr1 = new Instruction_mov(new Label(newS->name), dst);
+						codePtrs[dst] = new Label(newS->name);
+						currF->instrs.push_back(newInstr1);
+					} else {
+						std::cerr << "parse error: improper ops" << std::endl;
+					}
+				} else {
+					auto newInstr = new Instruction_mov(src, dst);
+					currF->instrs.push_back(newInstr);
+				}
 			} else {
 				std::cerr << "parse error: improper operands" << std::endl;
 			}
@@ -1077,7 +1131,7 @@ namespace LA {
 				if (src->getDup(tups)) {
 					isTup = true;
 				}
-				auto newInstr = new Instruction_from_array(isTup, src, args, dst);
+				auto newInstr = new Instruction_from_array((2*in.position().line + 1), isTup, src, args, dst);
 				currF->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1104,7 +1158,7 @@ namespace LA {
 				if (dst->getDup(tups)) {
 					isTup = true;
 				}
-				auto newInstr = new Instruction_to_array(isTup, src, args, dst);
+				auto newInstr = new Instruction_to_array((2*in.position().line + 1), isTup, src, args, dst);
 				currF->instrs.push_back(newInstr);
 			} else {
 				std::cerr << "improper operands" << std::endl;
@@ -1189,15 +1243,32 @@ namespace LA {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call rule" << std::endl;
 			auto currF = p.functions.back();
-			auto dst = parsedItems.back();
+			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			std::vector<Item*> args;
 			for (auto i : paramList) {
-				args.push_back(i);
+				if (dynamic_cast<Number*>(i)) {
+					args.push_back(new Number(2*(dynamic_cast<Number*>(i)->value) + 1));
+				} else {
+					args.push_back(i);
+				}
 			}
 			paramList.clear();
-			auto newInstr = new Instruction_call(dst, args);
-			currF->instrs.push_back(newInstr);
+			if (dst) {
+				if (!(dst->getDup(declaredVars))) { // call to local fcn
+					//if (dst->getDup(codeVars)) {
+						
+					//}
+					auto dstLbl = new Label(dst->name);
+					auto newInstr1 = new Instruction_call(dstLbl, args);
+					currF->instrs.push_back(newInstr1);
+				} else {
+					auto newInstr = new Instruction_call(dst, args);
+					currF->instrs.push_back(newInstr);
+				}
+			} else {
+				std::cerr << "improper operands" << std::endl;
+			}
     }
   };
 
@@ -1208,8 +1279,14 @@ namespace LA {
 			auto currF = p.functions.back();
 			auto arg = parsedItems.back();
 			parsedItems.pop_back();
-			auto newInstr = new Instruction_call_print(arg);
-			currF->instrs.push_back(newInstr);
+			if (dynamic_cast<Number*>(arg)) {
+				auto newArg = new Number(2*(dynamic_cast<Number*>(arg)->value)+1);
+				auto newInstr = new Instruction_call_print(newArg);
+				currF->instrs.push_back(newInstr);
+			} else {
+				auto newInstr1 = new Instruction_call_print(arg);
+				currF->instrs.push_back(newInstr1);
+			}
     }
   };
 
@@ -1228,18 +1305,28 @@ namespace LA {
     static void apply(const Input & in, Program & p) {
       if (printActions) std::cout << "call assign rule" << std::endl;
 			auto currF = p.functions.back();
-			auto src = parsedItems.back();
+			auto src = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			std::vector<Item*> args;
 			for (auto i : paramList) {
-				args.push_back(i);
+				if (dynamic_cast<Number*>(i)) {
+					args.push_back(new Number(2*(dynamic_cast<Number*>(i)->value) + 1));
+				} else {
+					args.push_back(i);
+				}
 			}
 			paramList.clear();
-			if (dst) {
-				auto newInstr = new Instruction_call_assign(src, args, dst);
-				currF->instrs.push_back(newInstr);
+			if (dst && src) {
+				if (!(src->getDup(declaredVars))) {
+					auto srcLbl = new Label(src->name);
+					auto newInstr1 = new Instruction_call_assign(srcLbl, args, dst);
+					currF->instrs.push_back(newInstr1);
+				} else {
+					auto newInstr = new Instruction_call_assign(src, args, dst);
+					currF->instrs.push_back(newInstr);
+				}
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}
@@ -1285,7 +1372,11 @@ namespace LA {
 			parsedItems.pop_back();
 			std::vector<Item*> args;
 			for (auto i : paramList) {
-				args.push_back(i);
+				if (dynamic_cast<Number*>(i)) {
+					args.push_back(new Number(2*(dynamic_cast<Number*>(i))->value + 1));
+				} else {
+					args.push_back(i);
+				}
 			}
 			paramList.clear();
 			if (dst) {
@@ -1308,8 +1399,13 @@ namespace LA {
 			auto dst = dynamic_cast<Variable*>(parsedItems.back());
 			parsedItems.pop_back();
 			if (dst) {
-				auto newInstr = new Instruction_tuple_init(arg, dst);
-				currF->instrs.push_back(newInstr);
+				if (dynamic_cast<Number*>(arg)) {
+					auto newInstr1 = new Instruction_tuple_init(new Number(2*(dynamic_cast<Number*>(arg))->value + 1), dst);
+					currF->instrs.push_back(newInstr1);
+				} else {
+					auto newInstr = new Instruction_tuple_init(arg, dst);
+					currF->instrs.push_back(newInstr);
+				}
 			} else {
 				std::cerr << "improper operands" << std::endl;
 			}

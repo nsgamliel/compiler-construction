@@ -35,11 +35,15 @@ namespace LA {
 	}
 
 	std::string Label::toString() {
-		return this->name;
+		if (this->name.substr(0,1).compare(":") == 0) {
+			return this->name;
+		} else {
+			return ":" + this->name;
+		}
 	}
 
 	std::string Variable::toString() {
-		return this->name;
+		return "%" + this->name;
 	}
 
 	std::string Number::toString() {
@@ -109,14 +113,16 @@ namespace LA {
 	Instruction_greater::Instruction_greater(Item* l, Item* r, Variable* d)
 	: Instruction_op(l, r, d) {}
 
-	Instruction_from_array::Instruction_from_array(bool iT, Variable* s, std::vector<Item*> i, Variable* d) {
+	Instruction_from_array::Instruction_from_array(int lN, bool iT, Variable* s, std::vector<Item*> i, Variable* d) {
+		lineNumber = lN;
 		isTup = iT;
 		src = s;
 		indices = i;
 		dst = d;
 	}
 
-	Instruction_to_array::Instruction_to_array(bool iT, Item* s, std::vector<Item*> i, Variable* d) {
+	Instruction_to_array::Instruction_to_array(int lN, bool iT, Item* s, std::vector<Item*> i, Variable* d) {
+		lineNumber = lN;
 		isTup = iT;
 		src = s;
 		indices = i;
@@ -181,6 +187,22 @@ namespace LA {
 		dst = d;
 	}
 
+
+
+	int Instruction_plus::getOpcode() { return opcode; }
+	int Instruction_minus::getOpcode() { return opcode; }
+	int Instruction_times::getOpcode() { return opcode; }
+	int Instruction_and::getOpcode() { return opcode; }
+	int Instruction_lsh::getOpcode() { return opcode; }
+	int Instruction_rsh::getOpcode() { return opcode; }
+	int Instruction_eq::getOpcode() { return opcode; }
+	int Instruction_le::getOpcode() { return opcode; }
+	int Instruction_ge::getOpcode() { return opcode; }
+	int Instruction_less::getOpcode() { return opcode; }
+	int Instruction_greater::getOpcode() { return opcode; }
+
+
+
 	void Instruction_return::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_return_val::accept(Visitor* v) { v->visit(this); return; }
 	void Instruction_define_var::accept(Visitor* v) { v->visit(this); return; }
@@ -228,91 +250,91 @@ namespace LA {
 		std::string str = type + " %" + var->name;
 		if (type.compare("int64") == 0) {
 			str += "\n\t%" + var->name + " <- 1";
+		} else if (type.find("[") != std::string::npos || type.compare("tuple") == 0) {
+			str  += "\n\t%" + var->name + " <- 0";
 		}
 		return str;
 	}
 
 	std::string Instruction_mov::toIRString() {
-		return dst->name + " <- " + src->toString();
+		return "%" + dst->name + " <- " + src->toString();
 	}
 
 	std::string Instruction_plus::toIRString() {
-		return dst->name + " <- " + left->toString() + " + " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " + " + right->toString();
 	}
 
 	std::string Instruction_minus::toIRString() {
-		return dst->name + " <- " + left->toString() + " - " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " - " + right->toString();
 	}
 
 	std::string Instruction_times::toIRString() {
-		return dst->name + " <- " + left->toString() + " * " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " * " + right->toString();
 	}
 
 	std::string Instruction_and::toIRString() {
-		return dst->name + " <- " + left->toString() + " & " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " & " + right->toString();
 	}
 
 	std::string Instruction_lsh::toIRString() {
-		return dst->name + " <- " + left->toString() + " << " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " << " + right->toString();
 	}
 
 	std::string Instruction_rsh::toIRString() {
-		return dst->name + " <- " + left->toString() + " >> " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " >> " + right->toString();
 	}
 
 	std::string Instruction_eq::toIRString() {
-		return dst->name + " <- " + left->toString() + " = " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " = " + right->toString();
 	}
 
 	std::string Instruction_le::toIRString() {
-		return dst->name + " <- " + left->toString() + " <= " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " <= " + right->toString();
 	}
 
 	std::string Instruction_ge::toIRString() {
-		return dst->name + " <- " + left->toString() + " >= " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " >= " + right->toString();
 	}
 
 	std::string Instruction_less::toIRString() {
-		return dst->name + " <- " + left->toString() + " < " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " < " + right->toString();
 	}
 
 	std::string Instruction_greater::toIRString() {
-		return dst->name + " <- " + left->toString() + " > " + right->toString();
+		return "%" + dst->name + " <- " + left->toString() + " > " + right->toString();
 	}
 
 	std::string Instruction_from_array::toIRString() {
-		/*std::string str = dst->name + " <- " + src->name;
+		std::string str = "%" + dst->name + " <- " + "%" + src->name;
 		for (auto ind : indices) {
 			str += "[" + ind->toString() + "]";
 		}
-		return str;*/
-		return "// ARRAY ACCESSES SHOULD NO LONGER BE PRESENT";
+		return str;
 	}
 
 	std::string Instruction_to_array::toIRString() {
-		/*std::string str = dst->name;
+		std::string str = "%" + dst->name;
 		for (auto ind : indices) {
 			str += "[" + ind->toString() + "]";
 		}
-		str += " <- " + src->name;
-		return str;*/
-		return "// ARRAY ACCESSES SHOULD NO LONGER BE PRESENT";
+		str += " <- " + src->toString();
+		return str;
 	}
 
 	std::string Instruction_length::toIRString() {
-		return "// LENGTH INSTRUCTIONS SHOULD NO LONGER BE PRESENT";
+		return "%" + dst->name + " <- length %" + src->name + " " + dim->toString();
 	}
 
 	std::string Instruction_label::toIRString() {
-		return label->name;
+		return label->toString();
 	}
 
 	std::string Instruction_branch::toIRString() {
-		return "br " + label->name;
+		return "br " + label->toString();
 	}
 
 	std::string Instruction_cond_branch::toIRString() {
-		return "br " + cond->toString() + " " + labelTrue->name + "\n\tbr " + labelFalse->name;
+		return "br " + cond->toString() + " " + labelTrue->toString() + " " + labelFalse->toString();
 	}
 
 	std::string Instruction_call::toIRString() {
@@ -344,7 +366,7 @@ namespace LA {
 	}
 
 	std::string Instruction_call_assign::toIRString() {
-		std::string str = dst->name + " <- call " + src->toString() + "(";
+		std::string str = "%" + dst->name + " <- call " + src->toString() + "(";
 		for (int i=0; i<args.size(); i++) {
 			str += args[i]->toString();
 			if (i != args.size()-1) { str += ", "; }
@@ -354,19 +376,25 @@ namespace LA {
 	}
 
 	std::string Instruction_call_print_assign::toIRString() {
-		return dst->name + " <- call print (" + arg->toString() + ")";
+		return "%" + dst->name + " <- call print (" + arg->toString() + ")";
 	}
 
 	std::string Instruction_call_input_assign::toIRString() {
-		return dst->name + " <- call input ()";
+		return "%" + dst->name + " <- call input ()";
 	}
 
 	std::string Instruction_array_init::toIRString() {
-		return "// ARRAY INITS SHOULD NO LONGER BE PRESENT";
+		std::string str = "%" + dst->name + " <- " + "new Array(";
+		for (int i=0; i<args.size(); i++) {
+			str += args[i]->toString();
+			if (i != args.size()-1) { str += ", "; }
+		}
+		str += ")";
+		return str;
 	}
 
 	std::string Instruction_tuple_init::toIRString() {
-		return "// TUPLE INITS SHOULD NO LONGER BE PRESENT";
+		return "%" + dst->name + " <- " + "new Tuple(" + args->toString() + ")";
 	}
 
 

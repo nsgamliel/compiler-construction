@@ -4,6 +4,6 @@
 
 namespace LA {
 
-	void encodeDecode(Function* f);
+	void generateTargetCode(Program* p);
 
 }
